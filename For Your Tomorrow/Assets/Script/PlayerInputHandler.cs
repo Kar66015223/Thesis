@@ -1,16 +1,21 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInputHandler : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public event Action<Vector2> OnMoveInput;
+    public event Action<bool> OnRunInput;
 
-    // Update is called once per frame
-    void Update()
+    public void OnMove(InputAction.CallbackContext context)
     {
-        
+        OnMoveInput?.Invoke(context.ReadValue<Vector2>());
+    }
+    public void OnRun(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            OnRunInput?.Invoke(true);
+        if (context.canceled)
+            OnRunInput?.Invoke(false);
     }
 }
