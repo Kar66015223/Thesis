@@ -5,12 +5,14 @@ using UnityEngine.InputSystem;
 public class PlayerInputHandler : MonoBehaviour
 {
     public event Action<Vector2> OnMoveInput;
+    public event Action<Vector2> OnLookInput;
     public event Action<bool> OnRunInput;
 
     public void OnMove(InputAction.CallbackContext context)
     {
         OnMoveInput?.Invoke(context.ReadValue<Vector2>());
     }
+    
     public void OnRun(InputAction.CallbackContext context)
     {
         if (context.performed)
