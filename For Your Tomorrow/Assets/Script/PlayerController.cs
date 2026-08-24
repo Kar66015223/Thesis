@@ -20,6 +20,13 @@ public class PlayerController : MonoBehaviour
     private Vector3 camForward;
     private Vector3 camRight;
 
+    [SerializeField] private Transform playerModel;
+
+    [Header("Camera Target Positioning")]
+    [SerializeField] private Transform camTarget;
+    [SerializeField] private float shoulderOffset = 1f;
+    [SerializeField] private float targetHeight = 1f;
+
     private Vector2 moveInput;
     private Vector2 lookInput;
     private float verticalVelocity;
@@ -45,21 +52,26 @@ public class PlayerController : MonoBehaviour
     {
         inputHandler.OnMoveInput += HandleMoveInput;
         inputHandler.OnRunInput += HandleRunInput;
+        inputHandler.OnLookInput += HandleLookInput;
     }
 
     void OnDisable()
     {
         inputHandler.OnMoveInput -= HandleMoveInput;
         inputHandler.OnRunInput -= HandleRunInput;
+        inputHandler.OnLookInput -= HandleLookInput;
     }
 
     void Update()
     {
         HandleMovement();
         HandleRotation();
+        UpdateCameraTarget();
     }
 
     private void HandleMoveInput(Vector2 input) => moveInput = input;
+
+    private void HandleLookInput(Vector2 input) => lookInput = input;
 
     private void HandleRunInput(bool isRunning)
     {
@@ -67,7 +79,7 @@ public class PlayerController : MonoBehaviour
         {
             stamina.isRunning = isRunning;
         }
-    } 
+    }
 
     private void HandleMovement()
     {
@@ -92,7 +104,7 @@ public class PlayerController : MonoBehaviour
 
         bool isMoving = moveInput.sqrMagnitude > 0.1f;
         stamina.isMoving = isMoving;
-        
+
         float currentSpeed = stamina.isRunning ? runSpeed : moveSpeed;
 
         Vector3 finalVelocity = (moveDir * currentSpeed) + (Vector3.up * verticalVelocity);
@@ -101,11 +113,24 @@ public class PlayerController : MonoBehaviour
 
     private void HandleRotation()
     {
-        if(moveDir != Vector3.zero)
+        if (moveDir != Vector3.zero && playerModel != null)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            playerModel.rotation = Quaternion.Slerp(
+                playerModel.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
+    }
+
+    private void UpdateCameraTarget()
+    {
+        if (camTarget == null || cam == null)
+            return;
+
+        Vector3 right = cam.transform.right;
+        right.y = 0;
+        right.Normalize();
+
+        camTarget.position = transform.position + (Vector3.up * targetHeight) + (right * shoulderOffset);
     }
 }

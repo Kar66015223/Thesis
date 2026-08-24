@@ -12,6 +12,11 @@ public class PlayerInputHandler : MonoBehaviour
     {
         OnMoveInput?.Invoke(context.ReadValue<Vector2>());
     }
+
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        OnLookInput?.Invoke(context.ReadValue<Vector2>());
+    }
     
     public void OnRun(InputAction.CallbackContext context)
     {
