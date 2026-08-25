@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 6004431181530761611}
   - component: {fileID: 719250979462900251}
   - component: {fileID: 912336687082218157}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -581,8 +581,8 @@ MonoBehaviour:
   cam: {fileID: 8753463606926023368}
   playerModel: {fileID: 1790317265148880749}
   camTarget: {fileID: 7541394739157157408}
-  shoulderOffset: 1
-  targetHeight: 1
+  shoulderOffset: 0.5
+  targetHeight: 0.5
 --- !u!114 &719250979462900251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -628,6 +628,7 @@ GameObject:
   - component: {fileID: 7920439288986842989}
   - component: {fileID: 47880088611927208}
   - component: {fileID: 7833217206675922856}
+  - component: {fileID: 7721422147807690635}
   m_Layer: 0
   m_Name: FollowCamera
   m_TagString: Untagged
@@ -643,8 +644,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7849789095491554775}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -1e-45, z: 7.1219965e-28, w: 1}
-  m_LocalPosition: {x: 1, y: 1, z: -4.1666665}
+  m_LocalRotation: {x: 0.0000000018626443, y: 0.0000000018623234, z: -3.4688468e-18, w: 1}
+  m_LocalPosition: {x: 0.99999994, y: 1, z: -1.6666665}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -676,7 +677,7 @@ MonoBehaviour:
   Lens:
     FieldOfView: 90
     OrthographicSize: 5
-    NearClipPlane: 0.3
+    NearClipPlane: 0.01
     FarClipPlane: 1000
     Dutch: 0
     ModeOverride: 0
@@ -713,7 +714,7 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   OrbitStyle: 0
-  Radius: 2.5
+  Radius: 1
   Orbits:
     Top:
       Radius: 2
@@ -837,6 +838,36 @@ MonoBehaviour:
         DecelTime: 0
   PlayerIndex: -1
   AutoEnableInputs: 1
+--- !u!114 &7721422147807690635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7849789095491554775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDecollider
+  CameraRadius: 1
+  Decollision:
+    Enabled: 1
+    ObstacleLayers:
+      serializedVersion: 2
+      m_Bits: 1
+    UseFollowTarget:
+      Enabled: 0
+      YOffset: 0
+    Damping: 0.5
+    SmoothingTime: 0
+  TerrainResolution:
+    Enabled: 0
+    TerrainLayers:
+      serializedVersion: 2
+      m_Bits: 1
+    MaximumRaycast: 10
+    Damping: 0.5
 --- !u!1 &8932809561775390139
 GameObject:
   m_ObjectHideFlags: 0
