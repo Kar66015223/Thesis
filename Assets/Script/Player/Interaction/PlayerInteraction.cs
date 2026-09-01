@@ -8,6 +8,23 @@ public class PlayerInteraction : MonoBehaviour
 
     void Awake()
     {
-        ui.Initialize(this, detector);
+        detector.Initialize(ui);
+        ui.Initialize(detector);
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (other.TryGetComponent<IInteractable>(out _))
+        {
+            detector.AddDetected(other);
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.TryGetComponent<IInteractable>(out _))
+        {
+            detector.RemoveDetected(other);
+        }
     }
 }

@@ -7,26 +7,44 @@ public class PlayerInteractionDetector
     private List<IInteractable> allDetected = new();
     [SerializeField] private List<GameObject> allDetectedObj = new();
 
-    void OnTriggerStay(Collider other)
+    private PlayerInteractionUI ui;
+
+    public void Initialize(PlayerInteractionUI ui)
+    {
+        this.ui = ui;
+    }
+
+    public void AddDetected(Collider other)
     {
         if (other.TryGetComponent(out IInteractable interactable))
         {
+            if (!interactable.CanInteract())
+            {
+                RemoveDetected(other);
+                return;
+            }
+
             if (!allDetected.Contains(interactable))
             {
                 allDetected.Add(interactable);
                 allDetectedObj.Add(interactable.Owner);
-                Debug.Log($"Found {other.name}");
+                
+                ui.UpdateDisplay();
             }
         }
     }
 
-    void OnTriggerExit(Collider other)
+    public void RemoveDetected(Collider other)
     {
-        IInteractable interactable = other.GetComponent<IInteractable>();
-        if (allDetected.Contains(interactable))
+        if (other.TryGetComponent(out IInteractable interactable))
         {
-            allDetected.Remove(interactable);
-            allDetectedObj.Remove(interactable.Owner);
+            if (allDetected.Contains(interactable))
+            {
+                allDetected.Remove(interactable);
+                allDetectedObj.Remove(interactable.Owner);
+
+                ui.UpdateDisplay();
+            }
         }
     }
 

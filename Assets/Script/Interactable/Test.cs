@@ -7,16 +7,14 @@ public class Test : MonoBehaviour, IInteractable
 
     public bool canInteract = true;
 
+    void Awake()
+    {
+        Owner = gameObject;
+    }
+
     public bool CanInteract()
     {
-        if (canInteract)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return canInteract;
     }
 
     public void Interact()

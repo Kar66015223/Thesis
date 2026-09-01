@@ -9,33 +9,42 @@ public class PlayerInteractionUI
 
     [SerializeField] private GameObject itemButtonPrefab;
     [SerializeField] private Transform itemButtonParent;
-    [SerializeField] private TMP_Text itemNameText;
 
-    private PlayerInteraction interact;
+    private Dictionary<IInteractable, GameObject> allItemButtons = new();
+
     private PlayerInteractionDetector detector;
 
-    public void Initialize(PlayerInteraction interact, PlayerInteractionDetector detector)
+    public void Initialize(PlayerInteractionDetector detector)
     {
-        this.interact = interact;
         this.detector = detector;
     }
 
-    void Update()
-    {
-        DisplayItems();
-    }
-    
-    private void DisplayItems()
+    public void UpdateDisplay()
     {
         List<IInteractable> allInteractables = detector.GetAllDetected();
-        List<GameObject> allObjects = detector.GetAllDetectObj();
+        List<IInteractable> itemsToRemove = new();
 
-        foreach(IInteractable interact in allInteractables)
+        foreach (var kvp in allItemButtons)
+        {
+            if (!allInteractables.Contains(kvp.Key))
+            {
+                Object.Destroy(kvp.Value);
+                itemsToRemove.Add(kvp.Key);
+            }
+        }
+
+        foreach (var item in itemsToRemove)
+        {
+            allItemButtons.Remove(item);
+        }
+        
+        foreach(IInteractable interactable in allInteractables)
         {
             GameObject itemButton = Object.Instantiate(itemButtonPrefab, itemButtonParent);
+            allItemButtons.Add(interactable, itemButton);
 
             TMP_Text nameText = itemButton.GetComponentInChildren<TMP_Text>();
-            nameText.text = nameText.gameObject.name;
+            nameText.text = interactable.Owner.name;
         }
     }
 }
