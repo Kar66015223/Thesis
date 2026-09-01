@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInteractionDetector : MonoBehaviour
+[System.Serializable]
+public class PlayerInteractionDetector
 {
     private List<IInteractable> allDetected = new();
     [SerializeField] private List<GameObject> allDetectedObj = new();
@@ -28,4 +29,7 @@ public class PlayerInteractionDetector : MonoBehaviour
             allDetectedObj.Remove(interactable.Owner);
         }
     }
+
+    public List<IInteractable> GetAllDetected() => allDetected;
+    public List<GameObject> GetAllDetectObj() => allDetectedObj;
 }

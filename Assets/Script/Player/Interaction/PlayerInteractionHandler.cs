@@ -1,8 +1,10 @@
 using UnityEngine;
 
-public class PlayerInteractionHandler : MonoBehaviour
+[System.Serializable]
+public class PlayerInteractionHandler
 {
-    [SerializeField] private IInteractable selectedInteractable;
+    private IInteractable selectedInteractable;
+    [SerializeField] private GameObject selectedObj;
 
     public void PerformInteract()
     {
