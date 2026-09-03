@@ -28,19 +28,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float targetHeight = 1f;
 
     private Vector2 moveInput;
-    private Vector2 lookInput;
     private float verticalVelocity;
 
     private CharacterController charController;
     private PlayerInputHandler inputHandler;
+
     private PlayerStamina stamina;
+    private PlayerInteraction interaction;
 
     void Awake()
     {
         charController = GetComponent<CharacterController>();
         inputHandler = GetComponent<PlayerInputHandler>();
+
         if (TryGetComponent(out PlayerStamina stamina))
             this.stamina = stamina;
+
+        if (interaction == null)
+            interaction = GetComponentInChildren<PlayerInteraction>();
 
         if (cam == null)
             cam = FindAnyObjectByType<CinemachineCamera>();
@@ -52,14 +57,14 @@ public class PlayerController : MonoBehaviour
     {
         inputHandler.OnMoveInput += HandleMoveInput;
         inputHandler.OnRunInput += HandleRunInput;
-        inputHandler.OnLookInput += HandleLookInput;
+        inputHandler.OnInteractInput += HandleInteractInput;
     }
 
     void OnDisable()
     {
         inputHandler.OnMoveInput -= HandleMoveInput;
         inputHandler.OnRunInput -= HandleRunInput;
-        inputHandler.OnLookInput -= HandleLookInput;
+        inputHandler.OnInteractInput -= HandleInteractInput;
     }
 
     void Update()
@@ -71,14 +76,17 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMoveInput(Vector2 input) => moveInput = input;
 
-    private void HandleLookInput(Vector2 input) => lookInput = input;
-
     private void HandleRunInput(bool isRunning)
     {
-        if(stamina != null)
+        if (stamina != null)
         {
             stamina.isRunning = isRunning;
         }
+    }
+    
+    private void HandleInteractInput()
+    {
+        interaction.handler.PerformInteract();
     }
 
     private void HandleMovement()

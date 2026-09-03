@@ -26,7 +26,7 @@ public class PlayerStamina : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(CurStamina);
+        // Debug.Log(CurStamina);
         CalculateStamina();
     }
 
