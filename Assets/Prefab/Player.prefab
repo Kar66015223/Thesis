@@ -539,7 +539,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 0
   m_Viewport: {fileID: 5673714234984969045}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 8969984926770936580}
@@ -684,6 +684,8 @@ MonoBehaviour:
     itemButtonPrefab: {fileID: 486968257986184980, guid: b5972dd37dd854544a21769d88871317, type: 3}
     itemButtonParent: {fileID: 2647683923277559331}
     allItemButtons: []
+    selection:
+      scrollRect: {fileID: 918947226888450609}
 --- !u!1 &6507348622545912309
 GameObject:
   m_ObjectHideFlags: 0

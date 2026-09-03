@@ -1259,17 +1259,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1047330595 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 918947226888450609, guid: b09fb0ab72208154a80728bfda47e8b2, type: 3}
-  m_PrefabInstance: {fileID: 3578823945966086610}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ScrollRect
 --- !u!114 &1256285063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1446,14 +1435,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 918947226888450609, guid: b09fb0ab72208154a80728bfda47e8b2, type: 3}
-      propertyPath: m_ScrollSensitivity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4071543729017783264, guid: b09fb0ab72208154a80728bfda47e8b2, type: 3}
-      propertyPath: ui.selection.scrollRect
-      value: 
-      objectReference: {fileID: 1047330595}
     - target: {fileID: 7546122520847356908, guid: b09fb0ab72208154a80728bfda47e8b2, type: 3}
       propertyPath: m_Name
       value: Player
