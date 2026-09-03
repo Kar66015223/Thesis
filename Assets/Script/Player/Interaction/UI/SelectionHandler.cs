@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class SelectionHandler
 {
+    [SerializeField] private ScrollRect scrollRect;
+    
     private Dictionary<IInteractable, GameObject> allItemButtons = new();
     private List<IInteractable> allInteractables = new();
     private int selectedIndex = 0;
@@ -33,10 +35,16 @@ public class SelectionHandler
     {
         IInteractable selectedInter = allInteractables[selectedIndex];
 
-        foreach(var kvp in allItemButtons)
+        foreach (var kvp in allItemButtons)
         {
             InteractItemUI itemUI = kvp.Value.GetComponent<InteractItemUI>();
             itemUI.isSelected = kvp.Key == selectedInter;
+        }
+        
+        if(scrollRect != null && allInteractables.Count > 1)
+        {
+            float normalizedScroll = 1f - ((float)selectedIndex / (allInteractables.Count - 1));
+            scrollRect.verticalNormalizedPosition = normalizedScroll;
         }
     }
 
