@@ -22,6 +22,6 @@ public class Test : MonoBehaviour, IInteractable
         if (!CanInteract())
             return;
 
-        Debug.Log("Interact!!!");
+        Debug.Log($"{Owner.name} was Interacted!!!");
     }
 }

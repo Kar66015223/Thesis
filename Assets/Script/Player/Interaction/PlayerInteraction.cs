@@ -9,10 +9,15 @@ public class PlayerInteraction : MonoBehaviour
     void Awake()
     {
         detector.Initialize(ui);
-        ui.Initialize(detector);
+        ui.Initialize(detector, handler);
     }
 
-    void OnTriggerStay(Collider other)
+    void Update()
+    {
+        detector.RemoveInvalids();
+    }
+
+    void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<IInteractable>(out _))
         {

@@ -11,4 +11,9 @@ public class PlayerInteractionHandler
         if (selectedInteractable != null && selectedInteractable.CanInteract())
             selectedInteractable.Interact();
     }
+
+    public void SetSelected(IInteractable interactable)
+    {
+        selectedInteractable = interactable;
+    }
 }

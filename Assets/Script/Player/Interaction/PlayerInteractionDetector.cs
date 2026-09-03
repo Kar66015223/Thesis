@@ -28,7 +28,7 @@ public class PlayerInteractionDetector
             {
                 allDetected.Add(interactable);
                 allDetectedObj.Add(interactable.Owner);
-                
+
                 ui.UpdateDisplay();
             }
         }
@@ -48,6 +48,21 @@ public class PlayerInteractionDetector
         }
     }
 
+    public void RemoveInvalids()
+    {
+        if (allDetected.Count == 0 && allDetectedObj.Count == 0)
+            return;
+            
+        allDetected.RemoveAll(item => 
+            item == null || 
+            item.Owner == null || 
+            !item.CanInteract());
+
+        allDetectedObj.RemoveAll(item => item == null);
+
+        ui.UpdateDisplay();
+    }
+
     public List<IInteractable> GetAllDetected() => allDetected;
-    public List<GameObject> GetAllDetectObj() => allDetectedObj;
+    public List<GameObject> GetAllDetectedObj() => allDetectedObj;
 }
