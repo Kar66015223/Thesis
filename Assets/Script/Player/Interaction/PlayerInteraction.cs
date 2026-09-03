@@ -15,6 +15,7 @@ public class PlayerInteraction : MonoBehaviour
     void Update()
     {
         detector.RemoveInvalids();
+        ui.selection.HandleScrollSelect();
     }
 
     void OnTriggerEnter(Collider other)

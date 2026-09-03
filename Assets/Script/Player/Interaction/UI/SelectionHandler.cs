@@ -5,48 +5,68 @@ using System.Linq;
 [System.Serializable]
 public class SelectionHandler
 {
-    private PlayerInteractionDetector detector;
-    private PlayerInteractionHandler handler;
-    private PlayerInteractionUI ui;
+    private Dictionary<IInteractable, GameObject> allItemButtons = new();
+    private List<IInteractable> allInteractables = new();
+    private int selectedIndex = 0;
 
-    public void Initialize(
-        PlayerInteractionDetector detector, PlayerInteractionHandler handler, PlayerInteractionUI ui)
+    public void Initialize(Dictionary<IInteractable, GameObject> allItemButtons)
     {
-        this.detector = detector;
-        this.handler = handler;
-        this.ui = ui;
+        this.allItemButtons = allItemButtons;
     }
 
-    public void UpdateSelection()
+    public void UpdateSelection(List<IInteractable> currentInter)
     {
-        if (ui.GetAllItemButtons().Count > 0 && detector.GetAllDetected().Count > 0)
-        {
-            InteractItemUI firstItem = ui.GetAllItemButtons().First().GetComponent<InteractItemUI>();
-            IInteractable firstInter = detector.GetAllDetected().First();
+        allInteractables = currentInter;
 
-            SelectItem(firstItem, firstInter);
+        if (allInteractables.Count == 0)
+            return;
+
+        if (selectedIndex >= allInteractables.Count)
+        {
+            selectedIndex = allInteractables.Count - 1;
+        }
+
+        UpdateUI();
+    }
+
+    public void UpdateUI()
+    {
+        IInteractable selectedInter = allInteractables[selectedIndex];
+
+        foreach(var kvp in allItemButtons)
+        {
+            InteractItemUI itemUI = kvp.Value.GetComponent<InteractItemUI>();
+            itemUI.isSelected = kvp.Key == selectedInter;
         }
     }
 
-    public void SelectItem(InteractItemUI selectedUI, IInteractable selectedInter)
+    public void HandleScrollSelect()
     {
-        List<GameObject> allItemButtonsObj = ui.GetAllItemButtonsPair().Values.ToList();
-        List<InteractItemUI> allButtonsInteractUI = new();
+        if (allInteractables.Count <= 1)
+            return;
 
-        foreach (var button in allItemButtonsObj)
+        float scroll = Input.mouseScrollDelta.y;
+        if (scroll != 0)
         {
-            allButtonsInteractUI.Add(button.GetComponent<InteractItemUI>());
-        }
+            if (scroll > 0)
+                selectedIndex--;
+            else
+                selectedIndex++;
 
-        if (allButtonsInteractUI.Count > 0 && allButtonsInteractUI.Contains(selectedUI))
-        {
-            foreach (var itemUI in allButtonsInteractUI)
-            {
-                itemUI.isSelected = false;
-                selectedUI.isSelected = true;
+            if (selectedIndex < 0)
+                selectedIndex = allInteractables.Count - 1;
+            else if (selectedIndex >= allInteractables.Count)
+                selectedIndex = 0;
 
-                handler.SetSelected(selectedInter);
-            }
+            UpdateUI();
         }
+    }
+    
+    public IInteractable GetSelectedInteractable()
+    {
+        if (allInteractables.Count == 0)
+            return null;
+
+        return allInteractables[selectedIndex];
     }
 }

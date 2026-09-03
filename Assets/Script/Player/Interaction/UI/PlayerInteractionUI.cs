@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.Multiplayer.Center.Common;
 using UnityEngine;
-using UnityEngine.UIElements;
-using UnityEngine.XR;
 
 [System.Serializable]
 public class PlayerInteractionUI
@@ -23,7 +22,7 @@ public class PlayerInteractionUI
     {
         this.detector = detector;
         this.handler = handler;
-        selection.Initialize(detector, handler, this);
+        selection.Initialize(allItemButtonsPair);
     }
 
     public void UpdateDisplay()
@@ -64,7 +63,8 @@ public class PlayerInteractionUI
             }
         }
 
-        selection.UpdateSelection();
+        selection.UpdateSelection(allInteractables);
+        handler.SetSelected(selection.GetSelectedInteractable());
     }
 
     public Dictionary<IInteractable, GameObject> GetAllItemButtonsPair() => allItemButtonsPair;
