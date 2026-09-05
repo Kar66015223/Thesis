@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
 
     private PlayerStamina stamina;
     private PlayerInteraction interaction;
+    private PlayerScannerSkill scanSkill;
 
     void Awake()
     {
@@ -44,8 +46,8 @@ public class PlayerController : MonoBehaviour
         if (TryGetComponent(out PlayerStamina stamina))
             this.stamina = stamina;
 
-        if (interaction == null)
-            interaction = GetComponentInChildren<PlayerInteraction>();
+        interaction = GetComponentInChildren<PlayerInteraction>();
+        scanSkill = GetComponentInChildren<PlayerScannerSkill>();
 
         if (cam == null)
             cam = FindAnyObjectByType<CinemachineCamera>();
@@ -58,6 +60,8 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnMoveInput += HandleMoveInput;
         inputHandler.OnRunInput += HandleRunInput;
         inputHandler.OnInteractInput += HandleInteractInput;
+
+        inputHandler.OnUseDemonEyeSkillInput += HandleDemonEyeSkillUsage;
     }
 
     void OnDisable()
@@ -65,6 +69,8 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnMoveInput -= HandleMoveInput;
         inputHandler.OnRunInput -= HandleRunInput;
         inputHandler.OnInteractInput -= HandleInteractInput;
+
+        inputHandler.OnUseDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
     }
 
     void Update()
@@ -140,5 +146,10 @@ public class PlayerController : MonoBehaviour
         right.Normalize();
 
         camTarget.position = transform.position + (Vector3.up * targetHeight) + (right * shoulderOffset);
+    }
+
+    private void HandleDemonEyeSkillUsage()
+    {
+        scanSkill.Scan();
     }
 }
