@@ -1,6 +1,5 @@
 using UnityEngine;
 using Unity.Cinemachine;
-using UnityEngine.Rendering;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
@@ -11,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float runSpeed = 15f;
     [SerializeField] private float crouchSpeed = 2f;
     [SerializeField] private float lookSensitivity = 0.2f;
-    [SerializeField] private float gravity = -19.62f;
+    [SerializeField] private float gravity = -9.81f;
 
     [SerializeField] private float rotationSpeed = 10f;
     private Vector3 moveDir;
@@ -38,19 +37,21 @@ public class PlayerController : MonoBehaviour
     private PlayerInteraction interaction;
     private PlayerScannerSkill scanSkill;
 
+    [SerializeField] private PlayerAnimation anim = new();
+
     void Awake()
     {
         charController = GetComponent<CharacterController>();
         inputHandler = GetComponent<PlayerInputHandler>();
+        if (cam == null)
+            cam = FindAnyObjectByType<CinemachineCamera>();
+        if (playerModel == null)
+            playerModel = GetComponentInChildren<Animator>().transform;
 
         if (TryGetComponent(out PlayerStamina stamina))
             this.stamina = stamina;
-
         interaction = GetComponentInChildren<PlayerInteraction>();
         scanSkill = GetComponentInChildren<PlayerScannerSkill>();
-
-        if (cam == null)
-            cam = FindAnyObjectByType<CinemachineCamera>();
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -93,6 +94,7 @@ public class PlayerController : MonoBehaviour
     private void HandleInteractInput()
     {
         interaction.handler.PerformInteract();
+        anim.SetInteract();
     }
 
     private void HandleMovement()
@@ -123,6 +125,11 @@ public class PlayerController : MonoBehaviour
 
         Vector3 finalVelocity = (moveDir * currentSpeed) + (Vector3.up * verticalVelocity);
         charController.Move(finalVelocity * Time.deltaTime);
+
+        if (isMoving)
+            anim.SetMove(1);
+        else
+            anim.SetMove(0);
     }
 
     private void HandleRotation()
