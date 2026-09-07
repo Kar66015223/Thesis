@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8a0001e1890140842b2032b96130f2e7
+guid: 72453ff65ac48004ead124c0441b834f
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
@@ -18,11 +18,14 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'root|Interact ' has import animation warnings
-      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'c_middle1.r' has translation animation
-      that will be discarded.\n\t'c_pinky1.r' has translation animation that will
-      be discarded.\n\t'c_ring1.r' has translation animation that will be discarded.\n"
+    animationImportWarnings: "\nClip 'root|CrouchWalk_test' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'c_middle1.l' has translation
+      animation that will be discarded.\n\t'c_pinky1.l' has translation animation
+      that will be discarded.\n\t'c_ring1.l' has translation animation that will
+      be discarded.\n\t'c_middle1.r' has translation animation that will be discarded.\n\t'c_pinky1.r'
+      has translation animation that will be discarded.\n\t'c_ring1.r' has translation
+      animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -36,9 +39,9 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: 'root|Interact '
-      takeName: 'root|Interact '
-      internalID: -639376033831525251
+      name: root|CrouchWalk_test
+      takeName: root|CrouchWalk_test
+      internalID: -3403503712262566416
       firstFrame: 0
       lastFrame: 35
       wrapMode: 0
@@ -47,8 +50,8 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0

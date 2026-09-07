@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float rotationSpeed = 10f;
     private Vector3 moveDir;
 
+    private bool canMove = true;
+
     [Header("Camera")]
     [SerializeField] private CinemachineCamera cam;
     private Vector3 camForward;
@@ -118,22 +120,28 @@ public class PlayerController : MonoBehaviour
             verticalVelocity += gravity * Time.deltaTime;
         }
 
-        bool isMoving = moveInput.sqrMagnitude > 0.1f;
-        stamina.isMoving = isMoving;
-
-        float currentSpeed = stamina.isRunning ? runSpeed : moveSpeed;
-
-        Vector3 finalVelocity = (moveDir * currentSpeed) + (Vector3.up * verticalVelocity);
-        charController.Move(finalVelocity * Time.deltaTime);
-
-        if (isMoving)
-            anim.SetMove(1);
-        else
-            anim.SetMove(0);
+        if (canMove)
+        {
+            bool isMoving = moveInput.sqrMagnitude > 0.1f;
+            stamina.isMoving = isMoving;
+    
+            float currentSpeed = stamina.isRunning ? runSpeed : moveSpeed;
+    
+            Vector3 finalVelocity = (moveDir * currentSpeed) + (Vector3.up * verticalVelocity);
+            charController.Move(finalVelocity * Time.deltaTime);
+    
+            if (isMoving)
+                anim.SetMove(1);
+            else
+                anim.SetMove(0);
+        }
     }
 
     private void HandleRotation()
     {
+        if (!canMove)
+            return;
+            
         if (moveDir != Vector3.zero && playerModel != null)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
@@ -159,4 +167,6 @@ public class PlayerController : MonoBehaviour
     {
         scanSkill.Scan();
     }
+
+    public void SetCanMove(bool flag) => canMove = flag;
 }

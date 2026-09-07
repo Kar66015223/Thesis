@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8a0001e1890140842b2032b96130f2e7
+guid: ef2b5443fe1ba2141a5faf4825651047
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
@@ -18,7 +18,7 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'root|Interact ' has import animation warnings
+    animationImportWarnings: "\nClip 'root|Crouch_test' has import animation warnings
       that might lower retargeting quality:\nNote: Activate translation DOF on avatar
       to improve retargeting quality.\n\t'c_middle1.r' has translation animation
       that will be discarded.\n\t'c_pinky1.r' has translation animation that will
@@ -36,19 +36,19 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: 'root|Interact '
-      takeName: 'root|Interact '
-      internalID: -639376033831525251
+      name: root|Crouch_test
+      takeName: root|Crouch_test
+      internalID: -6209276733069294950
       firstFrame: 0
-      lastFrame: 35
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
