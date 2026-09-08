@@ -19,6 +19,13 @@ public class PlayerStamina : MonoBehaviour
     public bool isRunning;
     public bool isExhausted;
 
+    private PlayerController controller;
+
+    void Awake()
+    {
+        controller = GetComponent<PlayerController>();
+    }
+
     void Start()
     {
         CurStamina = maxStamina;
@@ -32,7 +39,7 @@ public class PlayerStamina : MonoBehaviour
 
     private void CalculateStamina()
     {
-        if (isMoving && isRunning && !isExhausted && CurStamina > 0)
+        if (isMoving && isRunning && !isExhausted && CurStamina > 0 && !controller.IsCrouching)
         {
             CurStamina -= runDrainRate * Time.deltaTime;
 

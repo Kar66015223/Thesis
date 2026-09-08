@@ -17,6 +17,11 @@ public class PlayerController : MonoBehaviour
 
     private bool canMove = true;
 
+    public bool IsCrouching { get; private set; } = false;
+
+    private Vector2 moveInput;
+    private float verticalVelocity;
+
     [Header("Camera")]
     [SerializeField] private CinemachineCamera cam;
     private Vector3 camForward;
@@ -27,10 +32,13 @@ public class PlayerController : MonoBehaviour
     [Header("Camera Target Positioning")]
     [SerializeField] private Transform camTarget;
     [SerializeField] private float shoulderOffset = 1f;
-    [SerializeField] private float targetHeight = 1f;
+    [SerializeField] private float targetHeight = 1.3f;
 
-    private Vector2 moveInput;
-    private float verticalVelocity;
+    [SerializeField] private float standCamHeight = 1.3f;
+    [SerializeField] private float crouchCamHeight = 1f;
+
+    [SerializeField] private float heightTransitionSpeed = 10f;
+    private float currentCamHeight;
 
     private CharacterController charController;
     private PlayerInputHandler inputHandler;
@@ -56,12 +64,15 @@ public class PlayerController : MonoBehaviour
         scanSkill = GetComponentInChildren<PlayerScannerSkill>();
 
         Cursor.lockState = CursorLockMode.Locked;
+
+        currentCamHeight = standCamHeight;
     }
 
     void OnEnable()
     {
         inputHandler.OnMoveInput += HandleMoveInput;
         inputHandler.OnRunInput += HandleRunInput;
+        inputHandler.OnCrouchInput += HandleCrouchInput;
         inputHandler.OnInteractInput += HandleInteractInput;
 
         inputHandler.OnUseDemonEyeSkillInput += HandleDemonEyeSkillUsage;
@@ -71,6 +82,7 @@ public class PlayerController : MonoBehaviour
     {
         inputHandler.OnMoveInput -= HandleMoveInput;
         inputHandler.OnRunInput -= HandleRunInput;
+        inputHandler.OnCrouchInput -= HandleCrouchInput;
         inputHandler.OnInteractInput -= HandleInteractInput;
 
         inputHandler.OnUseDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
@@ -91,6 +103,14 @@ public class PlayerController : MonoBehaviour
         {
             stamina.isRunning = isRunning;
         }
+    }
+
+    private void HandleCrouchInput(bool input)
+    {
+        IsCrouching = input;
+
+        anim.SetCrouch(IsCrouching);
+        targetHeight = IsCrouching ? crouchCamHeight : standCamHeight;
     }
     
     private void HandleInteractInput()
@@ -124,8 +144,13 @@ public class PlayerController : MonoBehaviour
         {
             bool isMoving = moveInput.sqrMagnitude > 0.1f;
             stamina.isMoving = isMoving;
-    
-            float currentSpeed = stamina.isRunning ? runSpeed : moveSpeed;
+
+            float currentSpeed;
+
+            if (!IsCrouching)
+                currentSpeed = stamina.isRunning ? runSpeed : moveSpeed;
+            else
+                currentSpeed = crouchSpeed;
     
             Vector3 finalVelocity = (moveDir * currentSpeed) + (Vector3.up * verticalVelocity);
             charController.Move(finalVelocity * Time.deltaTime);
@@ -160,7 +185,8 @@ public class PlayerController : MonoBehaviour
         right.y = 0;
         right.Normalize();
 
-        camTarget.position = transform.position + (Vector3.up * targetHeight) + (right * shoulderOffset);
+        currentCamHeight = Mathf.Lerp(currentCamHeight, targetHeight, heightTransitionSpeed * Time.deltaTime);
+        camTarget.position = transform.position + (Vector3.up * currentCamHeight) + (right * shoulderOffset);
     }
 
     private void HandleDemonEyeSkillUsage()

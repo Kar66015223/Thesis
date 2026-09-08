@@ -8,6 +8,8 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action<Vector2> OnMoveInput;
     public event Action<Vector2> OnLookInput;
     public event Action<bool> OnRunInput;
+    public event Action<bool> OnCrouchInput;
+    private bool hasPressedCrouch;
 
     public event Action OnInteractInput;
 
@@ -31,6 +33,15 @@ public class PlayerInputHandler : MonoBehaviour
             OnRunInput?.Invoke(true);
         if (context.canceled)
             OnRunInput?.Invoke(false);
+    }
+
+    public void OnCrouch(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            hasPressedCrouch = !hasPressedCrouch;
+            OnCrouchInput?.Invoke(hasPressedCrouch);
+        }
     }
 
     public void OnInteract(InputAction.CallbackContext context)
