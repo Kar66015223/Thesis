@@ -210,7 +210,19 @@ MonoBehaviour:
     m_ActionId: 852140f2-7766-474d-8707-702459ba45f3
     m_ActionName: 'Player/Interact[/Keyboard/e]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 255021439158406942}
+        m_TargetAssemblyTypeName: PlayerInputHandler, Assembly-CSharp
+        m_MethodName: OnCrouch
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 27c5f898-bc57-4ee1-8800-db469aca5fe3
     m_ActionName: 'Player/Crouch[/Keyboard/c]'
   - m_PersistentCalls:
@@ -367,7 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 3
-  runSpeed: 10
+  runSpeed: 5
   crouchSpeed: 2
   lookSensitivity: 0.2
   gravity: -19.62
@@ -377,6 +389,8 @@ MonoBehaviour:
   camTarget: {fileID: 4844605494593759812}
   shoulderOffset: 0.5
   targetHeight: 1.3
+  standCamHeight: 1.3
+  crouchCamHeight: 1
   anim:
     anim: {fileID: 4789526049448611228}
 --- !u!114 &255021439158406942
@@ -1011,7 +1025,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5014081619451891361}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000018626443, y: 0.0000000018623234, z: -3.4688468e-18, w: 1}
+  m_LocalRotation: {x: 0.00000001450254, y: 7.4442435e-19, z: 1.3371956e-17, w: 1}
   m_LocalPosition: {x: 1, y: 1.7000002, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
