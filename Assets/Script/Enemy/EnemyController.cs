@@ -1,34 +1,27 @@
-using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    public EnemyState CurrentState { get; private set; }
+    [field: SerializeField] public EnemyState CurrentState { get; private set; }
 
-    private EnemyPatrol patrol;
+    private NavMeshAgent agent;
+    public EnemyPatrol patrol = new();
+
+    void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+
+        patrol.Initialize(this, agent);
+    }
 
     void Update()
     {
         switch(CurrentState)
         {
             case EnemyState.Patrol:
-                UpdatePatrol();
+                patrol.UpdatePatrol();
                 break;
         }
-    }
-
-    void UpdatePatrol()
-    {
-        
-    }
-
-    void UpdateChase()
-    {
-
-    }
-    
-    void UpdateStrangling()
-    {
-        
     }
 }
