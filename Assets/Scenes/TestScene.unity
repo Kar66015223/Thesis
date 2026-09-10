@@ -537,9 +537,9 @@ GameObject:
   - component: {fileID: 292651188}
   - component: {fileID: 292651187}
   - component: {fileID: 292651186}
+  - component: {fileID: 292651190}
   - component: {fileID: 292651191}
   - component: {fileID: 292651185}
-  - component: {fileID: 292651190}
   m_Layer: 0
   m_Name: EnemyTest
   m_TagString: Untagged
@@ -693,10 +693,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   <CurrentState>k__BackingField: 0
-  patrol:
+  movement:
     patrolSpeed: 3
     waitTime: 1
     dests: []
+    distractWaitTime: 1
 --- !u!114 &306563216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1478,6 +1479,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 8b7b7bbc31d6acc46aa3e804cfddd5f6, type: 3}
   m_ActionId: 24908448-c609-4bc3-a128-ea258674378a
+--- !u!1 &1290198888
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290198890}
+  - component: {fileID: 1290198889}
+  m_Layer: 0
+  m_Name: SoundEmitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1290198889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290198888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd1c50c144395634fa5adf130582e20d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundEmitter
+  radius: 20
+--- !u!4 &1290198890
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290198888}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.74246, y: -0, z: 8.25146}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1408857139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1880,3 +1926,4 @@ SceneRoots:
   - {fileID: 187304371}
   - {fileID: 1530126218}
   - {fileID: 292651189}
+  - {fileID: 1290198890}

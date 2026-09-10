@@ -3,8 +3,9 @@ using System.Linq;
 using UnityEngine.AI;
 
 [System.Serializable]
-public class EnemyPatrol
+public class EnemyMovement
 {
+    [Header("Patrol")]
     [SerializeField] private float patrolSpeed = 3f;
     [SerializeField] private float waitTime = 1f;
 
@@ -12,10 +13,19 @@ public class EnemyPatrol
     private int curTargetIndex;
     private float nextMoveTime;
 
+    [Header("Distraction")]
+    [SerializeField] private float distractWaitTime = 1f;
+    private float distractTimer;
+    private bool isDistracted = false;
+
+    public SoundSignal SoundHeared { get; private set; } = null;
+
+    private EnemyController controller;
     private NavMeshAgent agent;
 
     public void Initialize(EnemyController controller, NavMeshAgent agent)
     {
+        this.controller = controller;
         this.agent = agent;
 
         dests = controller.GetComponentsInChildren<Transform>()
@@ -40,6 +50,9 @@ public class EnemyPatrol
         if (Time.time < nextMoveTime)
             return;
 
+        if (isDistracted)
+            return;
+
         Transform target = dests[curTargetIndex];
         agent.SetDestination(target.position);
 
@@ -47,6 +60,33 @@ public class EnemyPatrol
         {
             nextMoveTime = Time.time + waitTime;
             curTargetIndex = (curTargetIndex + 1) % dests.Length;
-        }   
+        }
     }
+
+    public void UpdateDistracted()
+    {
+        isDistracted = true;
+        agent.SetDestination(SoundHeared.Position);
+
+        Debug.Log("Moving to sound");
+
+        if (isDistracted && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            Debug.Log("Arrived to sound");
+            distractTimer += Time.time;
+
+            if(distractTimer >= distractWaitTime)
+            {
+                isDistracted = false;
+                SoundHeared = null;
+                Debug.Log("Finished distracting");
+
+                distractTimer = 0f;
+
+                controller.SwitchState(EnemyState.Patrol);
+            }
+        }
+    }
+
+    public void SetSoundHeared(SoundSignal signal) => SoundHeared = signal; 
 }
