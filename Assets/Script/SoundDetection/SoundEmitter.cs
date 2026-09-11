@@ -28,7 +28,7 @@ public class SoundEmitter : MonoBehaviour
         Debug.Log($"Sound Made by {gameObject.name}!!!");
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, radius);
