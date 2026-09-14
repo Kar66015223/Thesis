@@ -15,7 +15,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     // Skill
     public event Action OnUsePhysicalSkillInput;
-    public event Action OnUseDemonEyeSkillInput;
+    public event Action<bool> OnHoldDemonEyeSkillInput;
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -50,9 +50,11 @@ public class PlayerInputHandler : MonoBehaviour
             OnInteractInput?.Invoke();
     }
     
-    public void OnUseDemonEyeSkill(InputAction.CallbackContext context)
+    public void OnHoldDemonEyeSkill(InputAction.CallbackContext context)
     {
         if (context.performed)
-            OnUseDemonEyeSkillInput?.Invoke();
+            OnHoldDemonEyeSkillInput?.Invoke(true);
+        if(context.canceled)
+            OnHoldDemonEyeSkillInput?.Invoke(false);
     }
 }

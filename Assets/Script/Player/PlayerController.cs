@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnCrouchInput += HandleCrouchInput;
         inputHandler.OnInteractInput += HandleInteractInput;
 
-        inputHandler.OnUseDemonEyeSkillInput += HandleDemonEyeSkillUsage;
+        inputHandler.OnHoldDemonEyeSkillInput += HandleDemonEyeSkillUsage;
     }
 
     void OnDisable()
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnCrouchInput -= HandleCrouchInput;
         inputHandler.OnInteractInput -= HandleInteractInput;
 
-        inputHandler.OnUseDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
+        inputHandler.OnHoldDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
     }
 
     void Update()
@@ -189,9 +189,9 @@ public class PlayerController : MonoBehaviour
         camTarget.position = transform.position + (Vector3.up * currentCamHeight) + (right * shoulderOffset);
     }
 
-    private void HandleDemonEyeSkillUsage()
+    private void HandleDemonEyeSkillUsage(bool flag)
     {
-        scanSkill.Scan();
+        scanSkill.Scan(flag);
     }
 
     public void SetCanMove(bool flag) => canMove = flag;
