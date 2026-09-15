@@ -38,8 +38,8 @@ public class PlayerStamina : MonoBehaviour
     }
 
     private void CalculateStamina()
-    {
-        if (isMoving && isRunning && !isExhausted && CurStamina > 0 && !controller.IsCrouching)
+    {   
+        if (isMoving && isRunning && !isExhausted && CurStamina > 0)
         {
             CurStamina -= runDrainRate * Time.deltaTime;
 

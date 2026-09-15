@@ -1,5 +1,7 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
@@ -16,8 +18,13 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveDir;
 
     private bool canMove = true;
+    private bool isMoving;
 
     public bool IsCrouching { get; private set; } = false;
+
+    private bool canCrouch;
+    private bool canRun;
+    private bool canInteract;
 
     private Vector2 moveInput;
     private float verticalVelocity;
@@ -99,6 +106,10 @@ public class PlayerController : MonoBehaviour
 
     private void HandleRunInput(bool isRunning)
     {
+        canRun = !IsCrouching;
+        if (!canRun)
+            return;
+            
         if (stamina != null)
         {
             stamina.isRunning = isRunning;
@@ -107,6 +118,10 @@ public class PlayerController : MonoBehaviour
 
     private void HandleCrouchInput(bool input)
     {
+        canCrouch = !stamina.isRunning;
+        if (!canCrouch)
+            return;
+        
         IsCrouching = input;
 
         anim.SetCrouch(IsCrouching);
@@ -115,6 +130,10 @@ public class PlayerController : MonoBehaviour
     
     private void HandleInteractInput()
     {
+        canInteract = !stamina.isRunning;
+        if (!canInteract)
+            return;
+        
         interaction.handler.PerformInteract();
         anim.SetInteract();
     }
@@ -142,24 +161,45 @@ public class PlayerController : MonoBehaviour
 
         if (canMove)
         {
-            bool isMoving = moveInput.sqrMagnitude > 0.1f;
+            isMoving = moveInput.sqrMagnitude > 0.1f;
             stamina.isMoving = isMoving;
 
             float currentSpeed;
 
             if (!IsCrouching)
+            {
                 currentSpeed = stamina.isRunning ? runSpeed : moveSpeed;
+            }
             else
+            {
                 currentSpeed = crouchSpeed;
-    
+            }
+
             Vector3 finalVelocity = (moveDir * currentSpeed) + (Vector3.up * verticalVelocity);
             charController.Move(finalVelocity * Time.deltaTime);
-    
-            if (isMoving)
-                anim.SetMove(1);
-            else
-                anim.SetMove(0);
+
+            UpdateMovementAnim();
         }
+    }
+    
+    private void UpdateMovementAnim()
+    {
+        int animMovementValue = 0;
+
+        
+        if (isMoving)
+        {
+            if (IsCrouching)
+            {
+                animMovementValue = 1;
+            }
+            else
+            {
+                animMovementValue = stamina.isRunning ? 2 : 1;
+            }
+        }
+
+        anim.SetMove(animMovementValue);
     }
 
     private void HandleRotation()
