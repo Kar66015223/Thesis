@@ -130,7 +130,7 @@ public class PlayerController : MonoBehaviour
     
     private void HandleInteractInput()
     {
-        canInteract = !stamina.isRunning;
+        canInteract = !stamina.isRunning && interaction.detector.GetAllDetected().Count > 0;
         if (!canInteract)
             return;
         
