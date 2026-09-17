@@ -385,14 +385,17 @@ MonoBehaviour:
   lookSensitivity: 0.2
   gravity: -19.62
   rotationSpeed: 10
-  cam: {fileID: 6953314275788628758}
   playerModel: {fileID: 4848257035913063347}
-  camTarget: {fileID: 4844605494593759812}
-  shoulderOffset: 0.5
-  targetHeight: 1.3
-  standCamHeight: 1.3
-  crouchCamHeight: 1
-  heightTransitionSpeed: 10
+  camController:
+    cam: {fileID: 6953314275788628758}
+    camForward: {x: 0, y: 0, z: 0}
+    camRight: {x: 0, y: 0, z: 0}
+    camTarget: {fileID: 4844605494593759812}
+    shoulderOffset: 0.5
+    targetHeight: 1.3
+    standCamHeight: 1.3
+    crouchCamHeight: 1
+    heightTransitionSpeed: 10
   anim:
     anim: {fileID: 4107124903005252647}
 --- !u!114 &255021439158406942

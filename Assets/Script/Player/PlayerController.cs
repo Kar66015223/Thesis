@@ -1,7 +1,4 @@
 using UnityEngine;
-using Unity.Cinemachine;
-using System.Runtime.CompilerServices;
-using System.Collections.Generic;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
@@ -29,26 +26,11 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveInput;
     private float verticalVelocity;
 
-    [Header("Camera")]
-    [SerializeField] private CinemachineCamera cam;
-    private Vector3 camForward;
-    private Vector3 camRight;
-
     [SerializeField] private Transform playerModel;
-
-    [Header("Camera Target Positioning")]
-    [SerializeField] private Transform camTarget;
-    [SerializeField] private float shoulderOffset = 1f;
-    [SerializeField] private float targetHeight = 1.3f;
-
-    [SerializeField] private float standCamHeight = 1.3f;
-    [SerializeField] private float crouchCamHeight = 1f;
-
-    [SerializeField] private float heightTransitionSpeed = 10f;
-    private float currentCamHeight;
 
     private CharacterController charController;
     private PlayerInputHandler inputHandler;
+    [SerializeField] private PlayerCameraController camController = new();
 
     private PlayerStamina stamina;
     private PlayerInteraction interaction;
@@ -60,8 +42,7 @@ public class PlayerController : MonoBehaviour
     {
         charController = GetComponent<CharacterController>();
         inputHandler = GetComponent<PlayerInputHandler>();
-        if (cam == null)
-            cam = FindAnyObjectByType<CinemachineCamera>();
+        camController.Initialize(this);
         if (playerModel == null)
             playerModel = GetComponentInChildren<Animator>().transform;
 
@@ -71,8 +52,6 @@ public class PlayerController : MonoBehaviour
         scanSkill = GetComponentInChildren<PlayerScannerSkill>();
 
         Cursor.lockState = CursorLockMode.Locked;
-
-        currentCamHeight = standCamHeight;
     }
 
     void OnEnable()
@@ -99,7 +78,9 @@ public class PlayerController : MonoBehaviour
     {
         HandleMovement();
         HandleRotation();
-        UpdateCameraTarget();
+        
+        camController.UpdateCameraTarget();
+        camController.UpdateFOVChange();
     }
 
     private void HandleMoveInput(Vector2 input) => moveInput = input;
@@ -125,30 +106,36 @@ public class PlayerController : MonoBehaviour
         IsCrouching = input;
 
         anim.SetCrouch(IsCrouching);
-        targetHeight = IsCrouching ? crouchCamHeight : standCamHeight;
+        camController.ChangeCamHeight(IsCrouching);
     }
-    
+
     private void HandleInteractInput()
     {
         canInteract = !stamina.isRunning && interaction.detector.GetAllDetected().Count > 0;
         if (!canInteract)
             return;
-        
+
         interaction.handler.PerformInteract();
         anim.SetInteract();
+    }
+    
+    private void HandleDemonEyeSkillUsage(bool flag)
+    {
+        scanSkill.Scan(flag);
+        camController.ChangeFOV(flag, camController.scanSkillFOVChange);
     }
 
     private void HandleMovement()
     {
-        camForward = cam.transform.forward;
-        camRight = cam.transform.right;
+        camController.camForward = camController.cam.transform.forward;
+        camController.camRight = camController.cam.transform.right;
 
-        camForward.y = 0;
-        camRight.y = 0;
-        camForward.Normalize();
-        camRight.Normalize();
+        camController.camForward.y = 0;
+        camController.camRight.y = 0;
+        camController.camForward.Normalize();
+        camController.camRight.Normalize();
 
-        moveDir = camForward * moveInput.y + camRight * moveInput.x;
+        moveDir = camController.camForward * moveInput.y + camController.camRight * moveInput.x;
 
         if (charController.isGrounded && verticalVelocity < 0)
         {
@@ -214,24 +201,6 @@ public class PlayerController : MonoBehaviour
             playerModel.rotation = Quaternion.Slerp(
                 playerModel.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
-    }
-
-    private void UpdateCameraTarget()
-    {
-        if (camTarget == null || cam == null)
-            return;
-
-        Vector3 right = cam.transform.right;
-        right.y = 0;
-        right.Normalize();
-
-        currentCamHeight = Mathf.Lerp(currentCamHeight, targetHeight, heightTransitionSpeed * Time.deltaTime);
-        camTarget.position = transform.position + (Vector3.up * currentCamHeight) + (right * shoulderOffset);
-    }
-
-    private void HandleDemonEyeSkillUsage(bool flag)
-    {
-        scanSkill.Scan(flag);
     }
 
     public void SetCanMove(bool flag) => canMove = flag;
