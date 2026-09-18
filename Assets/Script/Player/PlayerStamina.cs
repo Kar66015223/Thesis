@@ -57,9 +57,4 @@ public class PlayerStamina : MonoBehaviour
                 isExhausted = false;
         }
     }
-
-    public void Drain(float amount)
-    {
-        CurStamina -= amount;
-    }
 }

@@ -4,38 +4,48 @@ public class PlayerScannerSkill : MonoBehaviour
 {
     [Header("Skill Settings")]
     public GameObject scanVFX; 
-    public float cooldownTime = 10f;
 
-    [Header("Debug")]
+    public float cooldownTime = 1f;
     public bool isCooldown = false;
     public float currentCooldown = 0f;
 
-    // void Update()
-    // {
-    //     if (isCooldown)
-    //     {
-    //         currentCooldown -= Time.deltaTime;
-    //         if (currentCooldown <= 0f)
-    //             isCooldown = false;
-    //     }
-    // }
+    private bool isSkillActive = false;
+
+    void Update()
+    {
+        if (isCooldown)
+        {
+            currentCooldown -= Time.deltaTime;
+            if (currentCooldown <= 0f)
+            {
+                isCooldown = false;
+                currentCooldown = 0f;
+            }
+        }
+    }
     
     public void Scan(bool flag)
     {
-        // if (!isCooldown)
-        // {
-        //     // isCooldown = true;
-        //     // currentCooldown = cooldownTime;
+        if (scanVFX == null)
+            return;
 
-        //     if (scanVFX != null)
-        //     {
-        //         scanVFX.SetActive(flag);
-        //     }
-        // }
-        
-        if (scanVFX != null)
+        if (flag)
         {
-            scanVFX.SetActive(flag);
+            if (isCooldown)
+                return;
+
+            isSkillActive = true;
+            scanVFX.SetActive(true);
+        }
+        else
+        {
+            if (isSkillActive)
+            {
+                isSkillActive = false;
+                isCooldown = true;
+                currentCooldown = cooldownTime;
+            }
+            scanVFX.SetActive(false);
         }
     }
 }

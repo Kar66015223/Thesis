@@ -1,9 +1,19 @@
 using UnityEngine;
 
+public enum PlayerState
+{
+    Normal,
+    Running,
+    Crouching,
+    UsingSkill
+}
+
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private PlayerState state = PlayerState.Normal;
+
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float runSpeed = 15f;
@@ -16,12 +26,9 @@ public class PlayerController : MonoBehaviour
 
     private bool canMove = true;
     private bool isMoving;
-
     public bool IsCrouching { get; private set; } = false;
-
-    private bool canCrouch;
-    private bool canRun;
     private bool canInteract;
+    private bool isUsingSkill;
 
     private Vector2 moveInput;
     private float verticalVelocity;
@@ -61,7 +68,7 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnCrouchInput += HandleCrouchInput;
         inputHandler.OnInteractInput += HandleInteractInput;
 
-        inputHandler.OnHoldDemonEyeSkillInput += HandleDemonEyeSkillUsage;
+        inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage;
     }
 
     void OnDisable()
@@ -71,47 +78,59 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnCrouchInput -= HandleCrouchInput;
         inputHandler.OnInteractInput -= HandleInteractInput;
 
-        inputHandler.OnHoldDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
+        inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
     }
 
     void Update()
     {
         HandleMovement();
         HandleRotation();
-        
-        camController.UpdateCameraTarget();
-        camController.UpdateFOVChange();
+        UpdatePlayerState();
+        camController.Update();
     }
 
-    private void HandleMoveInput(Vector2 input) => moveInput = input;
+    private void HandleMoveInput(Vector2 input) 
+        => moveInput = input;
 
     private void HandleRunInput(bool isRunning)
     {
-        canRun = !IsCrouching;
-        if (!canRun)
+        if (state == PlayerState.Crouching || state == PlayerState.UsingSkill)
             return;
             
         if (stamina != null)
         {
             stamina.isRunning = isRunning;
+            camController.isRunning = isRunning;
         }
     }
 
     private void HandleCrouchInput(bool input)
     {
-        canCrouch = !stamina.isRunning;
-        if (!canCrouch)
+        if (state == PlayerState.Running)
             return;
-        
+
         IsCrouching = input;
 
         anim.SetCrouch(IsCrouching);
         camController.ChangeCamHeight(IsCrouching);
+        camController.isCrouching = IsCrouching;
+    }
+    
+    private void UpdatePlayerState()
+    {
+        if (IsCrouching)
+            ChangeState(PlayerState.Crouching);
+        else if (stamina.isRunning)
+            ChangeState(PlayerState.Running);
+        else if (isUsingSkill)
+            ChangeState(PlayerState.UsingSkill);
+        else
+            ChangeState(PlayerState.Normal);
     }
 
     private void HandleInteractInput()
     {
-        canInteract = !stamina.isRunning && interaction.detector.GetAllDetected().Count > 0;
+        canInteract = (state == PlayerState.Running) && interaction.detector.GetAllDetected().Count > 0;
         if (!canInteract)
             return;
 
@@ -121,8 +140,14 @@ public class PlayerController : MonoBehaviour
     
     private void HandleDemonEyeSkillUsage(bool flag)
     {
+        if (state == PlayerState.Running)
+            return;
+        if (flag && scanSkill.isCooldown)
+            return;
+
         scanSkill.Scan(flag);
-        camController.ChangeFOV(flag, camController.scanSkillFOVChange);
+        camController.isDemonEyeActive = flag;
+        isUsingSkill = flag;
     }
 
     private void HandleMovement()
@@ -203,5 +228,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void SetCanMove(bool flag) => canMove = flag;
+    public void SetCanMove(bool flag)
+        => canMove = flag;
+
+    public void ChangeState(PlayerState newState)
+        => state = newState;
 }
