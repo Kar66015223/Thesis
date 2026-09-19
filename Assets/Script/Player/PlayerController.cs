@@ -1,12 +1,5 @@
+using Unity.VisualScripting;
 using UnityEngine;
-
-public enum PlayerState
-{
-    Normal,
-    Running,
-    Crouching,
-    UsingSkill
-}
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
@@ -24,15 +17,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float rotationSpeed = 10f;
     private Vector3 moveDir;
 
+    private Vector2 moveInput;
+    private float verticalVelocity;
+
+    [Header("States")]
     private bool canMove = true;
     private bool isMoving;
     public bool IsCrouching { get; private set; } = false;
     private bool canInteract;
     private bool isUsingSkill;
 
-    private Vector2 moveInput;
-    private float verticalVelocity;
+    private bool isHiding;
+    private HidingPlace curHidingPlace;
 
+    [Header("Other")]
     [SerializeField] private Transform playerModel;
 
     private CharacterController charController;
@@ -89,6 +87,24 @@ public class PlayerController : MonoBehaviour
         camController.Update();
     }
 
+    private void UpdatePlayerState()
+    {
+        if (IsCrouching)
+            ChangeState(PlayerState.Crouching);
+
+        else if (stamina.isRunning)
+            ChangeState(PlayerState.Running);
+
+        else if (isUsingSkill)
+            ChangeState(PlayerState.UsingSkill);
+
+        else if (isHiding)
+            ChangeState(PlayerState.Hiding);
+
+        else
+            ChangeState(PlayerState.Normal);
+    }
+
     private void HandleMoveInput(Vector2 input) 
         => moveInput = input;
 
@@ -115,22 +131,16 @@ public class PlayerController : MonoBehaviour
         camController.ChangeCamHeight(IsCrouching);
         camController.isCrouching = IsCrouching;
     }
-    
-    private void UpdatePlayerState()
-    {
-        if (IsCrouching)
-            ChangeState(PlayerState.Crouching);
-        else if (stamina.isRunning)
-            ChangeState(PlayerState.Running);
-        else if (isUsingSkill)
-            ChangeState(PlayerState.UsingSkill);
-        else
-            ChangeState(PlayerState.Normal);
-    }
 
     private void HandleInteractInput()
     {
-        canInteract = (state == PlayerState.Running) && interaction.detector.GetAllDetected().Count > 0;
+        if (state == PlayerState.Hiding)
+        {
+            curHidingPlace.ToggleHide(gameObject);
+            return;
+        }
+
+        canInteract = !(state == PlayerState.Running) && interaction.detector.GetAllDetected().Count > 0;
         if (!canInteract)
             return;
 
@@ -188,7 +198,8 @@ public class PlayerController : MonoBehaviour
             }
 
             Vector3 finalVelocity = (moveDir * currentSpeed) + (Vector3.up * verticalVelocity);
-            charController.Move(finalVelocity * Time.deltaTime);
+            if(charController.enabled)
+                charController.Move(finalVelocity * Time.deltaTime);
 
             UpdateMovementAnim();
         }
@@ -218,7 +229,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!canMove)
             return;
-            
+
         if (moveDir != Vector3.zero && playerModel != null)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
@@ -230,6 +241,18 @@ public class PlayerController : MonoBehaviour
 
     public void SetCanMove(bool flag)
         => canMove = flag;
+
+    public void SetHiding(bool flag, HidingPlace place, Vector3 targetPos)
+    {
+        isHiding = flag;
+        curHidingPlace = place;
+
+        charController.enabled = false;
+        transform.position = targetPos;
+
+        charController.enabled = !flag;
+        playerModel.gameObject.SetActive(!flag);
+    }
 
     public void ChangeState(PlayerState newState)
         => state = newState;

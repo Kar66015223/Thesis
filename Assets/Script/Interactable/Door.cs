@@ -19,10 +19,10 @@ public class Door : MonoBehaviour, IInteractable
         return true;
     }
 
-    public void Interact()
+    public void Interact(GameObject interactor)
     {
         isOpen = !isOpen;
         anim.SetBool(IsOpenHash, isOpen);
-        Debug.Log("door interacted");
+        Debug.Log($"door interacted by {interactor.name}");
     }
 }

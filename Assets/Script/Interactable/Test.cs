@@ -17,11 +17,11 @@ public class Test : MonoBehaviour, IInteractable
         return canInteract;
     }
 
-    public void Interact()
+    public void Interact(GameObject interactor)
     {
         if (!CanInteract())
             return;
 
-        Debug.Log($"{Owner.name} was Interacted!!!");
+        Debug.Log($"{Owner.name} was Interacted by {interactor.name}!!!");
     }
 }

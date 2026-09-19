@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyController : MonoBehaviour, IHearable
 {
     [field: SerializeField] public EnemyState CurrentState { get; private set; }

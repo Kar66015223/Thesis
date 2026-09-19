@@ -452,7 +452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerScannerSkill
   scanVFX: {fileID: 76447404477018209}
-  cooldownTime: 1
+  cooldownTime: 0
   isCooldown: 0
   currentCooldown: 0
 --- !u!1 &1275720394783555798
@@ -1298,8 +1298,8 @@ Transform:
   m_GameObject: {fileID: 5769067075804141964}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.81700003, z: 1.5344}
-  m_LocalScale: {x: 8, y: 3, z: 2.4999995}
+  m_LocalPosition: {x: -0.0168, y: 0.3656, z: 0.8177}
+  m_LocalScale: {x: 4.0176206, y: 2.0972972, z: 1.0664998}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4848257035913063347}
@@ -1394,6 +1394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f50617613c430f4459b8cdac818e1ec2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  player: {fileID: 0}
   detector:
     allDetectedObj: []
   handler:

@@ -2,13 +2,18 @@ using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
+    [SerializeField] private GameObject player;
+
     public PlayerInteractionDetector detector = new();
     public PlayerInteractionHandler handler = new();
     public PlayerInteractionUI ui = new();
 
     void Awake()
     {
+        player = GetComponentInParent<PlayerController>().gameObject;
+
         detector.Initialize(ui);
+        handler.Initialize(player);
         ui.Initialize(detector, handler);
     }
 
