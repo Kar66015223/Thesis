@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Linq;
 using UnityEngine.AI;
 
 [System.Serializable]
@@ -24,6 +23,9 @@ public class EnemyMovement
 
     public SoundSignal SoundHeared { get; private set; } = null;
 
+    [Header("Chase")]
+    [SerializeField] private Transform chaseTarget;
+
     private EnemyController controller;
     private NavMeshAgent agent;
 
@@ -37,6 +39,7 @@ public class EnemyMovement
 
         if (dests.Length != 0)
         {
+            controller.ChangeState(EnemyState.Patrol);
             foreach (var dest in dests)
             {
                 if(dest.parent == controller.transform)
@@ -72,91 +75,111 @@ public class EnemyMovement
     {
         isDistracted = true;
 
-        switch(SoundHeared.Reaction)
+        switch (SoundHeared.Reaction)
         {
             case EnemyReaction.LookAt:
-                Debug.Log($"{controller.gameObject.name} heared LookAt sound, looking at sound");
-
-                agent.updateRotation = false;
-                agent.isStopped = true;
-
-                Vector3 direction = SoundHeared.Position - controller.transform.position;
-                direction.y = 0;
-                
-                if (direction != Vector3.zero)
-                {
-                    Quaternion targetRotation = Quaternion.LookRotation(direction);
-
-                    controller.transform.rotation = Quaternion.Slerp(
-                        controller.transform.rotation,
-                        targetRotation,
-                        lookAtRotationSpeed * Time.deltaTime);
-
-                    float angleToTarget = Vector3.Angle(controller.transform.forward, direction);
-    
-                    if(angleToTarget < 5f)
-                        distractTimer += Time.deltaTime;
-                }
-
-                if(isDistracted && distractTimer >= distractWaitTime)
-                {
-                    agent.updateRotation = true;
-                    agent.isStopped = false;
-
-                    isDistracted = false;
-                    SoundHeared = null;
-                    distractTimer = 0f;
-                    controller.SwitchState(EnemyState.Patrol);
-
-                    Debug.Log("Finished checking LookAt sound");
-                }
+                HandleLookAtState();
                 break;
-                
+
             case EnemyReaction.WalkTo:
-                Debug.Log($"{controller.gameObject.name} heared WalkTo sound, walking to sound");
-
-                agent.SetDestination(SoundHeared.Position);
-
-                if (isDistracted && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-                {
-                    Debug.Log("Arrived at sound");
-                    distractTimer += Time.deltaTime;
-
-                    if (distractTimer >= distractWaitTime)
-                    {
-                        isDistracted = false;
-                        SoundHeared = null;
-                        distractTimer = 0f;
-                        controller.SwitchState(EnemyState.Patrol);
-
-                        Debug.Log("Finished checking WalkTo sound");
-                    }
-                }
+                HandleWalkToState();
                 break;
 
             case EnemyReaction.RunTo:
-                Debug.Log($"{controller.gameObject.name} heared RunTo sound, running to sound");
-
-                agent.speed = runSpeed;
-                agent.SetDestination(SoundHeared.Position);
-
-                if (isDistracted && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-                {
-                    Debug.Log("Arrived at sound");
-                    agent.speed = walkSpeed;
-                    distractTimer += Time.deltaTime;
-
-                    if (distractTimer >= distractWaitTime)
-                    {
-                        isDistracted = false;
-                        SoundHeared = null;
-                        distractTimer = 0f;
-                        controller.SwitchState(EnemyState.Patrol);
-
-                        Debug.Log("Finished checking WalkTo sound");
-                    }
-                }
+                HandleRunToState();
                 break;
+        }
+    }
+
+    public void UpdateChase()
+    {
+        
+    }
+
+    private void HandleLookAtState()
+    {
+        Debug.Log($"{controller.gameObject.name} heared LookAt sound, looking at sound");
+
+        agent.updateRotation = false;
+        agent.isStopped = true;
+
+        Vector3 direction = SoundHeared.Position - controller.transform.position;
+        direction.y = 0;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+            controller.transform.rotation = Quaternion.Slerp(
+                controller.transform.rotation,
+                targetRotation,
+                lookAtRotationSpeed * Time.deltaTime);
+
+            float angleToTarget = Vector3.Angle(controller.transform.forward, direction);
+
+            if (angleToTarget < 5f)
+                distractTimer += Time.deltaTime;
+        }
+
+        if (isDistracted && distractTimer >= distractWaitTime)
+        {
+            agent.updateRotation = true;
+            agent.isStopped = false;
+
+            isDistracted = false;
+            SoundHeared = null;
+            distractTimer = 0f;
+            controller.ChangeState(EnemyState.Patrol);
+
+            Debug.Log("Finished checking LookAt sound");
+        }
+    }
+
+    private void HandleWalkToState()
+    {
+        Debug.Log($"{controller.gameObject.name} heared WalkTo sound, walking to sound");
+
+        agent.SetDestination(SoundHeared.Position);
+
+        if (isDistracted && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            Debug.Log("Arrived at sound");
+            distractTimer += Time.deltaTime;
+
+            if (distractTimer >= distractWaitTime)
+            {
+                isDistracted = false;
+                SoundHeared = null;
+                distractTimer = 0f;
+                controller.ChangeState(EnemyState.Patrol);
+
+                Debug.Log("Finished checking WalkTo sound");
+            }
+        }
+    }
+
+    private void HandleRunToState()
+    {
+        Debug.Log($"{controller.gameObject.name} heared RunTo sound, running to sound");
+
+        agent.speed = runSpeed;
+        agent.SetDestination(SoundHeared.Position);
+
+        if (isDistracted && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            Debug.Log("Arrived at sound");
+            agent.speed = walkSpeed;
+            distractTimer += Time.deltaTime;
+
+            if (distractTimer >= distractWaitTime)
+            {
+                isDistracted = false;
+                SoundHeared = null;
+                distractTimer = 0f;
+                controller.ChangeState(EnemyState.Patrol);
+
+                Debug.Log("Finished checking RunTo sound");
+            }
         }
     }
 

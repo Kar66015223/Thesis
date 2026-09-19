@@ -254,6 +254,7 @@ GameObject:
   - component: {fileID: 9164973046329764073}
   - component: {fileID: 2130764711534732854}
   - component: {fileID: 4111720402464977027}
+  - component: {fileID: 929758801589411030}
   m_Layer: 0
   m_Name: EnemyTest
   m_TagString: Untagged
@@ -310,7 +311,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7fd554419cf47bf489d412c79a8deb57, type: 2}
+  - {fileID: 2100000, guid: 74873ab5a99777f4883ecfebc1440a40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -399,6 +400,7 @@ MonoBehaviour:
     patrolWaitTime: 1
     lookAtRotationSpeed: 5
     distractWaitTime: 1
+    chaseTarget: {fileID: 0}
 --- !u!114 &4111720402464977027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,3 +415,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScannableEnemy
   highlightLayerName: RenderOnTop
   highlightDuration: 3
+--- !u!114 &929758801589411030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8649723213959183877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 159b7a63e55b96c4b8b19022148e7f30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldOfView
+  viewRadius: 10
+  viewAngle: 50
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 8
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 1
+  <visibleTargets>k__BackingField: []

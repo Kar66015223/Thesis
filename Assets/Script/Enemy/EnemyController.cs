@@ -2,17 +2,19 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(EnemyVision))]
 public class EnemyController : MonoBehaviour, IHearable
 {
-    [field: SerializeField] public EnemyState CurrentState { get; private set; }
+    [field: SerializeField] public EnemyState CurrentState { get; private set; } = EnemyState.Idle;
 
     private NavMeshAgent agent;
-    public EnemyMovement movement = new();
+    [SerializeField] private EnemyMovement movement = new();
+    private EnemyVision vision;
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-
+        vision = GetComponent<EnemyVision>();
         movement.Initialize(this, agent);
     }
 
@@ -27,6 +29,10 @@ public class EnemyController : MonoBehaviour, IHearable
             case EnemyState.Distracted:
                 movement.UpdateDistracted();
                 break;
+
+            case EnemyState.Chase:
+                movement.UpdateChase();
+                break;
         }
     }
 
@@ -34,10 +40,10 @@ public class EnemyController : MonoBehaviour, IHearable
     {
         Debug.Log($"{gameObject.name} heared a sound at {sound.Position}");
         movement.SetSoundHeared(sound);
-        SwitchState(EnemyState.Distracted);
+        ChangeState(EnemyState.Distracted);
     }
 
-    public void SwitchState(EnemyState newState)
+    public void ChangeState(EnemyState newState)
     {
         CurrentState = newState;
     }

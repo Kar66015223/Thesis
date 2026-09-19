@@ -1,7 +1,8 @@
 public enum EnemyState
 {
+    Idle,
     Patrol,
     Distracted,
     Chase,
-    Strangling
+    Catching
 }
