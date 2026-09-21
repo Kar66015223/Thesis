@@ -7,16 +7,16 @@ public class SelectionHandler
 {
     [SerializeField] private ScrollRect scrollRect;
     
-    private Dictionary<IInteractable, GameObject> allItemButtons = new();
-    private List<IInteractable> allInteractables = new();
+    private Dictionary<Item, GameObject> allItemButtons = new();
+    private List<Item> allInteractables = new();
     private int selectedIndex = 0;
 
-    public void Initialize(Dictionary<IInteractable, GameObject> allItemButtons)
+    public void Initialize(Dictionary<Item, GameObject> allItemButtons)
     {
         this.allItemButtons = allItemButtons;
     }
 
-    public void UpdateSelection(List<IInteractable> currentInter)
+    public void UpdateSelection(List<Item> currentInter)
     {
         allInteractables = currentInter;
 
@@ -33,7 +33,7 @@ public class SelectionHandler
 
     public void UpdateUI()
     {
-        IInteractable selectedInter = allInteractables[selectedIndex];
+        Item selectedInter = allInteractables[selectedIndex];
 
         foreach (var kvp in allItemButtons)
         {
@@ -70,7 +70,7 @@ public class SelectionHandler
         }
     }
     
-    public IInteractable GetSelectedInteractable()
+    public Item GetSelectedItem()
     {
         if (allInteractables.Count == 0)
             return null;

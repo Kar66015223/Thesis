@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class HidingPlace : MonoBehaviour
+public abstract class HidingPlace : Interactable
 {
     [SerializeField] private bool isHiding = false;
     [SerializeField] private Transform enterPos;

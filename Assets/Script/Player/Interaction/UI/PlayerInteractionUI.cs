@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ public class PlayerInteractionUI
     [SerializeField] private GameObject itemButtonPrefab;
     [SerializeField] private Transform itemButtonParent;
 
-    private Dictionary<IInteractable, GameObject> allItemButtonsPair = new();
+    private Dictionary<Item, GameObject> allItemButtonsPair = new();
     [SerializeField] private List<GameObject> allItemButtons = new();
 
     public SelectionHandler selection = new();
@@ -26,15 +27,27 @@ public class PlayerInteractionUI
 
     public void UpdateDisplay()
     {
-        List<IInteractable> allInteractables = detector.GetAllDetected();
-        List<IInteractable> itemsToRemove = new();
+        UpdateItemDisplay();
+        UpdateInteractableDisplay();
+    }
+
+    private void UpdateItemDisplay()
+    {
+        List<Item> allItems = new();
+        foreach (IInteractable interactable in detector.GetAllDetected())
+        {
+            if (interactable is Item item)
+                allItems.Add(item);
+        }
+
+        List<Item> itemsToRemove = new();
         List<GameObject> buttonsToRemove = new();
 
-        listPanel.SetActive(allInteractables.Count > 0);
+        listPanel.SetActive(allItems.Count > 0);
 
         foreach (var kvp in allItemButtonsPair)
         {
-            if (!allInteractables.Contains(kvp.Key))
+            if (!allItems.Contains(kvp.Key))
             {
                 Object.Destroy(kvp.Value);
                 itemsToRemove.Add(kvp.Key);
@@ -49,23 +62,52 @@ public class PlayerInteractionUI
         if (allItemButtons.Count > 0)
             allItemButtons.RemoveAll(obj => obj == null);
 
-        foreach (IInteractable interactable in allInteractables)
+        foreach (Item item in allItems)
         {
-            if (!allItemButtonsPair.ContainsKey(interactable))
+            if (!allItemButtonsPair.ContainsKey(item))
             {
                 GameObject itemButton = Object.Instantiate(itemButtonPrefab, itemButtonParent);
-                allItemButtonsPair.Add(interactable, itemButton);
+                allItemButtonsPair.Add(item, itemButton);
                 allItemButtons.Add(itemButton);
 
                 TMP_Text nameText = itemButton.GetComponentInChildren<TMP_Text>();
-                nameText.text = interactable.Owner.name;
+                nameText.text = item.data.itemName;
             }
         }
 
-        selection.UpdateSelection(allInteractables);
-        handler.SetSelected(selection.GetSelectedInteractable());
+        selection.UpdateSelection(allItems);
+        handler.SetSelected(selection.GetSelectedItem());
+    }
+    
+    private void UpdateInteractableDisplay()
+    {
+        List<Interactable> allInteractable = new();
+        foreach (IInteractable interactable in detector.GetAllDetected())
+        {
+            if (interactable is Interactable interact)
+                allInteractable.Add(interact);
+        }
+
+        List<Interactable> interactToRemove = new();
+
+        foreach (Interactable interact in allInteractable)
+        {
+            if (allInteractable.Contains(interact))
+                interact.TogglePrompt(true);
+            else
+                interactToRemove.Add(interact);
+        }
+        
+        foreach(Interactable interact in interactToRemove)
+        {
+            if (allInteractable.Contains(interact))
+            {
+                interact.TogglePrompt(false);
+                allInteractable.Remove(interact);
+            }
+        }
     }
 
-    public Dictionary<IInteractable, GameObject> GetAllItemButtonsPair() => allItemButtonsPair;
+    public Dictionary<Item, GameObject> GetAllItemButtonsPair() => allItemButtonsPair;
     public List<GameObject> GetAllItemButtons() => allItemButtons;
 }
