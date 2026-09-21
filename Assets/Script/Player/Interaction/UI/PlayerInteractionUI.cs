@@ -81,30 +81,28 @@ public class PlayerInteractionUI
     
     private void UpdateInteractableDisplay()
     {
-        List<Interactable> allInteractable = new();
-        foreach (IInteractable interactable in detector.GetAllDetected())
-        {
-            if (interactable is Interactable interact)
-                allInteractable.Add(interact);
-        }
+        List<Interactable> allInteractable = detector.GetAllDetected()
+        .OfType<Interactable>()
+        .ToList();
 
-        List<Interactable> interactToRemove = new();
+        List<Interactable> currentActiveInteractables = new();
+
+        foreach (Interactable interact in currentActiveInteractables)
+        {
+            if (!allInteractable.Contains(interact) && interact != null)
+                interact.TogglePrompt(false);
+        }
 
         foreach (Interactable interact in allInteractable)
         {
-            if (allInteractable.Contains(interact))
-                interact.TogglePrompt(true);
-            else
-                interactToRemove.Add(interact);
+            interact.TogglePrompt(true);
         }
-        
-        foreach(Interactable interact in interactToRemove)
+
+        currentActiveInteractables = allInteractable;
+
+        if (selection.GetSelectedItem() == null && allInteractable.Count > 0)
         {
-            if (allInteractable.Contains(interact))
-            {
-                interact.TogglePrompt(false);
-                allInteractable.Remove(interact);
-            }
+            handler.SetSelected(allInteractable[0]);
         }
     }
 

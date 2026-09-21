@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 
 public class Interactable : MonoBehaviour, IInteractable
@@ -27,6 +26,9 @@ public class Interactable : MonoBehaviour, IInteractable
     public void TogglePrompt(bool isShow)
     {
         if (!CanInteract())
+            return;
+
+        if (interactPrompt == null)
             return;
 
         interactPrompt.SetActive(isShow);

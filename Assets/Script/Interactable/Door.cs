@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class Door : MonoBehaviour, IInteractable
+public class Door : Interactable
 {
-    public GameObject Owner { get; set; }
-    
     private readonly int IsOpenHash = Animator.StringToHash("IsOpen");
     private Animator anim;
     private bool isOpen = false;
@@ -14,12 +12,12 @@ public class Door : MonoBehaviour, IInteractable
         anim = GetComponentInChildren<Animator>();
     }
 
-    public bool CanInteract()
-    {
-        return true;
-    }
+    // public bool CanInteract()
+    // {
+    //     return true;
+    // }
 
-    public void Interact(GameObject interactor)
+    public override void Interact(GameObject interactor)
     {
         isOpen = !isOpen;
         anim.SetBool(IsOpenHash, isOpen);
