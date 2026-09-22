@@ -11,7 +11,8 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action<bool> OnCrouchInput;
     private bool hasPressedCrouch;
 
-    public event Action OnInteractInput;
+    public event Action OnInteractFInput;
+    public event Action OnInteractSpacebarInput;
 
     // Skill
     public event Action OnUsePhysicalSkillInput;
@@ -46,10 +47,16 @@ public class PlayerInputHandler : MonoBehaviour
         }
     }
 
-    public void OnInteract(InputAction.CallbackContext context)
+    public void OnInteractF(InputAction.CallbackContext context)
     {
         if (context.performed)
-            OnInteractInput?.Invoke();
+            OnInteractFInput?.Invoke();
+    }
+
+    public void OnInteractSpacebar(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            OnInteractSpacebarInput?.Invoke();
     }
     
     public void OnUseDemonEyeSkill(InputAction.CallbackContext context)

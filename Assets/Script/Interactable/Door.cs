@@ -12,11 +12,6 @@ public class Door : Interactable
         anim = GetComponentInChildren<Animator>();
     }
 
-    // public bool CanInteract()
-    // {
-    //     return true;
-    // }
-
     public override void Interact(GameObject interactor)
     {
         isOpen = !isOpen;

@@ -12,7 +12,7 @@ public class Test : MonoBehaviour, IInteractable
         Owner = gameObject;
     }
 
-    public bool CanInteract()
+    public bool CanInteract(GameObject interactor = null)
     {
         return canInteract;
     }

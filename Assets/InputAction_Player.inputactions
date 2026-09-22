@@ -37,7 +37,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "Interact",
+                    "name": "InteractF",
                     "type": "Button",
                     "id": "852140f2-7766-474d-8707-702459ba45f3",
                     "expectedControlType": "",
@@ -57,10 +57,10 @@
                     "priority": 0
                 },
                 {
-                    "name": "Jump",
+                    "name": "InteractSpacebar",
                     "type": "Button",
                     "id": "f1ba0d36-48eb-4cd5-b651-1c94a6531f70",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false,
@@ -401,7 +401,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Jump",
+                    "action": "InteractSpacebar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -412,7 +412,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Jump",
+                    "action": "InteractSpacebar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -423,7 +423,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
-                    "action": "Jump",
+                    "action": "InteractSpacebar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -456,7 +456,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Interact",
+                    "action": "InteractF",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -467,7 +467,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Interact",
+                    "action": "InteractF",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

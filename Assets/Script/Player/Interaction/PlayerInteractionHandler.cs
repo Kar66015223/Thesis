@@ -13,10 +13,18 @@ public class PlayerInteractionHandler
         this.player = player;
     }
 
-    public void PerformInteract()
+    public void PerformFInteract()
     {
-        if (selectedInteractable != null && selectedInteractable.CanInteract())
-            selectedInteractable.Interact(player);
+        if (selectedInteractable != null && selectedInteractable.CanInteract(player))
+            if (selectedInteractable is Item item)
+                item.Interact(player);
+    }
+
+    public void PerformSpacebarInteract()
+    {
+        if (selectedInteractable != null && selectedInteractable.CanInteract(player))
+            if(selectedInteractable is Interactable interact)
+                interact.Interact(player);
     }
 
     public void SetSelected(IInteractable interactable)

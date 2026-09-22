@@ -12,9 +12,9 @@ public class PlayerInteraction : MonoBehaviour
     {
         player = GetComponentInParent<PlayerController>().gameObject;
 
-        detector.Initialize(ui);
+        detector.Initialize(player, ui);
         handler.Initialize(player);
-        ui.Initialize(detector, handler);
+        ui.Initialize(player, detector, handler);
     }
 
     void Update()

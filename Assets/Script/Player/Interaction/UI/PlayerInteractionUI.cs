@@ -14,12 +14,17 @@ public class PlayerInteractionUI
     private Dictionary<Item, GameObject> allItemButtonsPair = new();
     [SerializeField] private List<GameObject> allItemButtons = new();
 
+    private List<Interactable> currentActiveInteractables = new();
+
     public SelectionHandler selection = new();
+    private GameObject player;
     private PlayerInteractionDetector detector;
     private PlayerInteractionHandler handler;
 
-    public void Initialize(PlayerInteractionDetector detector, PlayerInteractionHandler handler)
+    public void Initialize(
+        GameObject player, PlayerInteractionDetector detector, PlayerInteractionHandler handler)
     {
+        this.player = player;
         this.detector = detector;
         this.handler = handler;
         selection.Initialize(allItemButtonsPair);
@@ -85,25 +90,24 @@ public class PlayerInteractionUI
         .OfType<Interactable>()
         .ToList();
 
-        List<Interactable> currentActiveInteractables = new();
-
         foreach (Interactable interact in currentActiveInteractables)
         {
             if (!allInteractable.Contains(interact) && interact != null)
-                interact.TogglePrompt(false);
+                interact.TogglePrompt(player, false);
         }
 
         foreach (Interactable interact in allInteractable)
         {
-            interact.TogglePrompt(true);
+            bool canInteract = interact.CanInteract(player);
+            interact.TogglePrompt(player, canInteract);
         }
 
         currentActiveInteractables = allInteractable;
 
-        if (selection.GetSelectedItem() == null && allInteractable.Count > 0)
-        {
+        if (allInteractable.Count > 0)
             handler.SetSelected(allInteractable[0]);
-        }
+        else
+            handler.SetSelected(null);
     }
 
     public Dictionary<Item, GameObject> GetAllItemButtonsPair() => allItemButtonsPair;

@@ -1,11 +1,10 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private PlayerState state = PlayerState.Normal;
+    [field: SerializeField] public PlayerState CurrentState { get; private set; } = PlayerState.Normal;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
@@ -64,7 +63,8 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnMoveInput += HandleMoveInput;
         inputHandler.OnRunInput += HandleRunInput;
         inputHandler.OnCrouchInput += HandleCrouchInput;
-        inputHandler.OnInteractInput += HandleInteractInput;
+        inputHandler.OnInteractFInput += HandleInteractFInput;
+        inputHandler.OnInteractSpacebarInput += HandleInteractSpacebarInput;
 
         inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage;
     }
@@ -74,7 +74,8 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnMoveInput -= HandleMoveInput;
         inputHandler.OnRunInput -= HandleRunInput;
         inputHandler.OnCrouchInput -= HandleCrouchInput;
-        inputHandler.OnInteractInput -= HandleInteractInput;
+        inputHandler.OnInteractFInput -= HandleInteractFInput;
+        inputHandler.OnInteractSpacebarInput -= HandleInteractSpacebarInput;
 
         inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
     }
@@ -110,7 +111,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleRunInput(bool isRunning)
     {
-        if (state == PlayerState.Crouching || state == PlayerState.UsingSkill)
+        if (CurrentState == PlayerState.Crouching || CurrentState == PlayerState.UsingSkill)
             return;
             
         if (stamina != null)
@@ -122,7 +123,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleCrouchInput(bool input)
     {
-        if (state == PlayerState.Running)
+        if (CurrentState == PlayerState.Running)
             return;
 
         IsCrouching = input;
@@ -132,25 +133,41 @@ public class PlayerController : MonoBehaviour
         camController.isCrouching = IsCrouching;
     }
 
-    private void HandleInteractInput()
+    private void HandleInteractFInput()
     {
-        if (state == PlayerState.Hiding)
+        if (CurrentState == PlayerState.Hiding)
         {
             curHidingPlace.ToggleHide(gameObject);
             return;
         }
 
-        canInteract = !(state == PlayerState.Running) && interaction.detector.GetAllDetected().Count > 0;
+        canInteract = interaction.detector.GetAllDetectedItems().Count > 0;
         if (!canInteract)
             return;
 
-        interaction.handler.PerformInteract();
+        interaction.handler.PerformFInteract();
+        anim.SetInteract();
+    }
+
+    private void HandleInteractSpacebarInput()
+    {
+        if (CurrentState == PlayerState.Hiding)
+        {
+            curHidingPlace.ToggleHide(gameObject);
+            return;
+        }
+
+        canInteract = interaction.detector.GetAllDetectedInteractables().Count > 0;
+        if (!canInteract)
+            return;
+
+        interaction.handler.PerformSpacebarInteract();
         anim.SetInteract();
     }
     
     private void HandleDemonEyeSkillUsage(bool flag)
     {
-        if (state == PlayerState.Running)
+        if (CurrentState == PlayerState.Running)
             return;
         if (flag && scanSkill.isCooldown)
             return;
@@ -255,5 +272,5 @@ public class PlayerController : MonoBehaviour
     }
 
     public void ChangeState(PlayerState newState)
-        => state = newState;
+        => CurrentState = newState;
 }
