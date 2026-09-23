@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
 
     private PlayerStamina stamina;
     private PlayerInteraction interaction;
-    private PlayerScannerSkill scanSkill;
+    private ScannerSkill scanSkill;
 
     [SerializeField] private PlayerAnimation anim = new();
 
@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
         if (TryGetComponent(out PlayerStamina stamina))
             this.stamina = stamina;
         interaction = GetComponentInChildren<PlayerInteraction>();
-        scanSkill = GetComponentInChildren<PlayerScannerSkill>();
+        scanSkill = GetComponentInChildren<ScannerSkill>();
 
         Cursor.lockState = CursorLockMode.Locked;
     }
