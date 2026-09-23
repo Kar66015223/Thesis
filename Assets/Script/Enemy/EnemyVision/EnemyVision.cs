@@ -6,11 +6,14 @@ public class EnemyVision : MonoBehaviour
 {
     public float viewRadius;
     [Range(0, 360)] public float viewAngle;
+    public float viewHeight;
+
+    public Vector3 EyePosition => transform.position + Vector3.up * viewHeight;
 
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
 
-    [field: SerializeField] public List<Transform> visibleTargets { get; private set; } = new();
+    [field: SerializeField] public List<Transform> VisibleTargets { get; private set; } = new();
 
     void Start()
     {
@@ -28,8 +31,8 @@ public class EnemyVision : MonoBehaviour
 
     void FindVisibleTargets()
     {
-        visibleTargets.Clear();
-        Collider[] targetsInView = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
+        VisibleTargets.Clear();
+        Collider[] targetsInView = Physics.OverlapSphere(EyePosition, viewRadius, targetMask);
 
         foreach(Collider col in targetsInView)
         {
@@ -42,7 +45,7 @@ public class EnemyVision : MonoBehaviour
 
                 if(!Physics.Raycast(transform.position, dirToTarget, distanceToTarget, obstacleMask))
                 {
-                    visibleTargets.Add(target);
+                    VisibleTargets.Add(target);
                 }
             }
         }
