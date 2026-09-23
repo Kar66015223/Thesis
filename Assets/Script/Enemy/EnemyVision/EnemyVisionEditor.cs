@@ -20,6 +20,15 @@ public class EnemyVisionEditor : Editor
 
         Handles.color = Color.red;
         foreach(Transform visibleTarget in fov.VisibleTargets)
-            Handles.DrawLine(origin, visibleTarget.position);
+        {
+            Vector3 targetDrawPos = visibleTarget.position;
+            if (visibleTarget.TryGetComponent(out Collider col))
+            {
+                targetDrawPos = col.bounds.center;
+                targetDrawPos.y = col.bounds.max.y;
+            }
+
+            Handles.DrawLine(origin, targetDrawPos);
+        }
     }
 }

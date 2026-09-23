@@ -29,6 +29,16 @@ public class PlayerController : MonoBehaviour
     private bool isHiding;
     private Hidable curHidingPlace;
 
+    [Header("Collider Size")]
+    private float currentColliderY;
+    private float currentColliderHeight;
+    
+    [SerializeField] private float standColliderY = 0.7f;
+    [SerializeField] private float standColliderHeight = 1.3f;
+    
+    [SerializeField] private float crouchColliderY = 0.5f;
+    [SerializeField] private float crouchColliderHeight = 0.8f;
+
     [Header("Other")]
     [SerializeField] private Transform playerModel;
 
@@ -54,6 +64,9 @@ public class PlayerController : MonoBehaviour
             this.stamina = stamina;
         interaction = GetComponentInChildren<PlayerInteraction>();
         scanSkill = GetComponentInChildren<ScannerSkill>();
+
+        charController.center = new(charController.center.x, currentColliderY, charController.center.z);
+        charController.height = currentColliderHeight;
 
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -85,6 +98,8 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         HandleRotation();
         UpdatePlayerState();
+        UpdateColliderSize();
+
         camController.Update();
     }
 
@@ -256,6 +271,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void UpdateColliderSize()
+    {
+        if (CurrentState == PlayerState.Crouching)
+        {
+            currentColliderY = crouchColliderY;
+            currentColliderHeight = crouchColliderHeight;
+        }
+        else
+        {
+            currentColliderY = standColliderY;
+            currentColliderHeight = standColliderHeight;
+        }
+
+        charController.center = new(charController.center.x, currentColliderY, charController.center.z);
+        charController.height = currentColliderHeight;
+    }
+
     public void SetCanMove(bool flag)
         => canMove = flag;
 
@@ -270,6 +302,9 @@ public class PlayerController : MonoBehaviour
         charController.enabled = !flag;
         playerModel.gameObject.SetActive(!flag);
     }
+
+    public void SetModelRotation(Transform target)
+        => playerModel.rotation = target.rotation;
 
     public void ChangeState(PlayerState newState)
         => CurrentState = newState;

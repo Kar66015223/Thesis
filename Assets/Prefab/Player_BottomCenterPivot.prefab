@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 8622764615272283725}
   - component: {fileID: 2368950199994602778}
   m_Layer: 3
-  m_Name: Player
+  m_Name: Player_BottomCenterPivot
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -792,7 +792,7 @@ RectTransform:
   m_Father: {fileID: 5227971889991555729}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1455,8 +1455,6 @@ MonoBehaviour:
   player: {fileID: 0}
   detector:
     allDetectedObj: []
-  handler:
-    selectedObj: {fileID: 0}
   ui:
     listPanel: {fileID: 2316468353766741295}
     itemButtonPrefab: {fileID: 486968257986184980, guid: b5972dd37dd854544a21769d88871317, type: 3}

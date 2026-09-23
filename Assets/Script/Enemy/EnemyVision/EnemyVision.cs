@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
+using System.Reflection;
 
 public class EnemyVision : MonoBehaviour
 {
@@ -37,13 +39,17 @@ public class EnemyVision : MonoBehaviour
         foreach(Collider col in targetsInView)
         {
             Transform target = col.transform;
-            Vector3 dirToTarget = (target.position - transform.position).normalized;
+
+            Vector3 targetCenter = col.bounds.center;
+            targetCenter.y = col.bounds.max.y;
+
+            Vector3 dirToTarget = (targetCenter - EyePosition).normalized;
 
             if(Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2)
             {
                 float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-                if(!Physics.Raycast(transform.position, dirToTarget, distanceToTarget, obstacleMask))
+                if(!Physics.Raycast(EyePosition, dirToTarget, distanceToTarget, obstacleMask))
                 {
                     VisibleTargets.Add(target);
                 }
