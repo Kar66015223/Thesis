@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerScannerSkill : MonoBehaviour
+public class ScannerSkill : MonoBehaviour
 {
     [Header("Skill Settings")]
     public GameObject scanVFX; 

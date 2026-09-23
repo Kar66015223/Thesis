@@ -18,7 +18,7 @@ public class ScannableEnemy : MonoBehaviour
     {
         // เก็บ Layer เดิมของศัตรูไว้
         originalLayer = gameObject.layer;
-
+        
         // หาค่า Index ของ Layer ปลายทาง
         highlightLayerIndex = LayerMask.NameToLayer(highlightLayerName);
         if (highlightLayerIndex == -1)
@@ -28,44 +28,30 @@ public class ScannableEnemy : MonoBehaviour
     }
 
     // ฟังก์ชันนี้จะทำงานเมื่อคลื่นสแกนที่ขยายตัวมาชนโดนตัวศัตรู
-    // void OnTriggerEnter(Collider other)
-    // {
-    //     // เช็คว่าสิ่งที่มาชนมี Tag เป็น "ScannerWave" หรือไม่
-    //     if (other.CompareTag("ScannerWave") && !isHighlighted)
-    //     {
-    //         StartCoroutine(ApplyHighlightEffect());
-    //     }
-    // }
-    public void ApplyHighlight()
+    void OnTriggerEnter(Collider other)
     {
-        if (isHighlighted)
-            return;
-
-        SetLayerRecursively(gameObject, highlightLayerIndex);
-        isHighlighted = true;
+        // เช็คว่าสิ่งที่มาชนมี Tag เป็น "ScannerWave" หรือไม่
+        if (other.CompareTag("ScannerWave") && !isHighlighted)
+        {
+            StartCoroutine(ApplyHighlightEffect());
+        }
     }
 
-    public void RemoveHighlight()
+    private IEnumerator ApplyHighlightEffect()
     {
+        isHighlighted = true;
+        
+        // 1. เปลี่ยน Layer เพื่อให้ Highlight Opaque (Render Objects) ทำงาน
+        SetLayerRecursively(gameObject, highlightLayerIndex);
+
+        // 2. รอเวลา (Duration ของสกิลที่มองเห็นศัตรู)
+        yield return new WaitForSeconds(highlightDuration);
+
+        // 3. หมดเวลา เปลี่ยน Layer กลับเป็นปกติ
         SetLayerRecursively(gameObject, originalLayer);
+        
         isHighlighted = false;
     }
-
-    // private IEnumerator ApplyHighlightEffect()
-    // {
-    //     isHighlighted = true;
-        
-    //     // 1. เปลี่ยน Layer เพื่อให้ Highlight Opaque (Render Objects) ทำงาน
-    //     SetLayerRecursively(gameObject, highlightLayerIndex);
-
-    //     // 2. รอเวลา (Duration ของสกิลที่มองเห็นศัตรู)
-    //     yield return new WaitForSeconds(highlightDuration);
-
-    //     // 3. หมดเวลา เปลี่ยน Layer กลับเป็นปกติ
-    //     SetLayerRecursively(gameObject, originalLayer);
-        
-    //     isHighlighted = false;
-    // }
 
     // ฟังก์ชันย่อยสำหรับเปลี่ยน Layer ให้กับโมเดลลูกๆ ทั้งหมด (กรณีโมเดลศัตรูมีหลายชิ้นส่วน)
     private void SetLayerRecursively(GameObject obj, int newLayer)

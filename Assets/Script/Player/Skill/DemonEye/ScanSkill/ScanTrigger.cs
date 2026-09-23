@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class ScanTrigger : MonoBehaviour
 {
-    private List<ScannableEnemy> allScanned = new();
+    private List<ScannableObject> allScanned = new();
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out ScannableEnemy scannable))
+        if (other.TryGetComponent(out ScannableObject scannable))
         {
             scannable.ApplyHighlight();
             if (!allScanned.Contains(scannable))
@@ -19,7 +19,7 @@ public class ScanTrigger : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent(out ScannableEnemy scannable))
+        if (other.TryGetComponent(out ScannableObject scannable))
         {
             scannable.RemoveHighlight();
             if (allScanned.Contains(scannable))
