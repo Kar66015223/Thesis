@@ -7,17 +7,19 @@ public class EnemyVisionEditor : Editor
     void OnSceneGUI()
     {
         EnemyVision fov = (EnemyVision)target;
+
+        Vector3 origin = fov.EyePosition;
         Handles.color = Color.white;
-        Handles.DrawWireArc(fov.transform.position, Vector3.up, Vector3.forward, 360, fov.viewRadius);
+        Handles.DrawWireArc(origin, Vector3.up, Vector3.forward, 360, fov.viewRadius);
 
         Vector3 viewAngleA = fov.DirFromAngle(-fov.viewAngle / 2, false);
         Vector3 viewAngleB = fov.DirFromAngle(fov.viewAngle / 2, false);
 
-        Handles.DrawLine(fov.transform.position, fov.transform.position + viewAngleA * fov.viewRadius);
-        Handles.DrawLine(fov.transform.position, fov.transform.position + viewAngleB * fov.viewRadius);
+        Handles.DrawLine(origin, origin + viewAngleA * fov.viewRadius);
+        Handles.DrawLine(origin, origin + viewAngleB * fov.viewRadius);
 
         Handles.color = Color.red;
-        foreach(Transform visibleTarget in fov.visibleTargets)
-            Handles.DrawLine(fov.transform.position, visibleTarget.position);
+        foreach(Transform visibleTarget in fov.VisibleTargets)
+            Handles.DrawLine(origin, visibleTarget.position);
     }
 }
