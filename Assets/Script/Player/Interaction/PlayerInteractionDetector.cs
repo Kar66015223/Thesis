@@ -55,19 +55,14 @@ public class PlayerInteractionDetector
         if (allDetected.Count == 0 && allDetectedObj.Count == 0)
             return;
             
-        // allDetected.RemoveAll(item => 
-        //     item == null || 
-        //     item.Owner == null || 
-        //     !item.CanInteract(player));
-
-        // allDetectedObj.RemoveAll(item => item == null);
-
         for (int i = allDetected.Count - 1; i >= 0; i--)
         {
             if (allDetected[i] == null || allDetected[i].Owner == null)
             {
                 allDetected.RemoveAt(i);
                 allDetectedObj.RemoveAt(i);
+
+                Debug.Log($"Removed {allDetected[i].Owner.name}");
             }
         }
 

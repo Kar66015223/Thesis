@@ -1,9 +1,11 @@
+using TMPro;
 using UnityEngine;
 
 public class Interactable : MonoBehaviour, IInteractable
 {
     public GameObject Owner { get; set; }
-    [SerializeField] private GameObject interactPrompt;
+    [field: SerializeField] public Transform InteractPromptPos { get; private set; }
+    [SerializeField] private string interactPromptText = "[Space]";
 
     void Awake()
     {
@@ -31,14 +33,24 @@ public class Interactable : MonoBehaviour, IInteractable
         Debug.Log($"{Owner.name} was interacted by {interactor.name}!!!!!!!!!!!!!!!!!!");
     }
 
-    public void TogglePrompt(GameObject player, bool isShow)
+    public void TogglePrompt(TMP_Text prompt, bool isShow, GameObject player)
     {
         if (!CanInteract(player) && isShow)
             return;
 
-        if (interactPrompt == null)
+        if (InteractPromptPos == null)
             return;
 
-        interactPrompt.SetActive(isShow);
+        Camera cam = Camera.main;
+
+        prompt.enabled = isShow;
+
+        if (prompt.enabled)
+        {
+            prompt.text = interactPromptText;
+            prompt.transform.position = cam.WorldToScreenPoint(InteractPromptPos.position);
+        }
+        else
+            prompt.text = null;
     }
 }

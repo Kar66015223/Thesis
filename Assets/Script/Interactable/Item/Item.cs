@@ -3,7 +3,7 @@ using UnityEngine;
 public class Item : MonoBehaviour, IInteractable
 {
     public GameObject Owner { get; set; }
-    [field: SerializeField] public ItemData data { get; private set; }
+    [field: SerializeField] public ItemData Data { get; private set; }
 
     void Awake()
     {
@@ -31,6 +31,6 @@ public class Item : MonoBehaviour, IInteractable
         if (!CanInteract(interactor))
             return;
 
-        Debug.Log($"{data.itemName} was interacted by {interactor.name}");
+        Debug.Log($"{Data.itemName} was interacted by {interactor.name}");
     }
 }

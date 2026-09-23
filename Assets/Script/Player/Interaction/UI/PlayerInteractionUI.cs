@@ -15,6 +15,7 @@ public class PlayerInteractionUI
     [SerializeField] private List<GameObject> allItemButtons = new();
 
     private List<Interactable> currentActiveInteractables = new();
+    [SerializeField] private TMP_Text interactPrompt;
 
     public SelectionHandler selection = new();
     private GameObject player;
@@ -76,12 +77,12 @@ public class PlayerInteractionUI
                 allItemButtons.Add(itemButton);
 
                 TMP_Text nameText = itemButton.GetComponentInChildren<TMP_Text>();
-                nameText.text = item.data.itemName;
+                nameText.text = item.Data.itemName;
             }
         }
 
         selection.UpdateSelection(allItems);
-        handler.SetSelected(selection.GetSelectedItem());
+        handler.SetSelectedItem(selection.GetSelectedItem());
     }
     
     private void UpdateInteractableDisplay()
@@ -93,21 +94,21 @@ public class PlayerInteractionUI
         foreach (Interactable interact in currentActiveInteractables)
         {
             if (!allInteractable.Contains(interact) && interact != null)
-                interact.TogglePrompt(player, false);
+                interact.TogglePrompt(interactPrompt, false, player);
         }
 
         foreach (Interactable interact in allInteractable)
         {
             bool canInteract = interact.CanInteract(player);
-            interact.TogglePrompt(player, canInteract);
+            interact.TogglePrompt(interactPrompt, canInteract, player);
         }
 
         currentActiveInteractables = allInteractable;
 
         if (allInteractable.Count > 0)
-            handler.SetSelected(allInteractable[0]);
+            handler.SetSelectedInteractable(allInteractable[0]);
         else
-            handler.SetSelected(null);
+            handler.SetSelectedInteractable(null);
     }
 
     public Dictionary<Item, GameObject> GetAllItemButtonsPair() => allItemButtonsPair;

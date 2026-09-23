@@ -20,6 +20,8 @@ public class Vaultable : Interactable
         if (!CanInteract(interactor))
             return;
 
+        base.Interact(interactor);
+
         StartCoroutine(VaultRoutine(interactor));
     }
 

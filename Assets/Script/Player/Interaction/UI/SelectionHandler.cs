@@ -8,7 +8,7 @@ public class SelectionHandler
     [SerializeField] private ScrollRect scrollRect;
     
     private Dictionary<Item, GameObject> allItemButtons = new();
-    private List<Item> allInteractables = new();
+    private List<Item> allItems = new();
     private int selectedIndex = 0;
 
     public void Initialize(Dictionary<Item, GameObject> allItemButtons)
@@ -18,14 +18,14 @@ public class SelectionHandler
 
     public void UpdateSelection(List<Item> currentInter)
     {
-        allInteractables = currentInter;
+        allItems = currentInter;
 
-        if (allInteractables.Count == 0)
+        if (allItems.Count == 0)
             return;
 
-        if (selectedIndex >= allInteractables.Count)
+        if (selectedIndex >= allItems.Count)
         {
-            selectedIndex = allInteractables.Count - 1;
+            selectedIndex = allItems.Count - 1;
         }
 
         UpdateUI();
@@ -33,24 +33,24 @@ public class SelectionHandler
 
     public void UpdateUI()
     {
-        Item selectedInter = allInteractables[selectedIndex];
+        Item selectedItem = allItems[selectedIndex];
 
         foreach (var kvp in allItemButtons)
         {
             InteractItemUI itemUI = kvp.Value.GetComponent<InteractItemUI>();
-            itemUI.isSelected = kvp.Key == selectedInter;
+            itemUI.isSelected = kvp.Key == selectedItem;
         }
         
-        if(scrollRect != null && allInteractables.Count > 1)
+        if(scrollRect != null && allItems.Count > 1)
         {
-            float normalizedScroll = 1f - ((float)selectedIndex / (allInteractables.Count - 1));
+            float normalizedScroll = 1f - ((float)selectedIndex / (allItems.Count - 1));
             scrollRect.verticalNormalizedPosition = normalizedScroll;
         }
     }
 
     public void HandleScrollSelect()
     {
-        if (allInteractables.Count <= 1)
+        if (allItems.Count <= 1)
             return;
 
         float scroll = Input.mouseScrollDelta.y;
@@ -62,8 +62,8 @@ public class SelectionHandler
                 selectedIndex++;
 
             if (selectedIndex < 0)
-                selectedIndex = allInteractables.Count - 1;
-            else if (selectedIndex >= allInteractables.Count)
+                selectedIndex = allItems.Count - 1;
+            else if (selectedIndex >= allItems.Count)
                 selectedIndex = 0;
 
             UpdateUI();
@@ -72,9 +72,9 @@ public class SelectionHandler
     
     public Item GetSelectedItem()
     {
-        if (allInteractables.Count == 0)
+        if (allItems.Count == 0)
             return null;
 
-        return allInteractables[selectedIndex];
+        return allItems[selectedIndex];
     }
 }

@@ -5,9 +5,8 @@ public class PlayerInteractionHandler
 {
     private GameObject player;
     
-    private IInteractable selectedInteractable;
-    [SerializeField] private GameObject selectedObj;
-
+    private Item selectedItem;
+    private Interactable selectedInteractable;
     public void Initialize(GameObject player)
     {
         this.player = player;
@@ -15,21 +14,16 @@ public class PlayerInteractionHandler
 
     public void PerformFInteract()
     {
-        if (selectedInteractable != null && selectedInteractable.CanInteract(player))
-            if (selectedInteractable is Item item)
-                item.Interact(player);
+        if (selectedItem != null && selectedItem.CanInteract(player))
+            selectedItem.Interact(player);
     }
 
     public void PerformSpacebarInteract()
     {
         if (selectedInteractable != null && selectedInteractable.CanInteract(player))
-            if(selectedInteractable is Interactable interact)
-                interact.Interact(player);
+            selectedInteractable.Interact(player);
     }
 
-    public void SetSelected(IInteractable interactable)
-    {
-        selectedInteractable = interactable;
-        selectedObj = selectedInteractable?.Owner;
-    }
+    public void SetSelectedItem(Item item) => selectedItem = item;
+    public void SetSelectedInteractable(Interactable interact) => selectedInteractable = interact;
 }

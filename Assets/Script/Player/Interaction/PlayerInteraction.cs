@@ -23,7 +23,7 @@ public class PlayerInteraction : MonoBehaviour
         ui.selection.HandleScrollSelect();
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if (other.TryGetComponent<IInteractable>(out _))
         {

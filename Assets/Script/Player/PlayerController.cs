@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
     private bool isUsingSkill;
 
     private bool isHiding;
-    private HidingPlace curHidingPlace;
+    private Hidable curHidingPlace;
 
     [Header("Other")]
     [SerializeField] private Transform playerModel;
@@ -259,7 +259,7 @@ public class PlayerController : MonoBehaviour
     public void SetCanMove(bool flag)
         => canMove = flag;
 
-    public void SetHiding(bool flag, HidingPlace place, Vector3 targetPos)
+    public void SetHiding(bool flag, Hidable place, Vector3 targetPos)
     {
         isHiding = flag;
         curHidingPlace = place;
