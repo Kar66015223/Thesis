@@ -6,68 +6,59 @@ using UnityEngine.AI;
 [RequireComponent(typeof(EnemyVision))]
 public class EnemyController : MonoBehaviour, IHearable
 {
-    [field: SerializeField] public EnemyState InitialState { get; private set; } = EnemyState.Idle;
-    public EnemyState CurrentState { get; private set; }
+    public NavMeshAgent Agent { get; private set; }
+    public EnemyVision Vision { get; private set; }
     [SerializeField] private TMP_Text stateUIText;
 
-    private NavMeshAgent agent;
-    [SerializeField] private EnemyMovement movement = new();
-    private EnemyVision vision;
+    private IEnemyState currentState;
+
+    [Header("Shared Settings")]
+    public float walkSpeed = 3f;
+    public float runSpeed = 5f;
+    public Transform[] patrolWaypoints;
+    public float patrolWaitTime = 1f;
+    public float distractWaitTime = 1f;
+    public float lookAtRotationSpeed = 5f;
 
     void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        vision = GetComponent<EnemyVision>();
-        movement.Initialize(agent, this, vision);
+        Agent = GetComponent<NavMeshAgent>();
+        Vision = GetComponent<EnemyVision>();
 
-        CurrentState = InitialState;
+        if (patrolWaypoints != null)
+        {
+            foreach (var dest in patrolWaypoints)
+            {
+                if (dest != null && dest.parent == transform)
+                    dest.SetParent(null);
+            }
+        }
+
+        ChangeState(new PatrolState(this));
     }
 
     void Update()
     {
-        switch (CurrentState)
-        {
-            case EnemyState.Patrol:
-                movement.UpdatePatrol();
-                break;
+        currentState?.Update();
 
-            case EnemyState.Distracted:
-                movement.UpdateDistracted();
-                break;
+        if (stateUIText != null && currentState != null)
+            stateUIText.text = currentState.GetType().Name;
+    }
 
-            case EnemyState.Chasing:
-                movement.UpdateChase();
-                break;
-
-            case EnemyState.Catching:
-                movement.UpdateCatching();
-                break;
-
-            case EnemyState.TargetFreed:
-                movement.OnTargetFreed();
-                break;
-        }
-
-        stateUIText.text = CurrentState.ToString();
+    public void ChangeState(IEnemyState newState)
+    {
+        currentState?.Exit();
+        currentState = newState;
+        currentState?.Enter();
     }
 
     public void OnHearSound(SoundSignal sound)
     {
-        Debug.Log($"{gameObject.name} heared a sound at {sound.Position}");
-        movement.SetSoundHeared(sound);
-        ChangeState(EnemyState.Distracted);
+        currentState?.OnHearSound(sound);
     }
 
     public void OnSeenTarget(Transform target)
     {
-        Debug.Log($"{gameObject.name} seen {target.gameObject.name} at {target.position}");
-        movement.SetChaseTarget(target);
-        ChangeState(EnemyState.Chasing);
+        currentState?.OnSeenTarget(target);
     }
-
-    public void ChangeState(EnemyState newState)
-        => CurrentState = newState;
-
-    public void ChangeInitialState(EnemyState newState)
-        => InitialState = newState;
 }
