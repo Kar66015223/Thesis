@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting;
-using System.Reflection;
 
+[RequireComponent(typeof(EnemyController))]
 public class EnemyVision : MonoBehaviour
 {
     public float viewRadius;
@@ -17,11 +16,21 @@ public class EnemyVision : MonoBehaviour
 
     [field: SerializeField] public List<Transform> VisibleTargets { get; private set; } = new();
 
-    void Start()
+    private EnemyController controller;
+
+    void Awake()
     {
-        StartCoroutine(FindTargetsWithDelay(0.5f));
+        controller = GetComponent<EnemyController>();
     }
 
+    void Start()
+    {
+        EnableVision();
+    }
+
+    public void EnableVision() => StartCoroutine(FindTargetsWithDelay(0.5f));
+    public void DisableVision() => StopAllCoroutines();
+    
     IEnumerator FindTargetsWithDelay(float delay)
     {
         while(true)
@@ -52,6 +61,9 @@ public class EnemyVision : MonoBehaviour
                 if(!Physics.Raycast(EyePosition, dirToTarget, distanceToTarget, obstacleMask))
                 {
                     VisibleTargets.Add(target);
+
+                    if(VisibleTargets.Count > 0)
+                        controller.OnSeenTarget(VisibleTargets[0].transform);
                 }
             }
         }
@@ -59,10 +71,9 @@ public class EnemyVision : MonoBehaviour
 
     public Vector3 DirFromAngle(float angleInDegree, bool angleIsGlobal)
     {
-        if(!angleIsGlobal)
-        {
+        if (!angleIsGlobal)
             angleInDegree += transform.eulerAngles.y;
-        }
+
         return new Vector3(Mathf.Sin(angleInDegree * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegree * Mathf.Deg2Rad));
     }
 }

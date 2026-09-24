@@ -1,5 +1,8 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
 
 [System.Serializable]
 public class EnemyMovement
@@ -25,21 +28,28 @@ public class EnemyMovement
 
     [Header("Chase")]
     [SerializeField] private Transform chaseTarget;
+    private bool isChasing = false;
 
-    private EnemyController controller;
+    [Header("Catching")]
+    [SerializeField] private PlayerController catchedPlayer;
+
     private NavMeshAgent agent;
 
-    public void Initialize(EnemyController controller, NavMeshAgent agent)
+    private EnemyController controller;
+    private EnemyVision vision;
+
+    public void Initialize(NavMeshAgent agent, EnemyController controller, EnemyVision vision)
     {
         this.controller = controller;
         this.agent = agent;
+        this.vision = vision;
 
         // dests = controller.GetComponentsInChildren<Transform>()
         //     .Where(d => d != controller.gameObject.transform).ToArray();
 
         if (dests.Length != 0)
         {
-            controller.ChangeState(EnemyState.Patrol);
+            controller.ChangeInitialState(EnemyState.Patrol);
             foreach (var dest in dests)
             {
                 if(dest.parent == controller.transform)
@@ -89,11 +99,6 @@ public class EnemyMovement
                 HandleRunToState();
                 break;
         }
-    }
-
-    public void UpdateChase()
-    {
-        
     }
 
     private void HandleLookAtState()
@@ -183,5 +188,71 @@ public class EnemyMovement
         }
     }
 
-    public void SetSoundHeared(SoundSignal signal) => SoundHeared = signal; 
+    public void UpdateChase()
+    {
+        if (chaseTarget == null)
+            return;
+
+        isChasing = true;
+
+        Debug.Log($"{controller.name} is chasing {chaseTarget.gameObject.name}");
+
+        agent.speed = runSpeed;
+        agent.SetDestination(chaseTarget.position);
+
+        agent.updateRotation = false;
+        agent.isStopped = false;
+
+        Vector3 direction = chaseTarget.transform.position - controller.transform.position;
+        direction.y = 0;
+
+        if (direction != Vector3.zero)
+            controller.transform.rotation = Quaternion.LookRotation(direction);
+
+        if (isChasing && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            Debug.Log("Reached target");
+
+            agent.isStopped = true;
+            isChasing = false;
+            OnCatchTarget(chaseTarget.gameObject);
+        }
+    }
+
+    public void OnCatchTarget(GameObject target)
+    {
+        if (target.TryGetComponent(out PlayerController playerCtrl))
+        {
+            Debug.Log($"{controller.gameObject.name} is catching {target.name}");
+            controller.ChangeState(EnemyState.Catching);
+
+            catchedPlayer = playerCtrl;
+        }
+    }
+
+    public void UpdateCatching()
+    {
+        if (catchedPlayer == null)
+            return;
+
+        catchedPlayer.SetCanMove(false);
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            catchedPlayer.SetCanMove(true);
+            catchedPlayer = null;
+            controller.ChangeState(EnemyState.TargetFreed);
+        }
+    }
+
+    public void OnTargetFreed()
+    {
+        agent.isStopped = false;
+        chaseTarget = null;
+
+        vision.DisableVision();
+    }
+
+    public void SetSoundHeared(SoundSignal signal) => SoundHeared = signal;
+    public void SetChaseTarget(Transform target) => chaseTarget = target;
 }

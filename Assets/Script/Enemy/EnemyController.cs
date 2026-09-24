@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -5,7 +6,9 @@ using UnityEngine.AI;
 [RequireComponent(typeof(EnemyVision))]
 public class EnemyController : MonoBehaviour, IHearable
 {
-    [field: SerializeField] public EnemyState CurrentState { get; private set; } = EnemyState.Idle;
+    [field: SerializeField] public EnemyState InitialState { get; private set; } = EnemyState.Idle;
+    public EnemyState CurrentState { get; private set; }
+    [SerializeField] private TMP_Text stateUIText;
 
     private NavMeshAgent agent;
     [SerializeField] private EnemyMovement movement = new();
@@ -15,12 +18,14 @@ public class EnemyController : MonoBehaviour, IHearable
     {
         agent = GetComponent<NavMeshAgent>();
         vision = GetComponent<EnemyVision>();
-        movement.Initialize(this, agent);
+        movement.Initialize(agent, this, vision);
+
+        CurrentState = InitialState;
     }
 
     void Update()
     {
-        switch(CurrentState)
+        switch (CurrentState)
         {
             case EnemyState.Patrol:
                 movement.UpdatePatrol();
@@ -30,10 +35,20 @@ public class EnemyController : MonoBehaviour, IHearable
                 movement.UpdateDistracted();
                 break;
 
-            case EnemyState.Chase:
+            case EnemyState.Chasing:
                 movement.UpdateChase();
                 break;
+
+            case EnemyState.Catching:
+                movement.UpdateCatching();
+                break;
+
+            case EnemyState.TargetFreed:
+                movement.OnTargetFreed();
+                break;
         }
+
+        stateUIText.text = CurrentState.ToString();
     }
 
     public void OnHearSound(SoundSignal sound)
@@ -43,8 +58,16 @@ public class EnemyController : MonoBehaviour, IHearable
         ChangeState(EnemyState.Distracted);
     }
 
-    public void ChangeState(EnemyState newState)
+    public void OnSeenTarget(Transform target)
     {
-        CurrentState = newState;
+        Debug.Log($"{gameObject.name} seen {target.gameObject.name} at {target.position}");
+        movement.SetChaseTarget(target);
+        ChangeState(EnemyState.Chasing);
     }
+
+    public void ChangeState(EnemyState newState)
+        => CurrentState = newState;
+
+    public void ChangeInitialState(EnemyState newState)
+        => InitialState = newState;
 }
