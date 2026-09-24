@@ -15,10 +15,16 @@ public class EnemyController : MonoBehaviour, IHearable
     [Header("Shared Settings")]
     public float walkSpeed = 3f;
     public float runSpeed = 5f;
+
     public Transform[] patrolWaypoints;
     public float patrolWaitTime = 1f;
+
     public float distractWaitTime = 1f;
     public float lookAtRotationSpeed = 5f;
+
+    public float stunTime = 5f;
+
+    public TMP_Text escapePrompt;
 
     void Awake()
     {

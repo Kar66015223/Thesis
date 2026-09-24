@@ -43,14 +43,14 @@ public class Interactable : MonoBehaviour, IInteractable
 
         Camera cam = Camera.main;
 
-        prompt.enabled = isShow;
+        // prompt.enabled = isShow;
 
-        if (prompt.enabled)
+        if (isShow)
         {
             prompt.text = interactPromptText;
             prompt.transform.position = cam.WorldToScreenPoint(InteractPromptPos.position);
         }
         else
-            prompt.text = null;
+            prompt.text = "";
     }
 }

@@ -1759,6 +1759,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2114281511}
   m_SourcePrefab: {fileID: 100100000, guid: 6cd109157820382499991e760a74c654, type: 3}
+--- !u!114 &1831273054 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1248005380694003053, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+  m_PrefabInstance: {fileID: 1236639709}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1834181465
 GameObject:
   m_ObjectHideFlags: 0
@@ -1951,6 +1962,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2130764711534732854, guid: 82d9cdca5b25e2546a23fbd93a21c5b0, type: 3}
+      propertyPath: escapePrompt
+      value: 
+      objectReference: {fileID: 1831273054}
     - target: {fileID: 2130764711534732854, guid: 82d9cdca5b25e2546a23fbd93a21c5b0, type: 3}
       propertyPath: movement.dests.Array.size
       value: 2

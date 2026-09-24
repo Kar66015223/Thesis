@@ -1,9 +1,12 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CatchingState : IEnemyState
 {
     private EnemyController ctrl;
     private PlayerController player;
+
+    private bool isCatching = false;
 
     public CatchingState(EnemyController ctrl, PlayerController player)
     {
@@ -15,10 +18,16 @@ public class CatchingState : IEnemyState
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        ctrl.escapePrompt.text = "[Spacebar] escape";
+        isCatching = true;
+
+        if (Input.GetKeyDown(KeyCode.Space) && isCatching)
         {
+            isCatching = false;
+            ctrl.escapePrompt.text = "";
+
             player.SetCanMove(true);
-            ctrl.ChangeState(new TargetFreedState(ctrl));
+            ctrl.ChangeState(new StunnedState(ctrl));
         }
     }
     
