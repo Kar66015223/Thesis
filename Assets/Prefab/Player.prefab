@@ -90,6 +90,77 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
   m_ShowMaskGraphic: 0
+--- !u!1 &739198718656277755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4433373423275846468}
+  - component: {fileID: 2886830264738725017}
+  - component: {fileID: 2421594854148336972}
+  m_Layer: 0
+  m_Name: GreyScreenBoxVolume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4433373423275846468
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739198718656277755}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.00000011920929, y: -0.000000042146844, z: 5.024295e-15, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5937243658499042084}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2886830264738725017
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739198718656277755}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2421594854148336972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739198718656277755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 0
+  priority: 0
+  blendDistance: 1
+  weight: 0
+  sharedProfile: {fileID: 11400000, guid: 6c33753d4ba173e42ad61cb9923d5ac2, type: 2}
 --- !u!1 &1056750182776962583
 GameObject:
   m_ObjectHideFlags: 0
@@ -107,7 +178,7 @@ GameObject:
   - component: {fileID: 8622764615272283725}
   - component: {fileID: 2368950199994602778}
   m_Layer: 3
-  m_Name: Player_BottomCenterPivot
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -398,6 +469,10 @@ MonoBehaviour:
   lookSensitivity: 0.2
   gravity: -19.62
   rotationSpeed: 10
+  standColliderY: 0.7
+  standColliderHeight: 1.3
+  crouchColliderY: 0.5
+  crouchColliderHeight: 0.8
   playerModel: {fileID: 2476962885942031575}
   camController:
     cam: {fileID: 6953314275788628758}
@@ -417,6 +492,8 @@ MonoBehaviour:
     standCamHeight: 1.3
     crouchCamHeight: 1
     heightTransitionSpeed: 10
+    greyScreenVolume: {fileID: 2421594854148336972}
+    volumeFadeSpeed: 10
   anim:
     anim: {fileID: 5103999531494630806}
 --- !u!114 &255021439158406942
@@ -1101,7 +1178,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 1.7000002, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4433373423275846468}
   m_Father: {fileID: 9184599300817462649}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6953314275788628758

@@ -1,5 +1,7 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.Rendering;
+using Unity.VisualScripting;
 
 [System.Serializable]
 public class PlayerCameraController
@@ -37,6 +39,12 @@ public class PlayerCameraController
     [SerializeField] private float heightTransitionSpeed = 10f;
     private float currentCamHeight;
 
+    [Header("Camera VFX")]
+    [SerializeField] private Volume greyScreenVolume;
+    [SerializeField] private float volumeFadeSpeed = 10f;
+
+    private float currentVolumeWeight;
+
     public void Initialize(PlayerController controller)
     {
         this.controller = controller;
@@ -45,12 +53,14 @@ public class PlayerCameraController
 
         currentCamHeight = standCamHeight;
         targetFOV = defaultFOV;
+        currentVolumeWeight = 0f;
     }
 
     public void Update()
     {
         UpdateCameraTarget();
         UpdateFOVChange();
+        UpdateCameraVFX();
     }
 
     public void UpdateCameraTarget()
@@ -70,9 +80,6 @@ public class PlayerCameraController
     public void ChangeCamHeight(bool IsCrouching)
         => targetHeight = IsCrouching ? crouchCamHeight : standCamHeight;
 
-    // public void ChangeFOV(bool isChanging, float value)
-    //     => targetFOV = isChanging ? value : defaultFOV;
-
     public void UpdateFOVChange()
     {
         if (isDemonEyeActive)
@@ -83,7 +90,21 @@ public class PlayerCameraController
             targetFOV = crouchFOVChange;
         else
             targetFOV = defaultFOV;
-        
+
         cam.Lens.FieldOfView = Mathf.Lerp(cam.Lens.FieldOfView, targetFOV, FOVChangeSpeed * Time.deltaTime);
+    }
+    
+    public void UpdateCameraVFX()
+    {
+        if (isDemonEyeActive)
+            currentVolumeWeight = 1f;
+        else
+            currentVolumeWeight = 0f;
+
+        greyScreenVolume.weight = Mathf.Lerp(
+            greyScreenVolume.weight, currentVolumeWeight, volumeFadeSpeed * Time.deltaTime);
+
+        if (Mathf.Abs(greyScreenVolume.weight - currentVolumeWeight) < 0.01f)
+            greyScreenVolume.weight = currentVolumeWeight;
     }
 }
