@@ -1453,9 +1453,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd1c50c144395634fa5adf130582e20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundEmitter
-  radius: 20
+  curRadius: 0
   curReaction: 0
-  makeSound: 0
 --- !u!4 &1290198890
 Transform:
   m_ObjectHideFlags: 0

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class SoundEmitter : MonoBehaviour
 {
-    [SerializeField] private float radius = 10f;
-    public EnemyReaction curReaction = EnemyReaction.LookAt;
+    [SerializeField] private float curRadius = 0f;
+    public EnemyReaction curReaction;
 
     public bool makeSound = false;
 
@@ -11,13 +11,19 @@ public class SoundEmitter : MonoBehaviour
     {
         if(makeSound)
         {
-            MakeSound(radius);
+            MakeSound(10f, curReaction);
         }
     }
 
-    public void MakeSound(float radius)
+    public void MakeSound(float radius, EnemyReaction reaction)
     {
         makeSound = false;
+
+        if (curRadius != radius)
+            curRadius = radius;
+
+        if (curReaction != reaction)
+            curReaction = reaction;
         
         Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
 
@@ -25,19 +31,19 @@ public class SoundEmitter : MonoBehaviour
         {
             if (col.TryGetComponent(out IHearable hearable))
             {
-                SoundSignal signal = new(transform.position, radius, curReaction);
+                SoundSignal signal = new(transform.position, radius, reaction);
                 hearable.OnHearSound(signal);
             }
         }
 
-        Debug.Log($"Sound Made by {gameObject.name}!!!");
+        // Debug.Log($"Sound Made by {gameObject.name}!!!");
     }
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, radius);
+        Gizmos.DrawWireSphere(transform.position, curRadius);
     }
 #endif
 }

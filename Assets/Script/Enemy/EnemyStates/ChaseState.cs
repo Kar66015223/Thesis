@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChaseState : IEnemyState
@@ -17,6 +16,7 @@ public class ChaseState : IEnemyState
         ctrl.Agent.speed = ctrl.runSpeed;
         ctrl.Agent.updateRotation = false;
         ctrl.Agent.isStopped = false;
+        ctrl.Agent.stoppingDistance = 2f;
     }
 
     public void Update()

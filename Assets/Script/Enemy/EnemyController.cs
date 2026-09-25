@@ -1,3 +1,4 @@
+using System.Transactions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,8 +14,14 @@ public class EnemyController : MonoBehaviour, IHearable
     private IEnemyState currentState;
 
     [Header("Shared Settings")]
+    public IEnemyState initialState;
+
     public float walkSpeed = 3f;
     public float runSpeed = 5f;
+
+    public Transform idleStandPoint;
+    // public Transform[] idleLookPoints;
+    // public float idleLookWaitTime = 1f;
 
     public Transform[] patrolWaypoints;
     public float patrolWaitTime = 1f;
@@ -31,16 +38,31 @@ public class EnemyController : MonoBehaviour, IHearable
         Agent = GetComponent<NavMeshAgent>();
         Vision = GetComponent<EnemyVision>();
 
-        if (patrolWaypoints != null)
+        if (patrolWaypoints.Length > 0)
         {
             foreach (var dest in patrolWaypoints)
             {
-                if (dest != null && dest.parent == transform)
-                    dest.SetParent(null);
+                if (dest != null)
+                {
+                    if (dest.parent == transform)
+                        dest.SetParent(null);
+                }
+                
+                ChangeState(new PatrolState(this));
             }
         }
+        else if(idleStandPoint != null)
+        {
+            if (idleStandPoint.parent == transform)
+                idleStandPoint.SetParent(null);
 
-        ChangeState(new PatrolState(this));
+            ChangeState(new IdleState(this));
+        }
+
+        initialState = currentState;
+
+        if(initialState != null)
+            Debug.Log($"{gameObject.name}'s initial state is {initialState.GetType().Name}");
     }
 
     void Update()
@@ -53,6 +75,8 @@ public class EnemyController : MonoBehaviour, IHearable
 
     public void ChangeState(IEnemyState newState)
     {
+        Debug.Log($"{gameObject.name} change state from {currentState} to {newState}");
+        
         currentState?.Exit();
         currentState = newState;
         currentState?.Enter();

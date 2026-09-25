@@ -1,7 +1,6 @@
 using UnityEngine;
 using Unity.Cinemachine;
 using UnityEngine.Rendering;
-using Unity.VisualScripting;
 
 [System.Serializable]
 public class PlayerCameraController

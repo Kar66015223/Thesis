@@ -18,13 +18,17 @@ public class CatchingState : IEnemyState
 
     public void Update()
     {
-        ctrl.escapePrompt.text = "[Spacebar] escape";
+        if(ctrl.escapePrompt != null)
+            ctrl.escapePrompt.text = "[Spacebar] escape";
+
         isCatching = true;
 
         if (Input.GetKeyDown(KeyCode.Space) && isCatching)
         {
             isCatching = false;
-            ctrl.escapePrompt.text = "";
+            
+            if(ctrl.escapePrompt != null)
+                ctrl.escapePrompt.text = "";
 
             player.SetCanMove(true);
             ctrl.ChangeState(new StunnedState(ctrl));

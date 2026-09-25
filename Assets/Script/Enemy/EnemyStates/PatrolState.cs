@@ -12,6 +12,7 @@ public class PatrolState : IEnemyState
     public void Enter()
     {
         ctrl.Agent.speed = ctrl.walkSpeed;
+        ctrl.Agent.stoppingDistance = 0f;
     }
 
     public void Update()
@@ -31,7 +32,10 @@ public class PatrolState : IEnemyState
         }
     }
 
-    public void Exit() { }
+    public void Exit()
+    {
+        ctrl.Agent.stoppingDistance = 2f;
+    }
 
     public void OnHearSound(SoundSignal sound)
         => ctrl.ChangeState(new DistractedState(ctrl, sound));

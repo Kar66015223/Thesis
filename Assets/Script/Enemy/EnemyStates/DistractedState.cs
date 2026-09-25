@@ -14,6 +14,8 @@ public class DistractedState : IEnemyState
 
     public void Enter()
     {
+        ctrl.Agent.stoppingDistance = 2f;
+
         timer = 0f;
         if (sound.Reaction == EnemyReaction.RunTo)
             ctrl.Agent.speed = ctrl.runSpeed;
@@ -52,7 +54,7 @@ public class DistractedState : IEnemyState
         }
 
         if (timer >= ctrl.distractWaitTime)
-            ctrl.ChangeState(new PatrolState(ctrl));
+            ctrl.ChangeState(ctrl.initialState);
     }
 
     private void HandleMoveTo()
@@ -67,7 +69,7 @@ public class DistractedState : IEnemyState
             timer += Time.deltaTime;
 
             if (timer >= ctrl.distractWaitTime)
-                ctrl.ChangeState(new PatrolState(ctrl));
+                ctrl.ChangeState(ctrl.initialState);
         }
     }
 
