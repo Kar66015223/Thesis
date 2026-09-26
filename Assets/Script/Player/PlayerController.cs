@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -28,6 +29,9 @@ public class PlayerController : MonoBehaviour
 
     private bool isHiding;
     private Hidable curHidingPlace;
+
+    public bool hasKey = false; // <-- For testing, delete later when have inventory system.
+    public bool hasMorseCode = false; // <-- For testing, delete later when have inventory system.
 
     [Header("Collider Size")]
     private float currentColliderY;

@@ -28,7 +28,7 @@ public class EnemyVision : MonoBehaviour
         EnableVision();
     }
 
-    public void EnableVision() => StartCoroutine(FindTargetsWithDelay(0.5f));
+    public void EnableVision() => StartCoroutine(FindTargetsWithDelay(0.1f));
     public void DisableVision() => StopAllCoroutines();
     
     IEnumerator FindTargetsWithDelay(float delay)

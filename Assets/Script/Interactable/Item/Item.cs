@@ -10,7 +10,7 @@ public class Item : MonoBehaviour, IInteractable
         Owner = gameObject;
     }
 
-    public bool CanInteract(GameObject interactor)
+    public virtual bool CanInteract(GameObject interactor)
     {
         if (interactor != null)
         {
@@ -26,7 +26,7 @@ public class Item : MonoBehaviour, IInteractable
         return true;
     }
 
-    public void Interact(GameObject interactor)
+    public virtual void Interact(GameObject interactor)
     {
         if (!CanInteract(interactor))
             return;

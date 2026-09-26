@@ -7,7 +7,7 @@ public class Interactable : MonoBehaviour, IInteractable
     [field: SerializeField] public Transform InteractPromptPos { get; private set; }
     [SerializeField] private string interactPromptText = "[Space]";
 
-    void Awake()
+    protected virtual void Awake()
     {
         Owner = gameObject;
     }

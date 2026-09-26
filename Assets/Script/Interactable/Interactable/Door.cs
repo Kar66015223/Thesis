@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 public class Door : Interactable
@@ -7,21 +8,35 @@ public class Door : Interactable
     private Animator anim;
     private bool isOpen = false;
 
+    private Lock currentLock;
+
     [SerializeField] private Transform playerPointFront;
     [SerializeField] private Transform playerPointBack;
+
 
     private Collider col;
     [SerializeField] private float colDisableWaitTime;
 
-    void Awake()
+    [SerializeField] private NavMeshLink link;
+
+    protected override void Awake()
     {
+        base.Awake();
         Owner = gameObject;
         anim = GetComponentInChildren<Animator>();
         col = GetComponent<Collider>();
+        currentLock = GetComponentInChildren<Lock>();
+        link.enabled = isOpen;
     }
 
     public override void Interact(GameObject interactor)
     {
+        if (currentLock != null && currentLock.IsLocked)
+        {
+            currentLock.Interact(interactor);
+            return;
+        }
+        
         Transform targetPoint = GetClosestPoint(interactor.transform.position);
 
         if (interactor.TryGetComponent(out CharacterController charController))
@@ -40,6 +55,7 @@ public class Door : Interactable
         }
 
         isOpen = !isOpen;
+        link.enabled = isOpen;
         anim.SetBool(IsOpenHash, isOpen);
         StartCoroutine(TurnOffCollider(colDisableWaitTime));
 
@@ -56,7 +72,7 @@ public class Door : Interactable
         col.enabled = true;
     }
 
-    private Transform GetClosestPoint(Vector3 playerPos)
+    public Transform GetClosestPoint(Vector3 playerPos)
     {
         float distanceToA = Vector3.Distance(playerPos, playerPointFront.position);
         float distanceToB = Vector3.Distance(playerPos, playerPointBack.position);
