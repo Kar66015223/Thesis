@@ -25,17 +25,17 @@ public class Vaultable : Interactable
         StartCoroutine(VaultRoutine(interactor));
     }
 
-    private IEnumerator VaultRoutine(GameObject player)
+    private IEnumerator VaultRoutine(GameObject interactor)
     {
         isVaulting = true;
 
-        Transform startTransform = GetClosestPoint(player.transform.position);
+        Transform startTransform = GetClosestPoint(interactor.transform.position);
         Transform targetTransform = (startTransform == sideAPoint) ? sideBPoint : sideAPoint;
 
-        Vector3 startPos = player.transform.position;
+        Vector3 startPos = interactor.transform.position;
         Vector3 targetPos = targetTransform.position;
 
-        if (player.TryGetComponent(out CharacterController charController))
+        if (interactor.TryGetComponent(out CharacterController charController))
             charController.enabled = false;
 
         float elapsedTime = 0f;
@@ -47,23 +47,23 @@ public class Vaultable : Interactable
             Vector3 currentPos = Vector3.Lerp(startPos, targetPos, curveValue);
             currentPos.y += Mathf.Sin(curveValue * Mathf.PI) * vaultHeight;
 
-            player.transform.position = currentPos;
+            interactor.transform.position = currentPos;
 
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        player.transform.position = targetPos;
-        if (player.TryGetComponent(out CharacterController _))
+        interactor.transform.position = targetPos;
+        if (interactor.TryGetComponent(out CharacterController _))
             charController.enabled = true;
             
         isVaulting = false;
     }
 
-    private Transform GetClosestPoint(Vector3 playerPos)
+    private Transform GetClosestPoint(Vector3 interactor)
     {
-        float distanceToA = Vector3.Distance(playerPos, sideAPoint.position);
-        float distanceToB = Vector3.Distance(playerPos, sideBPoint.position);
+        float distanceToA = Vector3.Distance(interactor, sideAPoint.position);
+        float distanceToB = Vector3.Distance(interactor, sideBPoint.position);
 
         return distanceToA < distanceToB ? sideAPoint : sideBPoint;
     }

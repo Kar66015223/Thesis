@@ -109,7 +109,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -211,6 +211,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 3394745963784711300, guid: bb06376a4f26c7f448d6dd3456b0332a, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3479287590792839753, guid: bb06376a4f26c7f448d6dd3456b0332a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -289,6 +293,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3479287590792839753, guid: bb06376a4f26c7f448d6dd3456b0332a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6144041482318461537, guid: bb06376a4f26c7f448d6dd3456b0332a, type: 3}
+      propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
