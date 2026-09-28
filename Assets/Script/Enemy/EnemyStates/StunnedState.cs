@@ -22,7 +22,7 @@ public class StunnedState : IEnemyState
         if (timer >= ctrl.stunTime)
         {
             ctrl.Vision.EnableVision();
-            ctrl.ChangeState(new PatrolState(ctrl));
+            ctrl.ChangeState(ctrl.initialState);
         }
     }
     
