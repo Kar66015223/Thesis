@@ -26,7 +26,11 @@ public class DistractedState : IEnemyState
         {
             ctrl.Agent.updateRotation = false;
             ctrl.Agent.isStopped = true;
+
+            GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.DistractedLook);
         }
+        else
+            GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.DistractedMove);
     }
 
     public void Update()
@@ -77,6 +81,8 @@ public class DistractedState : IEnemyState
     {
         ctrl.Agent.updateRotation = true;
         ctrl.Agent.isStopped = false;
+
+        GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.None);
     }
     
     public void OnHearSound(SoundSignal newSound) => ctrl.ChangeState(new DistractedState(ctrl, newSound));

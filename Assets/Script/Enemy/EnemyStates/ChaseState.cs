@@ -17,6 +17,8 @@ public class ChaseState : IEnemyState
         ctrl.Agent.updateRotation = false;
         ctrl.Agent.isStopped = false;
         ctrl.Agent.stoppingDistance = 2f;
+
+        GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.Chase);
     }
 
     public void Update()
@@ -44,6 +46,7 @@ public class ChaseState : IEnemyState
     public void Exit()
     {
         ctrl.Agent.updateRotation = true;
+        GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.None);
     }
     
     public void OnHearSound(SoundSignal sound) { }
