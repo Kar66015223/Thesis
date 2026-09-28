@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3971417853518692106}
   - component: {fileID: 9104711328095050692}
   - component: {fileID: 1166242904498988766}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -250,17 +250,9 @@ MonoBehaviour:
   m_Mesh: {fileID: 0}
   m_VersionIndex: 3524
   m_IsSelectable: 1
-  m_SelectedFaces: 05000000
-  m_SelectedEdges:
-  - a: 20
-    b: 21
-  - a: 22
-    b: 20
-  - a: 21
-    b: 23
-  - a: 23
-    b: 22
-  m_SelectedVertices: 14000000150000001600000017000000
+  m_SelectedFaces: 
+  m_SelectedEdges: []
+  m_SelectedVertices: 
 --- !u!114 &7891381118723712942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,7 +366,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4346450843549890341}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: DoNotPass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -412,7 +404,7 @@ GameObject:
   - component: {fileID: 8335549433414214127}
   - component: {fileID: 1470039898029789041}
   - component: {fileID: 4221891582513246498}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -648,17 +640,9 @@ MonoBehaviour:
   m_Mesh: {fileID: 0}
   m_VersionIndex: 3326
   m_IsSelectable: 1
-  m_SelectedFaces: 05000000
-  m_SelectedEdges:
-  - a: 20
-    b: 21
-  - a: 22
-    b: 20
-  - a: 21
-    b: 23
-  - a: 23
-    b: 22
-  m_SelectedVertices: 14000000150000001600000017000000
+  m_SelectedFaces: 
+  m_SelectedEdges: []
+  m_SelectedVertices: 
 --- !u!114 &2490364588488666828
 MonoBehaviour:
   m_ObjectHideFlags: 0
