@@ -14,6 +14,8 @@ public class StunnedState : IEnemyState
         ctrl.Vision.DisableVision();
 
         timer = 0f;
+
+        GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.Stunned);
     }
 
     public void Update()

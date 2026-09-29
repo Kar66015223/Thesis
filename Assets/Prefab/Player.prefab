@@ -943,6 +943,8 @@ MonoBehaviour:
   seeSprite: {fileID: 21300000, guid: dd1056460e0ef2c4d90b88a163b1f7ba, type: 3}
   hearSprite: {fileID: 21300000, guid: 1ddfe8cf37b839145be35e3c88ca95fd, type: 3}
   walkSprite: {fileID: 21300000, guid: 5d5a235daaac5a7489bbec08a1aabab6, type: 3}
+  chaseSprite: {fileID: 21300000, guid: e2bc98fb72f98c140b655ca497f02f01, type: 3}
+  stunnedSprite: {fileID: 21300000, guid: 7d2c353af6aa3ed478645094f1b1880d, type: 3}
 --- !u!1 &1699950383460022760
 GameObject:
   m_ObjectHideFlags: 0
@@ -2092,8 +2094,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5014081619451891361}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000000012400786, y: 0.000000042146848, z: 1.8841109e-15, w: 1}
-  m_LocalPosition: {x: 1, y: 1.7000002, z: -1.0000002}
+  m_LocalRotation: {x: -0.15529943, y: 0.19310452, z: 0.030970322, w: 0.9683148}
+  m_LocalPosition: {x: 0.6356474, y: 1.3872817, z: -0.87718546}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2177,7 +2179,7 @@ MonoBehaviour:
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: 0
+    Value: 22.556314
     Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
@@ -2187,7 +2189,7 @@ MonoBehaviour:
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: 0
+    Value: -18.223137
     Center: 0
     Range: {x: -89, y: 89}
     Wrap: 0
@@ -2304,7 +2306,7 @@ MonoBehaviour:
         LegacyInput: 
         LegacyGain: 1
         CancelDeltaTime: 0
-      InputValue: 0
+      InputValue: -0
       Driver:
         AccelTime: 0.2
         DecelTime: 0.2
@@ -2317,7 +2319,7 @@ MonoBehaviour:
         LegacyInput: 
         LegacyGain: 1
         CancelDeltaTime: 0
-      InputValue: 0
+      InputValue: -0
       Driver:
         AccelTime: 0
         DecelTime: 0

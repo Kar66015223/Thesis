@@ -23340,6 +23340,10 @@ PrefabInstance:
       propertyPath: idleStandPoint
       value: 
       objectReference: {fileID: 1434779083}
+    - target: {fileID: 2130764711534732854, guid: 82d9cdca5b25e2546a23fbd93a21c5b0, type: 3}
+      propertyPath: confirmWaitTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4527956754921892001, guid: 82d9cdca5b25e2546a23fbd93a21c5b0, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.98

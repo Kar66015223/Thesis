@@ -94,5 +94,5 @@ public class DistractedState : IEnemyState
     }
     
     public void OnHearSound(SoundSignal newSound) => ctrl.ChangeState(new DistractedState(ctrl, newSound));
-    public void OnSeenTarget(Transform target) => ctrl.ChangeState(new ChaseState(ctrl, target));
+    public void OnSeenTarget(Transform target) => ctrl.ChangeState(new ConfirmingState(ctrl, target));
 }
