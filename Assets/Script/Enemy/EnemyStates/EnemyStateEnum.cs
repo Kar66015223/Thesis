@@ -3,5 +3,7 @@ public enum EnemyState
     None,
     DistractedLook,
     DistractedMove,
-    Chase
+    Confirming,
+    Chase,
+    Stunned
 }

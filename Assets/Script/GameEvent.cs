@@ -9,4 +9,5 @@ public static class GameEvent
     public static Action<bool> OnLightsOut;
 
     public static Action<Transform, EnemyState> OnAlertEnemyState;
+    public static Action<Transform, float> OnUpdateConfirmTimer;
 }

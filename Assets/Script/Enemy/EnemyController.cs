@@ -28,6 +28,8 @@ public class EnemyController : MonoBehaviour, IHearable
     public float distractWaitTime = 1f;
     public float lookAtRotationSpeed = 5f;
 
+    public float confirmWaitTime = 0.5f;
+
     public float stunTime = 5f;
 
     public TMP_Text escapePrompt;

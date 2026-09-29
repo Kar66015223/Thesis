@@ -28,6 +28,8 @@ public class UIManager : MonoBehaviour
     public Sprite seeSprite;
     public Sprite hearSprite;
     public Sprite walkSprite;
+    public Sprite chaseSprite;
+    public Sprite stunnedSprite;
 
     void Awake()
     {
@@ -46,6 +48,7 @@ public class UIManager : MonoBehaviour
         GameEvent.OnLightsOut += ToggleLightsOutEffect;
 
         GameEvent.OnAlertEnemyState += ToggleEnemyStateUI;
+        GameEvent.OnUpdateConfirmTimer += UpdateConfirmUI;
     }
 
     void OnDisable()
@@ -56,6 +59,7 @@ public class UIManager : MonoBehaviour
         GameEvent.OnLightsOut -= ToggleLightsOutEffect;
 
         GameEvent.OnAlertEnemyState -= ToggleEnemyStateUI;
+        GameEvent.OnUpdateConfirmTimer -= UpdateConfirmUI;
     }
 
     public void ToggleReadUI(bool isOn, string text)
@@ -112,8 +116,16 @@ public class UIManager : MonoBehaviour
                 CreateOrUpdateEnemyStateUI(target, hearSprite, walkSprite);
                 break;
 
-            case EnemyState.Chase:
+            case EnemyState.Confirming:
                 CreateOrUpdateEnemyStateUI(target, seeSprite, null);
+                break;
+
+            case EnemyState.Chase:
+                CreateOrUpdateEnemyStateUI(target, chaseSprite, null);
+                break;
+
+            case EnemyState.Stunned:
+                CreateOrUpdateEnemyStateUI(target, stunnedSprite, null);
                 break;
         }
     }
@@ -146,13 +158,24 @@ public class UIManager : MonoBehaviour
                 ui.subImg.enabled = false;
         }
     }
-    
+
     private void RemoveEnemyStateUI(Transform target)
     {
-        if(activeEnemyUIs.TryGetValue(target, out GameObject uiInstance))
+        if (activeEnemyUIs.TryGetValue(target, out GameObject uiInstance))
         {
             Destroy(uiInstance);
             activeEnemyUIs.Remove(target);
+        }
+    }
+    
+    public void UpdateConfirmUI(Transform target, float fillAmount)
+    {
+        if(activeEnemyUIs.TryGetValue(target, out GameObject uiInstance))
+        {
+            if(uiInstance.TryGetComponent(out EnemyStateUI ui))
+            {
+                ui.mainImg.fillAmount = fillAmount;
+            }
         }
     }
 }

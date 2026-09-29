@@ -41,5 +41,5 @@ public class PatrolState : IEnemyState
         => ctrl.ChangeState(new DistractedState(ctrl, sound));
 
     public void OnSeenTarget(Transform target)
-        => ctrl.ChangeState(new ChaseState(ctrl, target));
+        => ctrl.ChangeState(new ConfirmingState(ctrl, target));
 }

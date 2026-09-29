@@ -14,7 +14,10 @@ public class EnemyVision : MonoBehaviour
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
 
+    [SerializeField] private float confirmTimer;
+
     [field: SerializeField] public List<Transform> VisibleTargets { get; private set; } = new();
+    [field: SerializeField] public List<Transform> ConfirmedTargets { get; private set; } = new();
 
     private EnemyController controller;
 
@@ -26,6 +29,37 @@ public class EnemyVision : MonoBehaviour
     void Start()
     {
         EnableVision();
+    }
+
+    void Update()
+    {
+        if (VisibleTargets.Count > 0)
+        {
+            Transform target = VisibleTargets[0].transform;
+
+            if (confirmTimer == 0f)
+                controller.OnSeenTarget(target);
+
+            confirmTimer += Time.deltaTime;
+            float fillRatio = Mathf.Clamp01(confirmTimer / controller.confirmWaitTime);
+
+            GameEvent.OnUpdateConfirmTimer?.Invoke(transform, fillRatio);
+
+            if (confirmTimer >= controller.confirmWaitTime && !ConfirmedTargets.Contains(target))
+            {
+                ConfirmedTargets.Add(target);
+                controller.OnSeenTarget(target);
+            }
+        }
+        else
+        {
+            if (confirmTimer > 0f)
+            {
+                confirmTimer = 0f;
+                ConfirmedTargets.Clear();
+                GameEvent.OnUpdateConfirmTimer?.Invoke(transform, 0f);
+            }
+        }
     }
 
     public void EnableVision() => StartCoroutine(FindTargetsWithDelay(0.1f));
@@ -60,10 +94,8 @@ public class EnemyVision : MonoBehaviour
 
                 if(!Physics.Raycast(EyePosition, dirToTarget, distanceToTarget, obstacleMask))
                 {
-                    VisibleTargets.Add(target);
-
-                    if(VisibleTargets.Count > 0)
-                        controller.OnSeenTarget(VisibleTargets[0].transform);
+                    if(!VisibleTargets.Contains(target))
+                        VisibleTargets.Add(target);
                 }
             }
         }

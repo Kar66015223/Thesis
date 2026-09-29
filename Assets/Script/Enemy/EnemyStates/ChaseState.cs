@@ -51,10 +51,10 @@ public class ChaseState : IEnemyState
 
         bool isInvalidOrPartialPath =
             !ctrl.Agent.pathPending &&
-                (ctrl.Agent.pathStatus == NavMeshPathStatus.PathInvalid ||
-                    ctrl.Agent.pathStatus == NavMeshPathStatus.PathPartial);
+            (ctrl.Agent.pathStatus == NavMeshPathStatus.PathInvalid ||
+                ctrl.Agent.pathStatus == NavMeshPathStatus.PathPartial);
 
-        if (actualDistance <= ctrl.Agent.stoppingDistance + 0.5f)
+        if (actualDistance <= ctrl.Agent.stoppingDistance)
         {
             ctrl.Agent.isStopped = true;
             if (target.TryGetComponent(out PlayerController player))
