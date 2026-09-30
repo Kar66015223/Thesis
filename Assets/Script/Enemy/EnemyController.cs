@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -39,31 +41,7 @@ public class EnemyController : MonoBehaviour, IHearable
         Agent = GetComponent<NavMeshAgent>();
         Vision = GetComponent<EnemyVision>();
 
-        if (patrolWaypoints.Length > 0)
-        {
-            foreach (var dest in patrolWaypoints)
-            {
-                if (dest != null)
-                {
-                    if (dest.parent == transform)
-                        dest.SetParent(null);
-                }
-                
-                ChangeState(new PatrolState(this));
-            }
-        }
-        else if(idleStandPoint != null)
-        {
-            if (idleStandPoint.parent == transform)
-                idleStandPoint.SetParent(null);
-
-            ChangeState(new IdleState(this));
-        }
-
-        initialState = currentState;
-
-        if(initialState != null)
-            Debug.Log($"{gameObject.name}'s initial state is {initialState.GetType().Name}");
+        SetInitialState();
     }
 
     void Update()
@@ -74,10 +52,39 @@ public class EnemyController : MonoBehaviour, IHearable
             stateUIText.text = currentState.GetType().Name;
     }
 
+    private void SetInitialState()
+    {
+        if (patrolWaypoints.Length > 0)
+        {
+            foreach (var dest in patrolWaypoints)
+            {
+                if (dest != null)
+                {
+                    if (dest.parent == transform)
+                        dest.SetParent(null);
+                }
+
+                ChangeState(new PatrolState(this));
+            }
+        }
+        else if (idleStandPoint != null)
+        {
+            if (idleStandPoint.parent == transform)
+                idleStandPoint.SetParent(null);
+
+            ChangeState(new IdleState(this));
+        }
+
+        initialState = currentState;
+
+        if (initialState != null)
+            Debug.Log($"{gameObject.name}'s initial state is {initialState.GetType().Name}");
+    }
+
     public void ChangeState(IEnemyState newState)
     {
         Debug.Log($"{gameObject.name} change state from {currentState} to {newState}");
-        
+
         currentState?.Exit();
         currentState = newState;
         currentState?.Enter();
@@ -91,5 +98,21 @@ public class EnemyController : MonoBehaviour, IHearable
     public void OnSeenTarget(Transform target)
     {
         currentState?.OnSeenTarget(target);
+    }
+
+    public void SetIdlePoint(Transform point)
+    {
+        idleStandPoint = point;
+        patrolWaypoints = new Transform[0];
+
+        SetInitialState();
+        
+    }
+    public void SetPatrolPoints(Transform[] points)
+    {
+        patrolWaypoints = points;
+        idleStandPoint = null;
+
+        SetInitialState();
     }
 }

@@ -7,5 +7,6 @@ public class CircuitBoard : Interactable
         base.Interact(interactor);
         GameEvent.OnLightsOut?.Invoke(true);
         GameEvent.OnShowTips?.Invoke("Lights out, enemies come to check circuit board");
+        GameEvent.OnChangeEnemyPath?.Invoke();
     }
 }
