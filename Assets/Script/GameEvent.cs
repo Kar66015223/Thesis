@@ -10,4 +10,6 @@ public static class GameEvent
 
     public static Action<Transform, EnemyState> OnAlertEnemyState;
     public static Action<Transform, float> OnUpdateConfirmTimer;
+
+    public static Action OnChangeEnemyPath;
 }
