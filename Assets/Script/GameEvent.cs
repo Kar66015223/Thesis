@@ -12,4 +12,6 @@ public static class GameEvent
     public static Action<Transform, float> OnUpdateConfirmTimer;
 
     public static Action OnChangeEnemyPath;
+
+    public static Action<bool> OnToggleUIQuestNPC;
 }
