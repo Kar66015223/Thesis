@@ -11,7 +11,7 @@ public class PatrolState : IEnemyState
 
     public void Enter()
     {
-        ctrl.Agent.speed = ctrl.walkSpeed;
+        ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
         ctrl.Agent.stoppingDistance = 0f;
     }
 

@@ -1,5 +1,4 @@
 
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ConfirmingState : IEnemyState
@@ -16,7 +15,9 @@ public class ConfirmingState : IEnemyState
 
     public void Enter()
     {
-        ctrl.Agent.speed = ctrl.walkSpeed;
+        ctrl.tracking.InterruptCurrentStep();
+
+        ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
         ctrl.Agent.isStopped = true;
         ctrl.Agent.updateRotation = false;
 
@@ -32,12 +33,18 @@ public class ConfirmingState : IEnemyState
         direction.y = 0;
         if (direction != Vector3.zero)
             ctrl.transform.rotation = Quaternion.LookRotation(direction);
+
+        stopTimer += Time.deltaTime;
+        if (stopTimer >= ctrl.confirmGiveUpTime)
+            ctrl.ChangeState(ctrl.initialState);
     }
 
     public void Exit()
     {
         ctrl.Agent.updateRotation = true;
         ctrl.Agent.isStopped = false;
+
+        ctrl.tracking.ResumeInterruptedStep();
     }
 
     public void OnHearSound(SoundSignal sound) {}

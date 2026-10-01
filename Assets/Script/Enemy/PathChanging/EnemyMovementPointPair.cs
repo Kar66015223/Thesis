@@ -23,6 +23,9 @@ public class EnemyMovementStep
 
     [Tooltip("Used when Movement Type is Patrol")]
     public PatrolPath patrolPath;
+
+    public float speedMultiplier = 1f;
+    public float toNextStepWaitTime = 0f;
 }
 
 [System.Serializable]

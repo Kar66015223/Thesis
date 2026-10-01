@@ -10,7 +10,9 @@ public class StunnedState : IEnemyState
 
     public void Enter()
     {
-        ctrl.Agent.isStopped = false;
+        ctrl.tracking.InterruptCurrentStep();
+
+        ctrl.Agent.isStopped = true;
         ctrl.Vision.DisableVision();
 
         timer = 0f;
@@ -25,10 +27,16 @@ public class StunnedState : IEnemyState
         {
             ctrl.Vision.EnableVision();
             ctrl.ChangeState(ctrl.initialState);
+            GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.None);
         }
     }
     
-    public void Exit() => ctrl.Vision.EnableVision();
+    public void Exit()
+    {
+        ctrl.Vision.EnableVision();
+        ctrl.tracking.ResumeInterruptedStep();
+        ctrl.Agent.isStopped = false;
+    } 
     public void OnHearSound(SoundSignal sound) { }
     public void OnSeenTarget(Transform target) { }
 }

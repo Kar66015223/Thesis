@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class GameEvent
@@ -14,7 +15,8 @@ public static class GameEvent
     public static Action<Transform, EnemyState> OnAlertEnemyState;
     public static Action<Transform, float> OnUpdateConfirmTimer;
 
-    public static Action OnChangeEnemyPath;
+    public static Action<EnemyController> OnChangeEnemyPath;
+    public static Action OnChangeAllEnemyPath;
 
     public static Action<bool> OnToggleUIQuestNPC;
 }

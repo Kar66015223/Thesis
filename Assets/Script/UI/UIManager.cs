@@ -172,12 +172,21 @@ public class UIManager : MonoBehaviour
     
     public void UpdateConfirmUI(Transform target, float fillAmount)
     {
-        if(activeEnemyUIs.TryGetValue(target, out GameObject uiInstance))
+        if (!activeEnemyUIs.TryGetValue(target, out GameObject uiInstance))
+        return;
+
+        if (!uiInstance.TryGetComponent(out EnemyStateUI ui))
+            return;
+
+        if (target.TryGetComponent(out EnemyController ctrl))
         {
-            if(uiInstance.TryGetComponent(out EnemyStateUI ui))
+            if (ctrl.CurrentState is ChaseState)
             {
-                ui.mainImg.fillAmount = fillAmount;
+                ui.mainImg.fillAmount = 1f;
+                return;
             }
         }
+
+        ui.mainImg.fillAmount = fillAmount;
     }
 }

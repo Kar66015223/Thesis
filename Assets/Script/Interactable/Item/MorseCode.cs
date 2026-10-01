@@ -11,6 +11,7 @@ public class MorseCode : Item
             ctrl.hasMorseCode = true;
             // GameEvent.OnShowTips?.Invoke("Player has morse code, light comes back, can return now");
             GameEvent.OnLightsOut?.Invoke(false);
+            GameEvent.OnChangeAllEnemyPath?.Invoke();
         }
     }
 }

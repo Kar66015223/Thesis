@@ -26,7 +26,9 @@ public class Door : Interactable
         anim = GetComponentInChildren<Animator>();
         col = GetComponent<Collider>();
         currentLock = GetComponentInChildren<Lock>();
-        link.enabled = isOpen;
+
+        if(link != null)
+            link.enabled = isOpen;
     }
 
     public override void Interact(GameObject interactor)
@@ -55,7 +57,10 @@ public class Door : Interactable
         }
 
         isOpen = !isOpen;
-        link.enabled = isOpen;
+
+        if(link != null)
+            link.enabled = isOpen;
+            
         anim.SetBool(IsOpenHash, isOpen);
         StartCoroutine(TurnOffCollider(colDisableWaitTime));
 

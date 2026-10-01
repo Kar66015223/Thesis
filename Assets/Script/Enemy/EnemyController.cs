@@ -1,16 +1,18 @@
+using System.Drawing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyVision))]
+[RequireComponent(typeof(EnemyMovement))]
 public class EnemyController : MonoBehaviour, IHearable
 {
     public NavMeshAgent Agent { get; private set; }
     public EnemyVision Vision { get; private set; }
+    public EnemyMovement Movement { get; private set; }
     public IEnemyState CurrentState { get; private set; }
-
-    
+    public EnemyStepTracking tracking = new();
 
     [SerializeField] private TMP_Text stateUIText;
 
@@ -31,6 +33,7 @@ public class EnemyController : MonoBehaviour, IHearable
     public float lookAtRotationSpeed = 5f;
 
     public float confirmWaitTime = 0.5f;
+    public float confirmGiveUpTime = 2f;
 
     public float stunTime = 5f;
 
@@ -40,6 +43,8 @@ public class EnemyController : MonoBehaviour, IHearable
     {
         Agent = GetComponent<NavMeshAgent>();
         Vision = GetComponent<EnemyVision>();
+        Movement = GetComponent<EnemyMovement>();
+        tracking.Initialize(this);
 
         SetInitialState();
     }
@@ -56,6 +61,7 @@ public class EnemyController : MonoBehaviour, IHearable
     {
         if (idlePointsParent.parent == transform)
             idlePointsParent.SetParent(null);
+
         if(patrolPointsParent.parent == transform)
             patrolPointsParent.SetParent(null);
 
@@ -69,15 +75,10 @@ public class EnemyController : MonoBehaviour, IHearable
         }
 
         initialState = CurrentState;
-
-        if (initialState != null)
-            Debug.Log($"{gameObject.name}'s initial state is {initialState.GetType().Name}");
     }
 
     public void ChangeState(IEnemyState newState)
     {
-        Debug.Log($"{gameObject.name} change state from {CurrentState} to {newState}");
-
         CurrentState?.Exit();
         CurrentState = newState;
         CurrentState?.Enter();
@@ -98,16 +99,31 @@ public class EnemyController : MonoBehaviour, IHearable
         idlePoint = point;
         patrolPoints = new Transform[0];
 
-        // SetInitialState();
-        ChangeState(new IdleState(this));
-        
+        SetInitialState();
+        // ChangeState(new IdleState(this));
     }
     public void SetPatrolPoints(Transform[] points)
     {
         patrolPoints = points;
         idlePoint = null;
 
-        // SetInitialState();
-        ChangeState(new PatrolState(this));
+        SetInitialState();
+        // ChangeState(new PatrolState(this));
+    }
+
+    public void ApplyIdlePoint(Transform point)
+    {
+        idlePoint = point;
+        patrolPoints = new Transform[0];
+        if (idlePoint != null)
+            Agent.SetDestination(idlePoint.position);
+    }
+
+    public void ApplyPatrolPoints(Transform[] points)
+    {
+        patrolPoints = points;
+        idlePoint = null;
+        // if (patrolPoints != null && patrolPoints.Length > 0)
+            // Agent.SetDestination(patrolPoints[0].position);
     }
 }

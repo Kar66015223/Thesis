@@ -19,9 +19,9 @@ public class DistractedState : IEnemyState
 
         timer = 0f;
         if (sound.Reaction == EnemyReaction.RunTo)
-            ctrl.Agent.speed = ctrl.runSpeed;
+            ctrl.Movement.SetBaseSpeed(ctrl.runSpeed);
         else
-            ctrl.Agent.speed = ctrl.walkSpeed;
+            ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
 
         if (sound.Reaction == EnemyReaction.LookAt)
         {
@@ -76,7 +76,7 @@ public class DistractedState : IEnemyState
         if (reachedDestination || isInvalidPath)
         {
             if (sound.Reaction == EnemyReaction.RunTo)
-                ctrl.Agent.speed = ctrl.walkSpeed;
+                ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
 
             timer += Time.deltaTime;
 

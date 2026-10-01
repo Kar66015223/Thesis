@@ -16,7 +16,9 @@ public class ChaseState : IEnemyState
 
     public void Enter()
     {
-        ctrl.Agent.speed = ctrl.runSpeed;
+        ctrl.tracking.InterruptCurrentStep();
+
+        ctrl.Movement.SetBaseSpeed(ctrl.runSpeed);
         ctrl.Agent.updateRotation = false;
         ctrl.Agent.isStopped = false;
         ctrl.Agent.stoppingDistance = 2f;
@@ -81,6 +83,8 @@ public class ChaseState : IEnemyState
     {
         ctrl.Agent.updateRotation = true;
         GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.None);
+
+        ctrl.tracking.ResumeInterruptedStep();
     }
     
     public void OnHearSound(SoundSignal sound) { }

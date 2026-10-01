@@ -7,6 +7,8 @@ public class EnemyManager : MonoBehaviour
     private Dictionary<EnemyController, EnemyMovementPointPair> dictEnemies = new();
     private Dictionary<EnemyController, int> currentStepIndex = new();
 
+    private float toNextStepTimer;
+
     void Awake()
     {
         foreach (var pair in allEnemiesMovementPair)
@@ -30,14 +32,25 @@ public class EnemyManager : MonoBehaviour
     void OnEnable()
     {
         GameEvent.OnChangeEnemyPath += HandlePathChange;
+        GameEvent.OnChangeAllEnemyPath += HandlePathChangeAllEnemy;
     }
 
     void OnDisable()
     {
         GameEvent.OnChangeEnemyPath -= HandlePathChange;
+        GameEvent.OnChangeAllEnemyPath -= HandlePathChangeAllEnemy;
     }
 
-    private void HandlePathChange()
+    private void HandlePathChange(EnemyController ctrl)
+    {
+        if (!dictEnemies.ContainsKey(ctrl))
+            return;
+
+        currentStepIndex[ctrl]++;
+        ApplyCurrentStep(ctrl);
+    }
+    
+    private void HandlePathChangeAllEnemy()
     {
         foreach (var pair in dictEnemies.Values)
         {
@@ -70,11 +83,12 @@ public class EnemyManager : MonoBehaviour
                     return;
                 }
 
-                ctrl.SetIdlePoint(step.idlePoint);
+                ctrl.Movement.SetSpeedModifier("Step", step.speedMultiplier);
+                ctrl.tracking.StartStep(pair, index);
                 break;
 
             case EnemyMovementType.Patrol:
-            
+
                 if (step.patrolPath.wayPoints == null ||
                     step.patrolPath.wayPoints.Length == 0)
                 {
@@ -82,7 +96,8 @@ public class EnemyManager : MonoBehaviour
                     return;
                 }
 
-                ctrl.SetPatrolPoints(step.patrolPath.wayPoints);
+                ctrl.Movement.SetSpeedModifier("Step", step.speedMultiplier);
+                ctrl.tracking.StartStep(pair, index);
                 break;
         }
     }

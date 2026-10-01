@@ -9,6 +9,9 @@ public class EnemyVision : MonoBehaviour
     [Range(0, 360)] public float viewAngle;
     public float viewHeight;
 
+    [SerializeField] private float defaultViewRadius = 10f;
+    [SerializeField] private float viewRadiusChasing = 30f;
+
     public Vector3 EyePosition => transform.position + Vector3.up * viewHeight;
 
     [SerializeField] private LayerMask targetMask;
@@ -60,6 +63,8 @@ public class EnemyVision : MonoBehaviour
                 GameEvent.OnUpdateConfirmTimer?.Invoke(transform, 0f);
             }
         }
+
+        UpdateViewRadiusChange();
     }
 
     public void EnableVision() => StartCoroutine(FindTargetsWithDelay(0.1f));
@@ -107,5 +112,15 @@ public class EnemyVision : MonoBehaviour
             angleInDegree += transform.eulerAngles.y;
 
         return new Vector3(Mathf.Sin(angleInDegree * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegree * Mathf.Deg2Rad));
+    }
+
+    private void UpdateViewRadiusChange()
+    {
+        if (controller.CurrentState is ChaseState)
+        {
+            viewRadius = viewRadiusChasing;
+        }
+        else
+            viewRadius = defaultViewRadius;
     }
 }
