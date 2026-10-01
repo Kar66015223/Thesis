@@ -37,7 +37,7 @@ public class EnemyController : MonoBehaviour, IHearable
 
     public float stunTime = 5f;
 
-    public TMP_Text escapePrompt;
+    // public TMP_Text escapePrompt;
 
     void Awake()
     {
