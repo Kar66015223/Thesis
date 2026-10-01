@@ -9,7 +9,7 @@ public class Mission1LeavePoint : Interactable
         if(interactor.TryGetComponent(out PlayerController ctrl))
         {
             if (ctrl.hasMorseCode)
-                GameEvent.OnShowTips?.Invoke("Mission Completed");
+                SceneLoader.LoadScene(SceneConstants.HIDEOUT_NAME);
             else
                 GameEvent.OnShowTips?.Invoke("Don't have morse code, can't return yet");
         }

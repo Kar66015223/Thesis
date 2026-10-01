@@ -17,18 +17,18 @@ public class PatrolState : IEnemyState
 
     public void Update()
     {
-        if (ctrl.patrolWaypoints == null || ctrl.patrolWaypoints.Length < 1)
+        if (ctrl.patrolPoints == null || ctrl.patrolPoints.Length < 1)
             return;
         if (Time.time < nextMoveTime)
             return;
 
-        Transform target = ctrl.patrolWaypoints[curTargetIndex];
+        Transform target = ctrl.patrolPoints[curTargetIndex];
         ctrl.Agent.SetDestination(target.position);
 
         if (!ctrl.Agent.pathPending && ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance)
         {
             nextMoveTime = Time.time + ctrl.patrolWaitTime;
-            curTargetIndex = (curTargetIndex + 1) % ctrl.patrolWaypoints.Length;
+            curTargetIndex = (curTargetIndex + 1) % ctrl.patrolPoints.Length;
         }
     }
 

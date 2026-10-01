@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class GameEvent
 {
-    public static Action<string> onSwitchActionMap;
+    public static Action<string> OnSwitchActionMap;
 
     // UI
     public static Action<bool, string> OnToggleReadUI;

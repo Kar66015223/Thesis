@@ -9,7 +9,7 @@ public class MorseCode : Item
         if(interactor.TryGetComponent(out PlayerController ctrl))
         {
             ctrl.hasMorseCode = true;
-            GameEvent.OnShowTips?.Invoke("Player has morse code, light comes back, can return now");
+            // GameEvent.OnShowTips?.Invoke("Player has morse code, light comes back, can return now");
             GameEvent.OnLightsOut?.Invoke(false);
         }
     }

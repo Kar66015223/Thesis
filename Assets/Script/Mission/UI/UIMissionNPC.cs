@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.Mathematics;
 
 public class UIMissionNPC : MonoBehaviour
 {
@@ -65,7 +64,7 @@ public class UIMissionNPC : MonoBehaviour
             ToggleMissionDetailPanel(false);
         }
 
-        GameEvent.onSwitchActionMap?.Invoke(
+        GameEvent.OnSwitchActionMap?.Invoke(
             isOn ? PlayerConstants.ACTIONMAP_UI : PlayerConstants.ACTIONMAP_PLAYER);
     }
 

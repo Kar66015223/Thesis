@@ -21,6 +21,16 @@ public class MissionManager : MonoBehaviour
         availableMission.Add(new Mission1());
     }
 
+    void Update()
+    {
+        if(onProgressMission != null)
+        {
+            onProgressMission.CheckCompletion();
+        }
+    }
+
     public List<Mission> GetAvailableMissions() => availableMission;
+
+    public Mission GetOnProgressMission() => onProgressMission;
     public void SetOnProgressMission(Mission mission) => onProgressMission = mission;
 }

@@ -3,30 +3,27 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    public List<EnemyMovementPointPair> listIdlePairs = new();
-    private Dictionary<EnemyController, List<Transform>> dictIdlePairs = new();
-
-    public List<EnemyMovementPointPair> listPatrolPairs = new();
-    private Dictionary<EnemyController, List<PatrolPath>> dictPatrolPairs = new();
-
-    private int currentPathIndex = 0;
+    public List<EnemyMovementPointPair> allEnemiesMovementPair = new();
+    private Dictionary<EnemyController, EnemyMovementPointPair> dictEnemies = new();
+    private Dictionary<EnemyController, int> currentStepIndex = new();
 
     void Awake()
     {
-        foreach (var idlePair in listIdlePairs)
+        foreach (var pair in allEnemiesMovementPair)
         {
-            if (!dictIdlePairs.ContainsKey(idlePair.ctrl))
-            {
-                dictIdlePairs.Add(idlePair.ctrl, idlePair.idlePoints);
-            }
-        }
+            if (pair.ctrl == null)
+                continue;
 
-        foreach (var patrolPair in listPatrolPairs)
+            dictEnemies[pair.ctrl] = pair;
+            currentStepIndex[pair.ctrl] = 0;
+        }
+    }
+
+    void Start()
+    {
+        foreach (var pair in dictEnemies.Values)
         {
-            if (!dictPatrolPairs.ContainsKey(patrolPair.ctrl))
-            {
-                dictPatrolPairs.Add(patrolPair.ctrl, patrolPair.patrolPoints);
-            }
+            ApplyCurrentStep(pair.ctrl);
         }
     }
 
@@ -42,44 +39,51 @@ public class EnemyManager : MonoBehaviour
 
     private void HandlePathChange()
     {
-        foreach (var ctrl in dictIdlePairs.Keys)
-            ChangeEnemyIdlePoint(ctrl, currentPathIndex);
-
-        foreach (var ctrl in dictPatrolPairs.Keys)
-            ChangeEnemyPatrolPoint(ctrl, currentPathIndex);
-
-        currentPathIndex++;
-    }
-
-    public void ChangeEnemyIdlePoint(EnemyController ctrl, int index)
-    {
-        if(dictIdlePairs.ContainsKey(ctrl))
+        foreach (var pair in dictEnemies.Values)
         {
-            var idlePointList = dictIdlePairs[ctrl];
-
-            if (index < idlePointList.Count)
-            {
-                Transform newIdlePoint = idlePointList[index];
-                ctrl.SetIdlePoint(newIdlePoint);
-            }
-            else
-                Debug.LogWarning($"Index {index} is out of bounds for idle points of {ctrl.gameObject.name}");
+            EnemyController ctrl = pair.ctrl;
+            currentStepIndex[ctrl]++;
+            ApplyCurrentStep(ctrl);
         }
     }
-    
-    public void ChangeEnemyPatrolPoint(EnemyController ctrl, int index)
-    {
-        if(dictPatrolPairs.ContainsKey(ctrl))
-        {
-            var patrolPointsList = dictPatrolPairs[ctrl];
 
-            if (index < patrolPointsList.Count)
-            {
-                Transform[] newPatrolPoints = patrolPointsList[index].wayPoints;
-                ctrl.SetPatrolPoints(newPatrolPoints);
-            }
-            else    
-                Debug.LogWarning($"Index {index} is out of bounds for patrol points of {ctrl.gameObject.name}");
+    private void ApplyCurrentStep(EnemyController ctrl)
+    {
+        EnemyMovementPointPair pair = dictEnemies[ctrl];
+        int index = currentStepIndex[ctrl];
+
+        if (index >= pair.movementSequence.Count)
+        {
+            Debug.Log($"{ctrl.gameObject.name} has completed its movement sequence");
+            return;
+        }
+
+        EnemyMovementStep step = pair.movementSequence[index];
+
+        switch(step.movementType)
+        {
+            case EnemyMovementType.Idle:
+
+                if (step.idlePoint == null)
+                {
+                    Debug.LogWarning($"{ctrl.gameObject.name} has an Idle step with no idle point");
+                    return;
+                }
+
+                ctrl.SetIdlePoint(step.idlePoint);
+                break;
+
+            case EnemyMovementType.Patrol:
+            
+                if (step.patrolPath.wayPoints == null ||
+                    step.patrolPath.wayPoints.Length == 0)
+                {
+                    Debug.LogWarning($"{ctrl.gameObject.name} has a Patrol step with no waypoints");
+                    return;
+                }
+
+                ctrl.SetPatrolPoints(step.patrolPath.wayPoints);
+                break;
         }
     }
 }

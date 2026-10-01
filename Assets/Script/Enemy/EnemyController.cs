@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,9 +8,11 @@ public class EnemyController : MonoBehaviour, IHearable
 {
     public NavMeshAgent Agent { get; private set; }
     public EnemyVision Vision { get; private set; }
-    [SerializeField] private TMP_Text stateUIText;
+    public IEnemyState CurrentState { get; private set; }
 
-    private IEnemyState currentState;
+    
+
+    [SerializeField] private TMP_Text stateUIText;
 
     [Header("Shared Settings")]
     public IEnemyState initialState;
@@ -20,11 +20,11 @@ public class EnemyController : MonoBehaviour, IHearable
     public float walkSpeed = 3f;
     public float runSpeed = 5f;
 
-    public Transform idleStandPoint;
-    // public Transform[] idleLookPoints;
-    // public float idleLookWaitTime = 1f;
+    public Transform idlePointsParent;
+    public Transform idlePoint;
 
-    public Transform[] patrolWaypoints;
+    public Transform patrolPointsParent;
+    public Transform[] patrolPoints;
     public float patrolWaitTime = 1f;
 
     public float distractWaitTime = 1f;
@@ -46,36 +46,29 @@ public class EnemyController : MonoBehaviour, IHearable
 
     void Update()
     {
-        currentState?.Update();
+        CurrentState?.Update();
 
-        if (stateUIText != null && currentState != null)
-            stateUIText.text = currentState.GetType().Name;
+        if (stateUIText != null && CurrentState != null)
+            stateUIText.text = CurrentState.GetType().Name;
     }
 
     private void SetInitialState()
     {
-        if (patrolWaypoints.Length > 0)
-        {
-            foreach (var dest in patrolWaypoints)
-            {
-                if (dest != null)
-                {
-                    if (dest.parent == transform)
-                        dest.SetParent(null);
-                }
+        if (idlePointsParent.parent == transform)
+            idlePointsParent.SetParent(null);
+        if(patrolPointsParent.parent == transform)
+            patrolPointsParent.SetParent(null);
 
-                ChangeState(new PatrolState(this));
-            }
+        if (patrolPoints.Length > 0)
+        {
+            ChangeState(new PatrolState(this));
         }
-        else if (idleStandPoint != null)
+        else if (idlePoint != null)
         {
-            if (idleStandPoint.parent == transform)
-                idleStandPoint.SetParent(null);
-
             ChangeState(new IdleState(this));
         }
 
-        initialState = currentState;
+        initialState = CurrentState;
 
         if (initialState != null)
             Debug.Log($"{gameObject.name}'s initial state is {initialState.GetType().Name}");
@@ -83,36 +76,38 @@ public class EnemyController : MonoBehaviour, IHearable
 
     public void ChangeState(IEnemyState newState)
     {
-        Debug.Log($"{gameObject.name} change state from {currentState} to {newState}");
+        Debug.Log($"{gameObject.name} change state from {CurrentState} to {newState}");
 
-        currentState?.Exit();
-        currentState = newState;
-        currentState?.Enter();
+        CurrentState?.Exit();
+        CurrentState = newState;
+        CurrentState?.Enter();
     }
 
     public void OnHearSound(SoundSignal sound)
     {
-        currentState?.OnHearSound(sound);
+        CurrentState?.OnHearSound(sound);
     }
 
     public void OnSeenTarget(Transform target)
     {
-        currentState?.OnSeenTarget(target);
+        CurrentState?.OnSeenTarget(target);
     }
 
     public void SetIdlePoint(Transform point)
     {
-        idleStandPoint = point;
-        patrolWaypoints = new Transform[0];
+        idlePoint = point;
+        patrolPoints = new Transform[0];
 
-        SetInitialState();
+        // SetInitialState();
+        ChangeState(new IdleState(this));
         
     }
     public void SetPatrolPoints(Transform[] points)
     {
-        patrolWaypoints = points;
-        idleStandPoint = null;
+        patrolPoints = points;
+        idlePoint = null;
 
-        SetInitialState();
+        // SetInitialState();
+        ChangeState(new PatrolState(this));
     }
 }

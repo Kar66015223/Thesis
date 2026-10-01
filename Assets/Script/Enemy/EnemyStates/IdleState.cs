@@ -16,7 +16,7 @@ public class IdleState : IEnemyState
         ctrl.Agent.updateRotation = true;
         ctrl.Agent.stoppingDistance = 0f;
         
-        ctrl.Agent.SetDestination(ctrl.idleStandPoint.position);
+        ctrl.Agent.SetDestination(ctrl.idlePoint.position);
     }
 
     public void Update()
@@ -25,7 +25,7 @@ public class IdleState : IEnemyState
         {
             ctrl.transform.rotation = Quaternion.Slerp(
                 ctrl.transform.rotation,
-                ctrl.idleStandPoint.rotation,
+                ctrl.idlePoint.rotation,
                 ctrl.lookAtRotationSpeed * Time.deltaTime);   
         }    
     }

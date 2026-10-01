@@ -12,18 +12,27 @@ public class Mission1 : Mission
 
     public override void OnAccept()
     {
-        MissionManager.instance.SetOnProgressMission(this);
-        Debug.Log("Mission Accepted!!!");
+        if (missionStatus != MissionStatus.Accepted)
+        {
+            MissionManager.instance.SetOnProgressMission(this);
+            GameEvent.OnShowTips?.Invoke("Mission Accepted");
+            missionStatus = MissionStatus.OnProgress;
+        }
     }
 
     public override void CheckCompletion()
     {
-        throw new System.NotImplementedException();
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if(player.TryGetComponent(out PlayerController controller))
+            if(controller.hasMorseCode)
+                Complete();
     }
 
     public override void Complete()
     {
-        throw new System.NotImplementedException();
+        missionStatus = MissionStatus.Completed;
+        GameEvent.OnShowTips?.Invoke($"{missionName} completed");
     }
 
     public override void OnSubmit()

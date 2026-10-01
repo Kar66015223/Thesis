@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
 
         inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage;
 
-        GameEvent.onSwitchActionMap += ToggleCameraInput;
+        GameEvent.OnSwitchActionMap += ToggleCameraInput;
     }
 
     void OnDisable()
@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
 
         inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
 
-        GameEvent.onSwitchActionMap -= ToggleCameraInput;
+        GameEvent.OnSwitchActionMap -= ToggleCameraInput;
     }
 
     void Update()

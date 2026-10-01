@@ -32,8 +32,8 @@ public class PlayerInputHandler : MonoBehaviour
             .GetComponent<InputSystemUIInputModule>();
     }
 
-    void OnEnable() => GameEvent.onSwitchActionMap += SwitchActionMap;
-    void OnDisable() => GameEvent.onSwitchActionMap -= SwitchActionMap;
+    void OnEnable() => GameEvent.OnSwitchActionMap += SwitchActionMap;
+    void OnDisable() => GameEvent.OnSwitchActionMap -= SwitchActionMap;
 
     public void SwitchActionMap(string mapName) => input.SwitchCurrentActionMap(mapName);
 

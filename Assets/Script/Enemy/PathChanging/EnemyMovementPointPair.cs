@@ -1,6 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EnemyMovementType
+{
+    Idle,
+    Patrol
+}
+
 [System.Serializable]
 public struct PatrolPath
 {
@@ -8,9 +14,20 @@ public struct PatrolPath
 }
 
 [System.Serializable]
+public class EnemyMovementStep
+{
+    public EnemyMovementType movementType;
+    
+    [Tooltip("Used when Movement Type is Idle")]
+    public Transform idlePoint;
+
+    [Tooltip("Used when Movement Type is Patrol")]
+    public PatrolPath patrolPath;
+}
+
+[System.Serializable]
 public class EnemyMovementPointPair
 {
     public EnemyController ctrl;
-    public List<Transform> idlePoints = new();
-    public List<PatrolPath> patrolPoints = new();
+    public List<EnemyMovementStep> movementSequence = new();
 }

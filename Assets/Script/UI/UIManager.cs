@@ -67,8 +67,9 @@ public class UIManager : MonoBehaviour
         readUIPanel.SetActive(isOn);
         readUIText.text = text;
 
-        Time.timeScale = isOn ? 0f : 1f;
         Cursor.lockState = isOn ? CursorLockMode.None : CursorLockMode.Locked;
+        GameEvent.OnSwitchActionMap?.Invoke(
+            isOn ? PlayerConstants.ACTIONMAP_UI : PlayerConstants.ACTIONMAP_PLAYER);
     }
 
     public void ShowTipsText(string text)
@@ -91,8 +92,9 @@ public class UIManager : MonoBehaviour
         if (passwordInputPanel.TryGetComponent(out PasswordInputUI ui))
             ui.SetCurrentLock(curLock);
 
-        Time.timeScale = isOn ? 0f : 1f;
         Cursor.lockState = isOn ? CursorLockMode.None : CursorLockMode.Locked;
+        GameEvent.OnSwitchActionMap?.Invoke(
+            isOn ? PlayerConstants.ACTIONMAP_UI : PlayerConstants.ACTIONMAP_PLAYER);
     }
 
     public void ToggleLightsOutEffect(bool isOn)
