@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class QuestNPC : Interactable
+public class MissionNPC : Interactable
 {
     public override void Interact(GameObject interactor)
     {

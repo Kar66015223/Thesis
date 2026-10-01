@@ -1,9 +1,14 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerInputHandler : MonoBehaviour
 {
+    private PlayerInput input;
+
     // Actions
     public event Action<Vector2> OnMoveInput;
     public event Action<Vector2> OnLookInput;
@@ -19,6 +24,18 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action<bool> OnDemonEyeSkillInput;
 
     private bool isDemonEyeActivated;
+
+    void Awake()
+    {
+        input = GetComponent<PlayerInput>();
+        input.uiInputModule = FindAnyObjectByType<EventSystem>()
+            .GetComponent<InputSystemUIInputModule>();
+    }
+
+    void OnEnable() => GameEvent.onSwitchActionMap += SwitchActionMap;
+    void OnDisable() => GameEvent.onSwitchActionMap -= SwitchActionMap;
+
+    public void SwitchActionMap(string mapName) => input.SwitchCurrentActionMap(mapName);
 
     public void OnMove(InputAction.CallbackContext context)
     {

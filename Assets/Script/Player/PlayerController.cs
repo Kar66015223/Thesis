@@ -1,4 +1,4 @@
-using Unity.VisualScripting;
+using NUnit.Framework.Interfaces;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -84,6 +84,8 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnInteractSpacebarInput += HandleInteractSpacebarInput;
 
         inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage;
+
+        GameEvent.onSwitchActionMap += ToggleCameraInput;
     }
 
     void OnDisable()
@@ -95,6 +97,8 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnInteractSpacebarInput -= HandleInteractSpacebarInput;
 
         inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
+
+        GameEvent.onSwitchActionMap -= ToggleCameraInput;
     }
 
     void Update()
@@ -312,4 +316,10 @@ public class PlayerController : MonoBehaviour
 
     public void ChangeState(PlayerState newState)
         => CurrentState = newState;
+
+    private void ToggleCameraInput(string mapName)
+    {
+        bool isUI = mapName == PlayerConstants.ACTIONMAP_UI;
+        camController.ToggleCameraInput(!isUI);
+    }
 }

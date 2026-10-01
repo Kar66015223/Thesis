@@ -6,6 +6,7 @@ using UnityEngine.Rendering;
 public class PlayerCameraController
 {
     private PlayerController controller;
+    [SerializeField] private CinemachineInputAxisController cameraInput;
 
     [Header("Camera")]
     public CinemachineCamera cam;
@@ -92,7 +93,7 @@ public class PlayerCameraController
 
         cam.Lens.FieldOfView = Mathf.Lerp(cam.Lens.FieldOfView, targetFOV, FOVChangeSpeed * Time.deltaTime);
     }
-    
+
     public void UpdateCameraVFX()
     {
         if (isDemonEyeActive)
@@ -105,5 +106,10 @@ public class PlayerCameraController
 
         if (Mathf.Abs(greyScreenVolume.weight - currentVolumeWeight) < 0.01f)
             greyScreenVolume.weight = currentVolumeWeight;
+    }
+    
+    public void ToggleCameraInput(bool isOn)
+    {
+        cameraInput.enabled = isOn;
     }
 }

@@ -1,12 +1,12 @@
-public enum QuestStatus
+public enum MissionStatus
 {
     Pending,
     Accepted,
     OnProgress,
-    Finished,
+    Completed,
     Submitted
 }
-public enum QuestType
+public enum MissionType
 {
     Main,
     Sub

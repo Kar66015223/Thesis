@@ -3,6 +3,9 @@ using UnityEngine;
 
 public static class GameEvent
 {
+    public static Action<string> onSwitchActionMap;
+
+    // UI
     public static Action<bool, string> OnToggleReadUI;
     public static Action<string> OnShowTips;
     public static Action<bool, PasswordLock> OnShowPasswordInputUI;
