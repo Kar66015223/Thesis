@@ -4,15 +4,10 @@ using System.Collections.Generic;
 [RequireComponent(typeof(EnemyController))]
 public class EnemyMovement : MonoBehaviour
 {
-    private EnemyController ctrl;
+    [SerializeField] private EnemyController ctrl;
     
     private float baseSpeed;
     private readonly Dictionary<string, float> speedModifiers = new();
-
-    void Awake()
-    {
-        ctrl = GetComponent<EnemyController>();
-    }
 
     public void SetBaseSpeed(float speed)
     {

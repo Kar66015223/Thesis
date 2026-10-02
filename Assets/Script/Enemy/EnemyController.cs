@@ -1,4 +1,3 @@
-using System.Drawing;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,8 +16,6 @@ public class EnemyController : MonoBehaviour, IHearable
     [SerializeField] private TMP_Text stateUIText;
 
     [Header("Shared Settings")]
-    public IEnemyState initialState;
-
     public float walkSpeed = 3f;
     public float runSpeed = 5f;
 
@@ -45,9 +42,9 @@ public class EnemyController : MonoBehaviour, IHearable
         Vision = GetComponent<EnemyVision>();
         Movement = GetComponent<EnemyMovement>();
         tracking.Initialize(this);
-
-        SetInitialState();
     }
+
+    void Start() => SetInitialState();
 
     void Update()
     {
@@ -59,22 +56,39 @@ public class EnemyController : MonoBehaviour, IHearable
 
     private void SetInitialState()
     {
-        if (idlePointsParent.parent == transform)
-            idlePointsParent.SetParent(null);
+        // if (idlePointsParent.parent == transform)
+        //     idlePointsParent.SetParent(null);
 
-        if(patrolPointsParent.parent == transform)
+        // if(patrolPointsParent.parent == transform)
+        //     patrolPointsParent.SetParent(null);
+
+        // if (patrolPoints.Length > 0)
+        // {
+        //     ChangeState(new PatrolState(this));
+        // }
+        // else if (idlePoint != null)
+        // {
+        //     ChangeState(new IdleState(this));
+        // }
+
+        // initialState = CurrentState;
+
+        if (idlePointsParent != null && idlePointsParent.parent == transform)
+            idlePointsParent.SetParent(null);
+        if (patrolPointsParent != null && patrolPointsParent.parent == transform)
             patrolPointsParent.SetParent(null);
 
-        if (patrolPoints.Length > 0)
-        {
+        ReturnToDefaultState();
+    }
+    
+    public void ReturnToDefaultState()
+    {
+        if (patrolPoints != null && patrolPoints.Length > 0) 
             ChangeState(new PatrolState(this));
-        }
-        else if (idlePoint != null)
-        {
+        else if (idlePoint != null)                          
             ChangeState(new IdleState(this));
-        }
-
-        initialState = CurrentState;
+        else 
+            Debug.LogWarning($"{name} has no patrol/idle points", this);
     }
 
     public void ChangeState(IEnemyState newState)

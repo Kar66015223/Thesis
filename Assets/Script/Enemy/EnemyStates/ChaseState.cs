@@ -46,7 +46,8 @@ public class ChaseState : IEnemyState
         if (direction != Vector3.zero)
             ctrl.transform.rotation = Quaternion.LookRotation(direction);
 
-        float actualDistance = Vector3.Distance(ctrl.transform.position, target.position);
+        float actualDistance = direction.magnitude;
+        float catchDistance  = ctrl.Agent.stoppingDistance + 0.5f;
 
         bool reachedNavMeshDestination =
             !ctrl.Agent.pathPending && ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance;
@@ -56,10 +57,11 @@ public class ChaseState : IEnemyState
             (ctrl.Agent.pathStatus == NavMeshPathStatus.PathInvalid ||
                 ctrl.Agent.pathStatus == NavMeshPathStatus.PathPartial);
 
-        if (actualDistance <= ctrl.Agent.stoppingDistance)
+        if (actualDistance <= catchDistance)
         {
             ctrl.Agent.isStopped = true;
-            if (target.TryGetComponent(out PlayerController player))
+            PlayerController player = target.GetComponentInParent<PlayerController>();
+            if (player != null)
             {
                 ctrl.ChangeState(new CatchingState(ctrl, player));
             }
@@ -69,7 +71,7 @@ public class ChaseState : IEnemyState
             giveUpTimer += Time.deltaTime;
             if (giveUpTimer >= ctrl.distractWaitTime)
             {
-                ctrl.ChangeState(ctrl.initialState);
+                ctrl.ReturnToDefaultState();
             }
         }
         else

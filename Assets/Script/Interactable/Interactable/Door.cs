@@ -13,7 +13,6 @@ public class Door : Interactable
     [SerializeField] private Transform playerPointFront;
     [SerializeField] private Transform playerPointBack;
 
-
     private Collider col;
     [SerializeField] private float colDisableWaitTime;
 

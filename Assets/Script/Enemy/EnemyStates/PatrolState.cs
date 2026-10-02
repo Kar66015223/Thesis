@@ -6,6 +6,8 @@ public class PatrolState : IEnemyState
     private int curTargetIndex;
     private float nextMoveTime;
 
+    private bool destinationSet;
+
     public PatrolState(EnemyController ctrl) 
         => this.ctrl = ctrl;
 
@@ -13,22 +15,29 @@ public class PatrolState : IEnemyState
     {
         ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
         ctrl.Agent.stoppingDistance = 0f;
+        destinationSet = false;
     }
 
     public void Update()
     {
-        if (ctrl.patrolPoints == null || ctrl.patrolPoints.Length < 1)
-            return;
-        if (Time.time < nextMoveTime)
-            return;
+        var points = ctrl.patrolPoints;
+        if (points == null || points.Length == 0 || Time.time < nextMoveTime) return;
 
-        Transform target = ctrl.patrolPoints[curTargetIndex];
-        ctrl.Agent.SetDestination(target.position);
+        curTargetIndex %= points.Length;
 
-        if (!ctrl.Agent.pathPending && ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance)
+        if (!destinationSet)
+        {
+            ctrl.Agent.SetDestination(points[curTargetIndex].position);
+            destinationSet = true;
+            return;
+        }
+
+        if (!ctrl.Agent.pathPending &&
+            ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance + 0.1f)
         {
             nextMoveTime = Time.time + ctrl.patrolWaitTime;
-            curTargetIndex = (curTargetIndex + 1) % ctrl.patrolPoints.Length;
+            curTargetIndex = (curTargetIndex + 1) % points.Length;
+            destinationSet = false;
         }
     }
 

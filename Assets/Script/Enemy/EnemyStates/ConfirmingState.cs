@@ -36,7 +36,7 @@ public class ConfirmingState : IEnemyState
 
         stopTimer += Time.deltaTime;
         if (stopTimer >= ctrl.confirmGiveUpTime)
-            ctrl.ChangeState(ctrl.initialState);
+            ctrl.ReturnToDefaultState();
     }
 
     public void Exit()

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -19,7 +20,7 @@ public class EnemyVisionEditor : Editor
         Handles.DrawLine(origin, origin + viewAngleB * fov.viewRadius);
 
         Handles.color = Color.red;
-        foreach(Transform target in fov.ConfirmedTargets)
+        foreach (Transform target in fov.ConfirmedTargets)
         {
             Vector3 targetDrawPos = target.position;
             if (target.TryGetComponent(out Collider col))
@@ -32,3 +33,4 @@ public class EnemyVisionEditor : Editor
         }
     }
 }
+#endif

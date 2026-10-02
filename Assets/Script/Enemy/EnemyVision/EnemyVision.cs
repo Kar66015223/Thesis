@@ -67,7 +67,12 @@ public class EnemyVision : MonoBehaviour
         UpdateViewRadiusChange();
     }
 
-    public void EnableVision() => StartCoroutine(FindTargetsWithDelay(0.1f));
+    public void EnableVision()
+    {
+        // DisableVision();
+        StartCoroutine(FindTargetsWithDelay(0.1f));
+    }
+    
     public void DisableVision() => StopAllCoroutines();
     
     IEnumerator FindTargetsWithDelay(float delay)

@@ -62,7 +62,7 @@ public class DistractedState : IEnemyState
         }
 
         if (timer >= ctrl.distractWaitTime)
-            ctrl.ChangeState(ctrl.initialState);
+            ctrl.ReturnToDefaultState();
     }
 
     private void HandleMoveTo()
@@ -81,7 +81,7 @@ public class DistractedState : IEnemyState
             timer += Time.deltaTime;
 
             if (timer >= ctrl.distractWaitTime)
-                ctrl.ChangeState(ctrl.initialState);
+                ctrl.ReturnToDefaultState();
         }
     }
 

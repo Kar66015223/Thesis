@@ -78,6 +78,7 @@ GameObject:
   - component: {fileID: 2130764711534732854}
   - component: {fileID: 4111720402464977027}
   - component: {fileID: 929758801589411030}
+  - component: {fileID: 8598886566586778322}
   m_Layer: 0
   m_Name: EnemyTest
   m_TagString: Untagged
@@ -228,8 +229,8 @@ MonoBehaviour:
   distractWaitTime: 1
   lookAtRotationSpeed: 5
   confirmWaitTime: 0.5
+  confirmGiveUpTime: 2
   stunTime: 5
-  escapePrompt: {fileID: 0}
 --- !u!114 &4111720402464977027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,6 +260,8 @@ MonoBehaviour:
   viewRadius: 10
   viewAngle: 50
   viewHeight: 0.5
+  defaultViewRadius: 10
+  viewRadiusChasing: 30
   targetMask:
     serializedVersion: 2
     m_Bits: 8
@@ -268,6 +271,19 @@ MonoBehaviour:
   confirmTimer: 0
   <VisibleTargets>k__BackingField: []
   <ConfirmedTargets>k__BackingField: []
+--- !u!114 &8598886566586778322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8649723213959183877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e7564f9048be94aa553da7e62b7e2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
+  ctrl: {fileID: 2130764711534732854}
 --- !u!1001 &4523432822077767563
 PrefabInstance:
   m_ObjectHideFlags: 0
