@@ -11,8 +11,9 @@ public class ScannerSkill : MonoBehaviour
     public bool isCooldown = false;
     public float currentCooldown = 0f;
 
-    [Header("Audio")]
-    public AudioSource audioSource;
+    [Header("Audio - Scanner Only")]
+    // AudioSource ตัวนี้ใช้สำหรับเสียง Scanner เท่านั้น
+    public AudioSource scanAudioSource;
 
     public AudioClip scanStartSound;
     public AudioClip scanLoopSound;
@@ -26,7 +27,6 @@ public class ScannerSkill : MonoBehaviour
     public float fadeInDuration = 0.5f;
 
     private bool isSkillActive = false;
-
     private Coroutine audioCoroutine;
 
     void Update()
@@ -57,7 +57,7 @@ public class ScannerSkill : MonoBehaviour
             {
                 isSkillActive = true;
 
-                // เปิด VFX ทั้งสองตัวพร้อมกันทันที
+                // เปิด VFX ทั้งสองตัว
                 if (scanVFX != null)
                 {
                     scanVFX.SetActive(true);
@@ -68,7 +68,7 @@ public class ScannerSkill : MonoBehaviour
                     scanVFX2.SetActive(true);
                 }
 
-                // เริ่มเสียง
+                // เริ่มเสียง Scanner
                 StartScanAudio();
             }
         }
@@ -86,7 +86,7 @@ public class ScannerSkill : MonoBehaviour
                 currentCooldown = cooldownTime;
             }
 
-            // ปิด VFX ทั้งสองตัว
+            // ปิด VFX
             if (scanVFX != null)
             {
                 scanVFX.SetActive(false);
@@ -97,17 +97,17 @@ public class ScannerSkill : MonoBehaviour
                 scanVFX2.SetActive(false);
             }
 
-            // หยุดเสียง
+            // หยุดเฉพาะเสียง Scanner
             StopScanAudio();
         }
     }
 
     // =====================================
-    // เริ่มระบบเสียง
+    // เริ่มเสียง Scanner
     // =====================================
     void StartScanAudio()
     {
-        if (audioSource == null)
+        if (scanAudioSource == null)
             return;
 
         if (audioCoroutine != null)
@@ -115,7 +115,8 @@ public class ScannerSkill : MonoBehaviour
             StopCoroutine(audioCoroutine);
         }
 
-        audioSource.Stop();
+        // หยุดเฉพาะ AudioSource ของ Scanner
+        scanAudioSource.Stop();
 
         audioCoroutine = StartCoroutine(PlayScanAudio());
     }
@@ -131,15 +132,15 @@ public class ScannerSkill : MonoBehaviour
 
         if (scanStartSound != null)
         {
-            audioSource.clip = scanStartSound;
-            audioSource.loop = false;
-            audioSource.volume = startVolume;
+            scanAudioSource.clip = scanStartSound;
+            scanAudioSource.loop = false;
+            scanAudioSource.volume = startVolume;
 
-            audioSource.Play();
+            scanAudioSource.Play();
 
-            // รอเสียงแรกเล่นจนจบ
+            // รอเสียงแรกจบ
             yield return new WaitWhile(
-                () => audioSource.isPlaying
+                () => scanAudioSource.isPlaying
             );
         }
 
@@ -153,13 +154,13 @@ public class ScannerSkill : MonoBehaviour
 
         if (scanLoopSound != null)
         {
-            audioSource.clip = scanLoopSound;
-            audioSource.loop = true;
+            scanAudioSource.clip = scanLoopSound;
+            scanAudioSource.loop = true;
 
-            // เริ่มเสียงที่ 2 จาก Volume 0
-            audioSource.volume = 0f;
+            // เริ่มจาก 0
+            scanAudioSource.volume = 0f;
 
-            audioSource.Play();
+            scanAudioSource.Play();
 
             // =====================================
             // Fade In
@@ -176,7 +177,7 @@ public class ScannerSkill : MonoBehaviour
 
                 float t = timer / fadeInDuration;
 
-                audioSource.volume = Mathf.Lerp(
+                scanAudioSource.volume = Mathf.Lerp(
                     0f,
                     loopVolume,
                     t
@@ -185,12 +186,12 @@ public class ScannerSkill : MonoBehaviour
                 yield return null;
             }
 
-            audioSource.volume = loopVolume;
+            scanAudioSource.volume = loopVolume;
         }
     }
 
     // =====================================
-    // หยุดเสียง
+    // หยุดเฉพาะเสียง Scanner
     // =====================================
     void StopScanAudio()
     {
@@ -200,13 +201,14 @@ public class ScannerSkill : MonoBehaviour
             audioCoroutine = null;
         }
 
-        if (audioSource != null)
+        if (scanAudioSource != null)
         {
-            audioSource.Stop();
+            // หยุดเฉพาะ Scanner
+            scanAudioSource.Stop();
 
-            audioSource.clip = null;
-            audioSource.loop = false;
-            audioSource.volume = 0f;
+            scanAudioSource.clip = null;
+            scanAudioSource.loop = false;
+            scanAudioSource.volume = 0f;
         }
     }
 
