@@ -16,14 +16,17 @@ public class PlayerStamina : MonoBehaviour
     [Range(0, 1)][SerializeField] private float recoveryThreshold = 0.25f;
 
     public bool isMoving;
-    public bool isRunning;
+    public bool isInputtingRun;
+    public bool IsRunning { get; private set; }
     public bool isExhausted;
 
     private PlayerController controller;
+    private PlayerSound sound;
 
     void Awake()
     {
         controller = GetComponent<PlayerController>();
+        sound = GetComponent<PlayerSound>();
     }
 
     void Start()
@@ -33,20 +36,22 @@ public class PlayerStamina : MonoBehaviour
 
     void Update()
     {
-        // Debug.Log(CurStamina);
         CalculateStamina();
     }
 
     private void CalculateStamina()
-    {   
-        if (isMoving && isRunning && !isExhausted && CurStamina > 0)
+    {
+        IsRunning = isMoving && isInputtingRun && !isExhausted && CurStamina > 0;
+
+        if (IsRunning)
         {
             CurStamina -= runDrainRate * Time.deltaTime;
 
             if (CurStamina == 0)
             {
-                isRunning = false;
+                IsRunning = false;
                 isExhausted = true;
+                sound.PlayTiredSound();
             }
         }
         else

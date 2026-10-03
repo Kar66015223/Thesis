@@ -6,9 +6,11 @@ public class PlayerSound : MonoBehaviour
 {
     private AudioSource source;
     private SoundEmitter emitter;
+    private PlayerStamina stamina;
 
     [Header("Footstep Audio")]
     [SerializeField] private AudioClip[] footstepClips;
+    [SerializeField] private AudioClip tiredClip;
 
     [Header("Volume")]
     [SerializeField, Range(0f, 1f)]
@@ -16,6 +18,9 @@ public class PlayerSound : MonoBehaviour
 
     [SerializeField, Range(0f, 1f)]
     private float runVolume = 1f;
+
+    [SerializeField, Range(0f, 1f)]
+    private float tiredVolume = 1f;
 
     [Header("Random Variation")]
     [SerializeField, Range(0f, 0.1f)]
@@ -36,6 +41,7 @@ public class PlayerSound : MonoBehaviour
     {
         source = GetComponent<AudioSource>();
         emitter = GetComponent<SoundEmitter>();
+        stamina = GetComponent<PlayerStamina>();
 
         // ป้องกัน AudioSource เล่นเองตอนเริ่มเกม
         source.playOnAwake = false;
@@ -58,6 +64,11 @@ public class PlayerSound : MonoBehaviour
             runSoundRadius,
             walkSoundReaction
         );
+    }
+
+    public void PlayTiredSound()
+    {
+        source.PlayOneShot(tiredClip, tiredVolume);
     }
 
     private void PlayFootstep(

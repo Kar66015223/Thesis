@@ -8,6 +8,8 @@ public class PlayerCameraController
     private PlayerController controller;
     [SerializeField] private CinemachineInputAxisController cameraInput;
 
+    private PlayerStamina stamina;
+
     [Header("Camera")]
     public CinemachineCamera cam;
     [HideInInspector] public Vector3 camForward;
@@ -51,6 +53,8 @@ public class PlayerCameraController
         if (cam == null)
             cam = Object.FindAnyObjectByType<CinemachineCamera>();
 
+        stamina = controller.GetComponent<PlayerStamina>();
+
         currentCamHeight = standCamHeight;
         targetFOV = defaultFOV;
         currentVolumeWeight = 0f;
@@ -82,12 +86,18 @@ public class PlayerCameraController
 
     public void UpdateFOVChange()
     {
+        if (stamina != null)
+            isRunning = stamina.IsRunning;
+
         if (isDemonEyeActive)
             targetFOV = scanSkillFOVChange;
+
         else if (isRunning)
             targetFOV = runFOVChange;
+
         else if (isCrouching)
             targetFOV = crouchFOVChange;
+
         else
             targetFOV = defaultFOV;
 

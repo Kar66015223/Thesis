@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
         if (IsCrouching)
             ChangeState(PlayerState.Crouching);
 
-        else if (stamina.isRunning)
+        else if (stamina.IsRunning)
             ChangeState(PlayerState.Running);
 
         else if (isUsingSkill)
@@ -132,15 +132,14 @@ public class PlayerController : MonoBehaviour
     private void HandleMoveInput(Vector2 input) 
         => moveInput = input;
 
-    private void HandleRunInput(bool isRunning)
+    private void HandleRunInput(bool isInput)
     {
         if (CurrentState == PlayerState.Crouching || CurrentState == PlayerState.UsingSkill)
             return;
             
         if (stamina != null)
         {
-            stamina.isRunning = isRunning;
-            camController.isRunning = isRunning;
+            stamina.isInputtingRun = isInput;
         }
     }
 
@@ -230,7 +229,7 @@ public class PlayerController : MonoBehaviour
 
             if (!IsCrouching)
             {
-                currentSpeed = stamina.isRunning ? runSpeed : moveSpeed;
+                currentSpeed = stamina.IsRunning ? runSpeed : moveSpeed;
             }
             else
             {
@@ -258,7 +257,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                animMovementValue = stamina.isRunning ? 2 : 1;
+                animMovementValue = stamina.IsRunning ? 2 : 1;
             }
         }
 

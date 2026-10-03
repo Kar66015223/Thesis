@@ -2494,6 +2494,7 @@ MonoBehaviour:
       patrolPath:
         wayPoints: []
       speedMultiplier: 1
+      toNextStepWaitTime: 0
     - movementType: 1
       idlePoint: {fileID: 0}
       patrolPath:
@@ -2501,6 +2502,7 @@ MonoBehaviour:
         - {fileID: 1296113560}
         - {fileID: 446712129}
       speedMultiplier: 1
+      toNextStepWaitTime: 0
     - movementType: 0
       idlePoint: {fileID: 371599498}
       patrolPath:
@@ -2508,6 +2510,7 @@ MonoBehaviour:
         - {fileID: 1296113560}
         - {fileID: 446712129}
       speedMultiplier: 1
+      toNextStepWaitTime: 0
 --- !u!4 &1983876400
 Transform:
   m_ObjectHideFlags: 0
