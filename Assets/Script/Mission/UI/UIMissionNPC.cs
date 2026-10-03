@@ -89,17 +89,10 @@ public class UIMissionNPC : MonoBehaviour
                 GameObject missionButton = Instantiate(missionButtonPrefab, missionButtonParent);
                 mission.uiButton = missionButton;
 
-                if (missionButton.TryGetComponent(out MissionButton prefab))
+                if (missionButton.TryGetComponent(out MissionButton mButton))
                 {
-                    prefab.nameText.text = mission.missionName;
-
-                    prefab.statusText.text = mission.missionStatus.ToString();
-                    prefab.statusText.color = mission.missionStatus switch
-                    {
-                        MissionStatus.OnProgress => Color.yellow,
-                        MissionStatus.Completed => Color.green,
-                        _ => Color.white,
-                    };
+                    mButton.curMission = mission;
+                    mButton.UpdateUI();
                 }
 
                 if (missionButton.TryGetComponent(out Button button))

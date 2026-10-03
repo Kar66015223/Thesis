@@ -12,4 +12,9 @@ public abstract class Mission
     public abstract void CheckCompletion();
     public abstract void Complete();
     public abstract void OnSubmit();
+    public virtual void UpdateUIButton()
+    {
+        if(uiButton != null && uiButton.TryGetComponent(out MissionButton button))
+            button.UpdateUI();
+    }
 }

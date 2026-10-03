@@ -17,6 +17,8 @@ public class Mission1 : Mission
             MissionManager.instance.SetOnProgressMission(this);
             GameEvent.OnShowTips?.Invoke("Mission Accepted");
             missionStatus = MissionStatus.OnProgress;
+
+            UpdateUIButton();
         }
     }
 
@@ -33,6 +35,8 @@ public class Mission1 : Mission
     {
         missionStatus = MissionStatus.Completed;
         GameEvent.OnShowTips?.Invoke($"{missionName} completed");
+        
+        UpdateUIButton();
     }
 
     public override void OnSubmit()
