@@ -16,10 +16,16 @@ public class NormalLock : Lock
         Transform playerSide = CurrentDoor.GetClosestPoint(interactor.transform.position);
         bool isOnUnlockableSide = playerSide == unlockableSide;
 
-        if ((!isOnUnlockableSide && needKey && canUnlock) || isOnUnlockableSide)
+        if ((!isOnUnlockableSide && needKey && canUnlock) || (isOnUnlockableSide && !needKey))
         {
             IsLocked = false;
             CurrentDoor.Interact(interactor);
+            return;
+        }
+
+        if(isOnUnlockableSide && needKey)
+        {
+            GameEvent.OnShowTips?.Invoke("Locked from the other side.");
             return;
         }
 
