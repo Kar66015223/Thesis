@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Demon EyE
+  m_Name: ScreenEffect_Blood
   m_Shader: {fileID: -6465566751694194690, guid: 144e68878339e0f42a543b7c3c9a423a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -91,7 +91,8 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _BreathFrquency: 1.75
+    - _BreathFrequency: 2
+    - _BreathFrquency: 2
     - _BreathTensity: 0.5
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -126,7 +127,7 @@ Material:
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _VignetteIntensity: 10
-    - _VignettePower: 6
+    - _VignettePower: 20
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
