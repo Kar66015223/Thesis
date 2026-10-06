@@ -1031,6 +1031,35 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Struggle",
+            "id": "51b5427d-c136-4211-a729-e544dd22d7ac",
+            "actions": [
+                {
+                    "name": "Struggle",
+                    "type": "Button",
+                    "id": "e03aca83-94c5-4c47-adc4-0e10c92e45c7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "145dedc8-4bee-4154-9fc9-4b8195e28d9c",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Struggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

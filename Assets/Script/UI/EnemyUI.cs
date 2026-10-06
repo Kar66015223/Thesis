@@ -1,21 +1,21 @@
-using UnityEngine;
+// using UnityEngine;
 
-public class EnemyUI : MonoBehaviour
-{
-    [SerializeField] private GameObject struggleRootPanel;
+// public class EnemyUI : MonoBehaviour
+// {
+//     [SerializeField] private GameObject struggleRootPanel;
 
-    void OnEnable()
-    {
-        GameEvent.OnToggleStruggleUI += ToggleStruggleUI;
-    }
+//     void OnEnable()
+//     {
+//         GameEvent.OnToggleStruggleUI += ToggleStruggleUI;
+//     }
 
-    void OnDisable()
-    {
-        GameEvent.OnToggleStruggleUI -= ToggleStruggleUI;
-    }
+//     void OnDisable()
+//     {
+//         GameEvent.OnToggleStruggleUI -= ToggleStruggleUI;
+//     }
 
-    private void ToggleStruggleUI(bool isOn)
-    {
-        struggleRootPanel.SetActive(isOn);
-    }
-}
+//     private void ToggleStruggleUI(bool isOn)
+//     {
+//         struggleRootPanel.SetActive(isOn);
+//     }
+// }

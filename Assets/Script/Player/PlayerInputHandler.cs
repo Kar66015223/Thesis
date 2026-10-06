@@ -19,6 +19,8 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnInteractFInput;
     public event Action OnInteractSpacebarInput;
 
+    public event Action OnStruggleInput;
+
     // Skill
     public event Action OnUsePhysicalSkillInput;
     public event Action<bool> OnDemonEyeSkillInput;
@@ -75,13 +77,19 @@ public class PlayerInputHandler : MonoBehaviour
         if (context.performed)
             OnInteractSpacebarInput?.Invoke();
     }
-    
+
     public void OnUseDemonEyeSkill(InputAction.CallbackContext context)
     {
-        if(context.performed)
+        if (context.performed)
         {
             isDemonEyeActivated = !isDemonEyeActivated;
             OnDemonEyeSkillInput?.Invoke(isDemonEyeActivated);
         }
+    }
+    
+    public void OnStruggle(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            OnStruggleInput?.Invoke();
     }
 }

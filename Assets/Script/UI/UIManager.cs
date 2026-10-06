@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,13 +32,19 @@ public class UIManager : MonoBehaviour
     public Sprite chaseSprite;
     public Sprite stunnedSprite;
 
+    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private Button restartButton;
+
     void Awake()
     {
         if (readUIText != null)
             readUIText.text = "";
-            
+
         if (closeButton != null)
             closeButton.onClick.AddListener(() => GameEvent.OnToggleReadUI?.Invoke(false, ""));
+
+        if (restartButton != null)
+            restartButton.onClick.AddListener(Restart);
     }
 
     void OnEnable()
@@ -49,6 +56,8 @@ public class UIManager : MonoBehaviour
 
         GameEvent.OnShowEnemyState += ToggleEnemyStateUI;
         GameEvent.OnUpdateConfirmTimer += UpdateConfirmUI;
+
+        GameEvent.OnToggleGameOverUI += ToggleGameOverUI;
     }
 
     void OnDisable()
@@ -60,6 +69,8 @@ public class UIManager : MonoBehaviour
 
         GameEvent.OnShowEnemyState -= ToggleEnemyStateUI;
         GameEvent.OnUpdateConfirmTimer -= UpdateConfirmUI;
+
+        GameEvent.OnToggleGameOverUI -= ToggleGameOverUI;
     }
 
     public void ToggleReadUI(bool isOn, string text)
@@ -169,11 +180,11 @@ public class UIManager : MonoBehaviour
             activeEnemyUIs.Remove(target);
         }
     }
-    
+
     public void UpdateConfirmUI(Transform target, float fillAmount)
     {
         if (!activeEnemyUIs.TryGetValue(target, out GameObject uiInstance))
-        return;
+            return;
 
         if (!uiInstance.TryGetComponent(out EnemyStateUI ui))
             return;
@@ -188,5 +199,17 @@ public class UIManager : MonoBehaviour
         }
 
         ui.mainImg.fillAmount = fillAmount;
+    }
+
+    public void ToggleGameOverUI(bool isOn)
+    {
+        gameOverPanel.SetActive(isOn);
+        Cursor.lockState = isOn ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+    
+    public void Restart()
+    {
+        GameEvent.OnToggleGameOverUI?.Invoke(false);
+        SceneLoader.RestartScene();
     }
 }

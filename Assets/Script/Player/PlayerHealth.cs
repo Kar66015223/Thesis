@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerController))]
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float _curHP;
@@ -34,8 +35,11 @@ public class PlayerHealth : MonoBehaviour
     public bool takeDamage = false;
     public bool heal = false;
 
+    private PlayerController ctrl;
+
     void Awake()
     {
+        ctrl = GetComponent<PlayerController>();
         CurHP = maxHP;
     }
 
@@ -77,7 +81,8 @@ public class PlayerHealth : MonoBehaviour
     public void Die()
     {
         IsDead = true;
-        Debug.Log("Player Died");
+        GameEvent.OnToggleGameOverUI?.Invoke(true);
+        ctrl.SetCanMove(false);
     }
 
     private void UpdateScreenEffect()

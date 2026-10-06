@@ -66,6 +66,8 @@ public class PlayerCameraController
         UpdateCameraTarget();
         UpdateFOVChange();
         UpdateCameraVFX();
+
+        cameraInput.enabled = Cursor.lockState == CursorLockMode.Locked;
     }
 
     public void UpdateCameraTarget()
@@ -119,11 +121,6 @@ public class PlayerCameraController
             greyScreenVolume.weight = currentVolumeWeight;
     }
 
-    public void ToggleCameraInput(bool isOn)
-    {
-        cameraInput.enabled = isOn;
-    }
-    
     // public void ToggleShake(bool isOn)
     // {
     //     perlin.AmplitudeGain = isOn ? 1 : 0;

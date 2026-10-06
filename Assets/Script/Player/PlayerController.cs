@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
 
         inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage;
 
-        GameEvent.OnSwitchActionMap += ToggleCameraInput;
+        GameEvent.OnSwitchActionMap += SwitchActionMap;
     }
 
     void OnDisable()
@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
 
         inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
 
-        GameEvent.OnSwitchActionMap -= ToggleCameraInput;
+        GameEvent.OnSwitchActionMap -= SwitchActionMap;
     }
 
     void Update()
@@ -316,11 +316,11 @@ public class PlayerController : MonoBehaviour
     public void ChangeState(PlayerState newState)
         => CurrentState = newState;
 
-    private void ToggleCameraInput(string mapName)
+    private void SwitchActionMap(string mapName)
     {
         bool isUI = mapName == PlayerConstants.ACTIONMAP_UI;
-        camController.ToggleCameraInput(!isUI);
+        // camController.ToggleCameraInput(!isUI);
     }
-
+    
     // public void ToggleShake(bool isOn) => camController.ToggleShake(isOn);
 }

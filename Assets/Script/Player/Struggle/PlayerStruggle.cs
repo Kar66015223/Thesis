@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerController))]
@@ -14,22 +13,29 @@ public class PlayerStruggle : MonoBehaviour
     public bool IsCatched { get; private set; } = false;
     public EnemyController CatchingEnemy { get; private set; }
 
-    private PlayerController ctrl;
     private PlayerHealth hp;
-
-    public event Action<bool> OnToggleStruggleUI;
-    public event Action<float> OnStruggleProgressChanged;
+    private PlayerInputHandler inputHandler;
 
     void Awake()
     {
-        ctrl = GetComponent<PlayerController>();
         hp = GetComponent<PlayerHealth>();
+        inputHandler = GetComponent<PlayerInputHandler>();
+    }
+
+    void OnEnable()
+    {
+        inputHandler.OnStruggleInput += OnStruggleInput;
+    }
+
+    void OnDisable()
+    {
+        inputHandler.OnStruggleInput -= OnStruggleInput;
     }
 
     public void EnterStruggle(EnemyController eCtrl)
     {
         IsCatched = true;
-        ctrl.SetCanMove(false);
+        GameEvent.OnSwitchActionMap?.Invoke(PlayerConstants.ACTIONMAP_STRUGGLE);
         CatchingEnemy = eCtrl;
 
         GameEvent.OnToggleStruggleUI?.Invoke(true);
@@ -38,16 +44,13 @@ public class PlayerStruggle : MonoBehaviour
     public void UpdateStruggle(float catchDamage, float damageCooldown)
     {
         damageCooldownTimer += Time.deltaTime;
-        
+
         if (damageCooldownTimer >= damageCooldown)
         {
             damageCooldownTimer = 0f;
             hp.TakeDamage(catchDamage);
             CatchingEnemy.ShakeScreen();
         }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-            AddStruggle(struggleValue);
 
         if (struggleProgress >= struggleThreshold || hp.IsDead)
         {
@@ -56,16 +59,21 @@ public class PlayerStruggle : MonoBehaviour
         }
     }
     
+    private void OnStruggleInput()
+    {
+        AddStruggle(struggleValue);
+    }
+    
     public void AddStruggle(float amount)
     {
         struggleProgress += amount;
-        OnStruggleProgressChanged?.Invoke(amount);
+        GameEvent.OnStruggleProgressChanged?.Invoke(Mathf.Clamp01(struggleProgress / struggleThreshold));
     }
     
     public void EndStruggle(bool playerDead)
     {
         IsCatched = false;
-        ctrl.SetCanMove(true);
+        GameEvent.OnSwitchActionMap?.Invoke(PlayerConstants.ACTIONMAP_PLAYER);
 
         if (!playerDead)
         {

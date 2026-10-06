@@ -13,9 +13,13 @@ public static class GameEvent
 
     public static Action<Transform, EnemyState> OnShowEnemyState;
     public static Action<Transform, float> OnUpdateConfirmTimer;
+
     public static Action<bool> OnToggleStruggleUI;
+    public static Action<float> OnStruggleProgressChanged;
 
     public static Action<bool> OnToggleUIQuestNPC;
+
+    public static Action<bool> OnToggleGameOverUI;
 
     // Enemy
     public static Action<EnemyController> OnChangeEnemyPath;
