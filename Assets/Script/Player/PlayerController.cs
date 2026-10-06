@@ -321,4 +321,6 @@ public class PlayerController : MonoBehaviour
         bool isUI = mapName == PlayerConstants.ACTIONMAP_UI;
         camController.ToggleCameraInput(!isUI);
     }
+
+    // public void ToggleShake(bool isOn) => camController.ToggleShake(isOn);
 }

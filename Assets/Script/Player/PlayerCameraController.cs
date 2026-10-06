@@ -6,12 +6,13 @@ using UnityEngine.Rendering;
 public class PlayerCameraController
 {
     private PlayerController controller;
-    [SerializeField] private CinemachineInputAxisController cameraInput;
-
     private PlayerStamina stamina;
 
     [Header("Camera")]
     public CinemachineCamera cam;
+    [SerializeField] private CinemachineInputAxisController cameraInput;
+    // [SerializeField] private CinemachineBasicMultiChannelPerlin perlin;
+
     [HideInInspector] public Vector3 camForward;
     [HideInInspector] public Vector3 camRight;
 
@@ -117,9 +118,14 @@ public class PlayerCameraController
         if (Mathf.Abs(greyScreenVolume.weight - currentVolumeWeight) < 0.01f)
             greyScreenVolume.weight = currentVolumeWeight;
     }
-    
+
     public void ToggleCameraInput(bool isOn)
     {
         cameraInput.enabled = isOn;
     }
+    
+    // public void ToggleShake(bool isOn)
+    // {
+    //     perlin.AmplitudeGain = isOn ? 1 : 0;
+    // }
 }

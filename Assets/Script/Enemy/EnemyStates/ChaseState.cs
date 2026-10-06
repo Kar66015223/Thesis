@@ -27,7 +27,7 @@ public class ChaseState : IEnemyState
         ctrl.Agent.SetDestination(target.position);
         lastTargetPos = target.position;
 
-        GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.Chase);
+        GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.Chase);
     }
 
     public void Update()
@@ -57,11 +57,18 @@ public class ChaseState : IEnemyState
             (ctrl.Agent.pathStatus == NavMeshPathStatus.PathInvalid ||
                 ctrl.Agent.pathStatus == NavMeshPathStatus.PathPartial);
 
+        PlayerStruggle player = target.GetComponentInParent<PlayerStruggle>();
+
+        if (player != null && player.IsCatched && player.CatchingEnemy != ctrl)
+        {
+            ctrl.ReturnToDefaultState();
+            return;
+        }
+
         if (actualDistance <= catchDistance)
         {
             ctrl.Agent.isStopped = true;
-            PlayerController player = target.GetComponentInParent<PlayerController>();
-            if (player != null)
+            if (player != null && !player.IsCatched)
             {
                 ctrl.ChangeState(new CatchingState(ctrl, player));
             }
@@ -84,7 +91,7 @@ public class ChaseState : IEnemyState
     public void Exit()
     {
         ctrl.Agent.updateRotation = true;
-        GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.None);
+        GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.None);
 
         ctrl.tracking.ResumeInterruptedStep();
     }

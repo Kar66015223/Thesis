@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,6 +12,7 @@ public class EnemyController : MonoBehaviour, IHearable
     public EnemyVision Vision { get; private set; }
     public EnemyMovement Movement { get; private set; }
     public IEnemyState CurrentState { get; private set; }
+    public CinemachineImpulseSource ImpulseSource { get; private set; }
     public EnemyStepTracking tracking = new();
 
     [SerializeField] private TMP_Text stateUIText;
@@ -32,6 +34,9 @@ public class EnemyController : MonoBehaviour, IHearable
     public float confirmWaitTime = 0.5f;
     public float confirmGiveUpTime = 2f;
 
+    public float catchDamage = 10f;
+    public float damageCooldown = 1f;
+
     public float stunTime = 5f;
 
     // public TMP_Text escapePrompt;
@@ -41,6 +46,8 @@ public class EnemyController : MonoBehaviour, IHearable
         Agent = GetComponent<NavMeshAgent>();
         Vision = GetComponent<EnemyVision>();
         Movement = GetComponent<EnemyMovement>();
+        ImpulseSource = GetComponent<CinemachineImpulseSource>();
+
         tracking.Initialize(this);
     }
 
@@ -56,23 +63,6 @@ public class EnemyController : MonoBehaviour, IHearable
 
     private void SetInitialState()
     {
-        // if (idlePointsParent.parent == transform)
-        //     idlePointsParent.SetParent(null);
-
-        // if(patrolPointsParent.parent == transform)
-        //     patrolPointsParent.SetParent(null);
-
-        // if (patrolPoints.Length > 0)
-        // {
-        //     ChangeState(new PatrolState(this));
-        // }
-        // else if (idlePoint != null)
-        // {
-        //     ChangeState(new IdleState(this));
-        // }
-
-        // initialState = CurrentState;
-
         if (idlePointsParent != null && idlePointsParent.parent == transform)
             idlePointsParent.SetParent(null);
         if (patrolPointsParent != null && patrolPointsParent.parent == transform)
@@ -114,7 +104,6 @@ public class EnemyController : MonoBehaviour, IHearable
         patrolPoints = new Transform[0];
 
         SetInitialState();
-        // ChangeState(new IdleState(this));
     }
     public void SetPatrolPoints(Transform[] points)
     {
@@ -122,7 +111,6 @@ public class EnemyController : MonoBehaviour, IHearable
         idlePoint = null;
 
         SetInitialState();
-        // ChangeState(new PatrolState(this));
     }
 
     public void ApplyIdlePoint(Transform point)
@@ -137,7 +125,10 @@ public class EnemyController : MonoBehaviour, IHearable
     {
         patrolPoints = points;
         idlePoint = null;
-        // if (patrolPoints != null && patrolPoints.Length > 0)
-            // Agent.SetDestination(patrolPoints[0].position);
+    }
+
+    public void ShakeScreen()
+    {
+        ImpulseSource.GenerateImpulse();
     }
 }

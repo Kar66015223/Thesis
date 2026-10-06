@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
@@ -7,9 +6,16 @@ public class PlayerHealth : MonoBehaviour
     public float CurHP
     {
         get => _curHP;
-        set => _curHP = Mathf.Clamp(value, 0, maxHP);
+        set
+        {
+            _curHP = Mathf.Clamp(value, 0, maxHP);
+            if (_curHP == 0)
+                Die();
+        } 
     }
     [SerializeField] private float maxHP = 100f;
+
+    public bool IsDead { get; private set; } = false;
 
     [Header("Blood Effect")]
     [SerializeField] private Material bloodFX;
@@ -32,6 +38,7 @@ public class PlayerHealth : MonoBehaviour
     {
         CurHP = maxHP;
     }
+
     void OnDisable()
     {
         ResetBloodFX();
@@ -57,6 +64,7 @@ public class PlayerHealth : MonoBehaviour
         takeDamage = false;
         heal = false;
         CurHP -= damage;
+        Debug.Log($"{gameObject.name} take {damage} damage");
     }
 
     public void Heal(float amount)
@@ -66,11 +74,17 @@ public class PlayerHealth : MonoBehaviour
         CurHP += amount;
     }
 
+    public void Die()
+    {
+        IsDead = true;
+        Debug.Log("Player Died");
+    }
+
     private void UpdateScreenEffect()
     {
-        if (CurHP <= 50f && CurHP > 20f)
+        if (CurHP < maxHP && CurHP > 50f)
             curVignettePower = halfHPVignettePower;
-        else if (CurHP <= 20f)
+        else if (CurHP <= 50f)
         {
             curVignettePower = lowHPVignettePower;
             curBreathFrequency = lowHPBreathFrequency;

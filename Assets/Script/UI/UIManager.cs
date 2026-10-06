@@ -47,7 +47,7 @@ public class UIManager : MonoBehaviour
         GameEvent.OnShowPasswordInputUI += TogglePasswordInputUI;
         GameEvent.OnLightsOut += ToggleLightsOutEffect;
 
-        GameEvent.OnAlertEnemyState += ToggleEnemyStateUI;
+        GameEvent.OnShowEnemyState += ToggleEnemyStateUI;
         GameEvent.OnUpdateConfirmTimer += UpdateConfirmUI;
     }
 
@@ -58,7 +58,7 @@ public class UIManager : MonoBehaviour
         GameEvent.OnShowPasswordInputUI -= TogglePasswordInputUI;
         GameEvent.OnLightsOut -= ToggleLightsOutEffect;
 
-        GameEvent.OnAlertEnemyState -= ToggleEnemyStateUI;
+        GameEvent.OnShowEnemyState -= ToggleEnemyStateUI;
         GameEvent.OnUpdateConfirmTimer -= UpdateConfirmUI;
     }
 

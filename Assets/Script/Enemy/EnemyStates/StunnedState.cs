@@ -17,7 +17,7 @@ public class StunnedState : IEnemyState
 
         timer = 0f;
 
-        GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.Stunned);
+        GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.Stunned);
     }
 
     public void Update()
@@ -26,7 +26,7 @@ public class StunnedState : IEnemyState
         if (timer >= ctrl.stunTime)
         {
             ctrl.ReturnToDefaultState();
-            GameEvent.OnAlertEnemyState?.Invoke(ctrl.transform, EnemyState.None);
+            GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.None);
         }
     }
     

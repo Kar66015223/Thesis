@@ -590,6 +590,7 @@ GameObject:
   - component: {fileID: 8622764615272283725}
   - component: {fileID: 2368950199994602778}
   - component: {fileID: 8105777623543101903}
+  - component: {fileID: 6872179149545432460}
   - component: {fileID: 5448438016998072887}
   - component: {fileID: 8901633974480956560}
   - component: {fileID: 5362707908087178346}
@@ -895,8 +896,9 @@ MonoBehaviour:
   crouchColliderHeight: 0.8
   playerModel: {fileID: 2476962885942031575}
   camController:
-    cameraInput: {fileID: 5299851598402469485}
     cam: {fileID: 6953314275788628758}
+    cameraInput: {fileID: 5299851598402469485}
+    perlin: {fileID: 0}
     camForward: {x: 0, y: 0, z: 0}
     camRight: {x: 0, y: 0, z: 0}
     defaultFOV: 80
@@ -944,7 +946,7 @@ MonoBehaviour:
   _curHP: 0
   maxHP: 100
   bloodFX: {fileID: 2100000, guid: f69ad6132eae97f4caf6496e0bbb508b, type: 2}
-  maxHPVignettePower: 20
+  normalVignettePower: 20
   halfHPVignettePower: 10
   lowHPVignettePower: 8
   normalBreathFrequency: 2
@@ -1018,6 +1020,20 @@ MonoBehaviour:
   tiredVolume: 1
   pitchVariation: 0.02
   volumeVariation: 0.04
+--- !u!114 &6872179149545432460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1056750182776962583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9006e525b36f5ad45b0e111f78c393f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStruggle
+  struggleThreshold: 100
+  struggleValue: 10
 --- !u!82 &5448438016998072887
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3024,8 +3040,9 @@ GameObject:
   - component: {fileID: 6953314275788628758}
   - component: {fileID: 2632410412039742316}
   - component: {fileID: 98673287736299003}
-  - component: {fileID: 9016275726387757963}
+  - component: {fileID: 7091564426871799284}
   - component: {fileID: 5299851598402469485}
+  - component: {fileID: 9016275726387757963}
   m_Layer: 2
   m_Name: FollowCamera
   m_TagString: Untagged
@@ -3184,7 +3201,7 @@ MonoBehaviour:
     Time: 0
     Smoothing: 0
     IgnoreY: 0
---- !u!114 &9016275726387757963
+--- !u!114 &7091564426871799284
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3193,27 +3210,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 5014081619451891361}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDecollider
-  CameraRadius: 1
-  Decollision:
-    Enabled: 1
-    ObstacleLayers:
-      serializedVersion: 2
-      m_Bits: 1
-    UseFollowTarget:
-      Enabled: 0
-      YOffset: 0
-    Damping: 0.5
-    SmoothingTime: 0
-  TerrainResolution:
-    Enabled: 0
-    TerrainLayers:
-      serializedVersion: 2
-      m_Bits: 1
-    MaximumRaycast: 10
-    Damping: 0.5
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineImpulseListener
+  ApplyAfter: 2
+  ChannelMask: 1
+  Gain: 1
+  Use2DDistance: 0
+  UseCameraSpace: 1
+  SignalCombinationMode: 0
+  ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!114 &5299851598402469485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3272,6 +3283,36 @@ MonoBehaviour:
         DecelTime: 0
   PlayerIndex: -1
   AutoEnableInputs: 1
+--- !u!114 &9016275726387757963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5014081619451891361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca7de3aefa901374ba29464584a3109a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDecollider
+  CameraRadius: 1
+  Decollision:
+    Enabled: 1
+    ObstacleLayers:
+      serializedVersion: 2
+      m_Bits: 1
+    UseFollowTarget:
+      Enabled: 0
+      YOffset: 0
+    Damping: 0.5
+    SmoothingTime: 0
+  TerrainResolution:
+    Enabled: 0
+    TerrainLayers:
+      serializedVersion: 2
+      m_Bits: 1
+    MaximumRaycast: 10
+    Damping: 0.5
 --- !u!1 &5158294924428628136
 GameObject:
   m_ObjectHideFlags: 0
