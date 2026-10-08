@@ -83,9 +83,9 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnInteractFInput += HandleInteractFInput;
         inputHandler.OnInteractSpacebarInput += HandleInteractSpacebarInput;
 
-        inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage;
+        inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage; // <-- Move to SkillManager later
 
-        GameEvent.OnSwitchActionMap += SwitchActionMap;
+        // GameEvent.OnSwitchActionMap += SwitchActionMap;
     }
 
     void OnDisable()
@@ -96,9 +96,9 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnInteractFInput -= HandleInteractFInput;
         inputHandler.OnInteractSpacebarInput -= HandleInteractSpacebarInput;
 
-        inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage;
+        inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage; // <-- Move to SkillManager later
 
-        GameEvent.OnSwitchActionMap -= SwitchActionMap;
+        // GameEvent.OnSwitchActionMap -= SwitchActionMap;
     }
 
     void Update()
@@ -187,7 +187,7 @@ public class PlayerController : MonoBehaviour
         anim.SetInteract();
     }
     
-    private void HandleDemonEyeSkillUsage(bool flag)
+    private void HandleDemonEyeSkillUsage(bool flag) // <-- Move to SkillManager later
     {
         if (CurrentState == PlayerState.Running)
             return;
@@ -316,11 +316,11 @@ public class PlayerController : MonoBehaviour
     public void ChangeState(PlayerState newState)
         => CurrentState = newState;
 
-    private void SwitchActionMap(string mapName)
-    {
-        bool isUI = mapName == PlayerConstants.ACTIONMAP_UI;
-        // camController.ToggleCameraInput(!isUI);
-    }
+    // private void SwitchActionMap(string mapName)
+    // {
+    //     bool isUI = mapName == PlayerConstants.ACTIONMAP_UI;
+    //     // camController.ToggleCameraInput(!isUI);
+    // }
     
     // public void ToggleShake(bool isOn) => camController.ToggleShake(isOn);
 }
