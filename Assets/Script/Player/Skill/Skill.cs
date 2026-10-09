@@ -9,6 +9,7 @@ public abstract class Skill
     public SkillUsage usage;
     public float coolDown;
     public float cost;
+    public SkillContext context;
 
     public abstract void Use();
     public abstract void HoldUse(bool isHolding);
