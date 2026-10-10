@@ -123,7 +123,7 @@ public class PlayerCameraController
             grayScreenVol.weight = curGrayScreenWeight;
 
         if (isTired)
-            curBlackVignetteWeight = 1f;
+            curBlackVignetteWeight = 0.4f;
         else
             curBlackVignetteWeight = 0f;
 

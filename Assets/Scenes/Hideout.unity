@@ -17284,6 +17284,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HideoutMainDoor
   <InteractPromptPos>k__BackingField: {fileID: 66552278}
   interactPromptText: '[Space]'
+  highlight: {fileID: 0}
+  hasInteracted: 0
 --- !u!43 &945172283
 Mesh:
   m_ObjectHideFlags: 0
@@ -32996,6 +32998,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestNPC
   <InteractPromptPos>k__BackingField: {fileID: 1373244026}
   interactPromptText: '[Space]'
+  highlight: {fileID: 0}
+  hasInteracted: 0
 --- !u!136 &1886523046
 CapsuleCollider:
   m_ObjectHideFlags: 0

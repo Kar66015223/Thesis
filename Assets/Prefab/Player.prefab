@@ -1136,7 +1136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   <CurrentState>k__BackingField: 0
   moveSpeed: 3
-  runSpeed: 8
+  runSpeed: 5
   crouchSpeed: 2
   lookSensitivity: 0.2
   gravity: -19.62
@@ -1156,11 +1156,12 @@ MonoBehaviour:
     defaultFOV: 80
     FOVChangeSpeed: 10
     runFOVChange: 90
-    isRunning: 0
     crouchFOVChange: 70
-    isCrouching: 0
     scanSkillFOVChange: 60
+    isRunning: 0
+    isCrouching: 0
     isDemonEyeActive: 0
+    isTired: 0
     camTarget: {fileID: 4844605494593759812}
     shoulderOffset: 0
     targetHeight: 1.3
@@ -1477,11 +1478,11 @@ RectTransform:
   - {fileID: 5236509328978055689}
   - {fileID: 8809994909472075503}
   - {fileID: 4091028683622402558}
+  - {fileID: 8369265353756578797}
+  - {fileID: 4387206710310695635}
+  - {fileID: 2255152309501079833}
   - {fileID: 7758778959909152951}
   - {fileID: 5143216923417357061}
-  - {fileID: 8369265353756578797}
-  - {fileID: 2255152309501079833}
-  - {fileID: 4387206710310695635}
   m_Father: {fileID: 9184599300817462649}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
