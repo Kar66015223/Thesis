@@ -9,6 +9,9 @@ public class TackleData : ScriptableObject
     public float dashDuration = 1f;
     public float coolDown = 10f;
     public float cost = 30f;
+    public SkillType type = SkillType.Physical;
     public SkillUsage usage = SkillUsage.Press;
     public Sprite icon;
+
+    public LayerMask enemyLayer;
 }

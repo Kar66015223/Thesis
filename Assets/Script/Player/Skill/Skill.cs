@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public enum SkillType { Physical, DemonEye }
 public enum SkillUsage { Press, Hold, Both }
 
@@ -9,6 +11,8 @@ public abstract class Skill
     public SkillUsage usage;
     public float coolDown;
     public float cost;
+    public Sprite icon;
+    
     public SkillContext context;
 
     public abstract void Use();

@@ -14,9 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TackleData
   skillName: Tackle
   skillDesc: Dash and tackle targeted enemy, push them back and stun them briefly
-  dashRange: 1
-  dashDuration: 1
+  dashRange: 2
+  dashDuration: 0.2
   coolDown: 10
   cost: 30
+  type: 0
   usage: 0
   icon: {fileID: 0}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256

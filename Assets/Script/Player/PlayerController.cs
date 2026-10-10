@@ -296,7 +296,11 @@ public class PlayerController : MonoBehaviour
     }
 
     public void SetCanMove(bool flag)
-        => canMove = flag;
+    {
+        canMove = flag;
+        if (!canMove)
+            anim.SetMove(0);
+    }
 
     public void SetHiding(bool flag, Hidable place, Vector3 targetPos)
     {
@@ -315,6 +319,8 @@ public class PlayerController : MonoBehaviour
 
     public void ChangeState(PlayerState newState)
         => CurrentState = newState;
+
+    public Vector3 GetForward() => playerModel.transform.forward;
 
     // private void SwitchActionMap(string mapName)
     // {
