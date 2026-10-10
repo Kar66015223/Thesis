@@ -3,16 +3,27 @@ using UnityEngine;
 
 public class ScanTrigger : MonoBehaviour
 {
-    private List<ScannableObject> allScanned = new();
+    private List<ScannableObject> allScannedEnemies = new();
+    private List<ObjectiveHighlight> allScannedObjtive = new();
 
     void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out ScannableObject scannable))
         {
             scannable.ApplyHighlight();
-            if (!allScanned.Contains(scannable))
+            if (!allScannedEnemies.Contains(scannable))
             {
-                allScanned.Add(scannable);
+                allScannedEnemies.Add(scannable);
+            }
+        }
+
+        if(other.TryGetComponent(out ObjectiveHighlight objtive))
+        {
+            objtive.ApplyHighlight();
+            if (!allScannedObjtive.Contains(objtive))
+            {
+                allScannedObjtive.Add(objtive);
+                Debug.Log($"Scanned: {other.gameObject.name}");
             }
         }
     }
@@ -22,23 +33,40 @@ public class ScanTrigger : MonoBehaviour
         if (other.TryGetComponent(out ScannableObject scannable))
         {
             scannable.RemoveHighlight();
-            if (allScanned.Contains(scannable))
+            if (allScannedEnemies.Contains(scannable))
             {
-                allScanned.Remove(scannable);
+                allScannedEnemies.Remove(scannable);
+            }
+        }
+
+        if(other.TryGetComponent(out ObjectiveHighlight objtive))
+        {
+            objtive.RemoveHighlight();
+            if (allScannedObjtive.Contains(objtive))
+            {
+                allScannedObjtive.Remove(objtive);
+                Debug.Log($"Removed: {other.gameObject.name}");
             }
         }
     }
 
     void OnDisable()
     {
-        if(allScanned.Count > 0)
+        if (allScannedEnemies.Count > 0)
         {
-            foreach(var scanned in allScanned)
+            foreach (var scanned in allScannedEnemies)
             {
                 scanned.RemoveHighlight();
             }
         }
-        
-        allScanned.Clear();
+
+        if(allScannedObjtive.Count > 0)
+        {
+            foreach (var scanned in allScannedObjtive)
+                scanned.RemoveHighlight();
+        }
+
+        allScannedEnemies.Clear();
+        allScannedObjtive.Clear();
     }
 }
