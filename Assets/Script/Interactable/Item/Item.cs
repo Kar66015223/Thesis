@@ -5,9 +5,22 @@ public class Item : MonoBehaviour, IInteractable
     public GameObject Owner { get; set; }
     [field: SerializeField] public ItemData Data { get; private set; }
 
+    [SerializeField] private ObjectiveHighlight highlight;
+    public bool hasInteracted = false;
+
     void Awake()
     {
         Owner = gameObject;
+    }
+
+    void OnEnable()
+    {
+        GameEvent.OnObjectiveReset += HandleObjectiveReset;
+    }
+
+    void OnDisable()
+    {
+        GameEvent.OnObjectiveReset -= HandleObjectiveReset;
     }
 
     public virtual bool CanInteract(GameObject interactor)
@@ -31,6 +44,13 @@ public class Item : MonoBehaviour, IInteractable
         if (!CanInteract(interactor))
             return;
 
-        Debug.Log($"{Data.itemName} was interacted by {interactor.name}");
+        if (highlight != null && !hasInteracted && highlight.canHighlight)
+            GameEvent.OnChangeObjective?.Invoke();
+    }
+
+    private void HandleObjectiveReset(ObjectiveHighlight resetHighlight)
+    {
+        if (resetHighlight == highlight)
+            hasInteracted = false;
     }
 }

@@ -32,6 +32,8 @@ public class Door : Interactable
 
     public override void Interact(GameObject interactor)
     {
+        base.Interact(interactor);
+
         if (currentLock != null && currentLock.IsLocked)
         {
             currentLock.Interact(interactor);

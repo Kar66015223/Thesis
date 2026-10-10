@@ -7,6 +7,7 @@ public class ObjectiveHighlight : MonoBehaviour
     private int originalLayer;
 
     private bool isHighlighted = false;
+    public bool canHighlight = false;
 
     void Start()
     {
@@ -19,7 +20,7 @@ public class ObjectiveHighlight : MonoBehaviour
 
     public void ApplyHighlight()
     {
-        if (isHighlighted)
+        if (isHighlighted || !canHighlight)
             return;
 
         SetLayerRecursively(gameObject, highlightLayerIndex);

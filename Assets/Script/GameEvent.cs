@@ -24,4 +24,8 @@ public static class GameEvent
     // Enemy
     public static Action<EnemyController> OnChangeEnemyPath;
     public static Action OnChangeAllEnemyPath;
+
+    // Stage
+    public static Action OnChangeObjective;
+    public static Action<ObjectiveHighlight> OnObjectiveReset;
 }
