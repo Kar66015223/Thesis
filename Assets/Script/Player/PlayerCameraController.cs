@@ -22,13 +22,13 @@ public class PlayerCameraController
     private float targetFOV;
 
     public float runFOVChange = 100f;
-    [HideInInspector] public bool isRunning;
-
     public float crouchFOVChange = 80f;
-    [HideInInspector] public bool isCrouching;
-
     public float scanSkillFOVChange = 60f;
+
+    [HideInInspector] public bool isRunning;
+    [HideInInspector] public bool isCrouching;
     [HideInInspector] public bool isDemonEyeActive;
+    [HideInInspector] public bool isTired;
 
 
     [Header("Camera Target Positioning")]
@@ -43,10 +43,12 @@ public class PlayerCameraController
     private float currentCamHeight;
 
     [Header("Camera VFX")]
-    [SerializeField] private Volume greyScreenVolume;
+    [SerializeField] private Volume grayScreenVol;
     [SerializeField] private float volumeFadeSpeed = 10f;
+    private float curGrayScreenWeight;
 
-    private float currentVolumeWeight;
+    [SerializeField] private Volume blackVignetteVol;
+    private float curBlackVignetteWeight;
 
     public void Initialize(PlayerController controller)
     {
@@ -58,7 +60,7 @@ public class PlayerCameraController
 
         currentCamHeight = standCamHeight;
         targetFOV = defaultFOV;
-        currentVolumeWeight = 0f;
+        curGrayScreenWeight = 0f;
     }
 
     public void Update()
@@ -110,15 +112,26 @@ public class PlayerCameraController
     public void UpdateCameraVFX()
     {
         if (isDemonEyeActive)
-            currentVolumeWeight = 1f;
+            curGrayScreenWeight = 1f;
         else
-            currentVolumeWeight = 0f;
+            curGrayScreenWeight = 0f;
 
-        greyScreenVolume.weight = Mathf.Lerp(
-            greyScreenVolume.weight, currentVolumeWeight, volumeFadeSpeed * Time.deltaTime);
+        grayScreenVol.weight = Mathf.Lerp(
+            grayScreenVol.weight, curGrayScreenWeight, volumeFadeSpeed * Time.deltaTime);
 
-        if (Mathf.Abs(greyScreenVolume.weight - currentVolumeWeight) < 0.01f)
-            greyScreenVolume.weight = currentVolumeWeight;
+        if (Mathf.Abs(grayScreenVol.weight - curGrayScreenWeight) < 0.01f)
+            grayScreenVol.weight = curGrayScreenWeight;
+
+        if (isTired)
+            curBlackVignetteWeight = 1f;
+        else
+            curBlackVignetteWeight = 0f;
+
+        blackVignetteVol.weight = Mathf.Lerp(
+            blackVignetteVol.weight, curBlackVignetteWeight, volumeFadeSpeed * Time.deltaTime);
+
+        if (Mathf.Abs(blackVignetteVol.weight - curBlackVignetteWeight) < 0.01f)
+            blackVignetteVol.weight = curBlackVignetteWeight;
     }
 
     // public void ToggleShake(bool isOn)

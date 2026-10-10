@@ -14,4 +14,5 @@ public abstract class Skill
     public abstract void Use();
     public abstract void HoldUse(bool isHolding);
     public abstract void HandleUse();
+    public virtual void Tick(float deltaTime) {}
 }

@@ -1,14 +1,15 @@
-using System.Collections;
 using UnityEngine;
 
 public class Tackle : Skill
 {
-    private float dashRange;
-    private float dashDuration;
-    private bool isDashing = false;
+    private TackleData data;
 
-    public Tackle(SkillContext context, float dashRange, float dashDuration)
+    private bool isDashing = false;
+    private float dashElapsed = 0f;
+
+    public Tackle(TackleData data, SkillContext context)
     {
+        this.data = data;
         skillName = "Tackle";
         skillDesc = "Dash and tackle targeted enemy, push them back and stun them briefly";
         type = SkillType.Physical;
@@ -16,36 +17,30 @@ public class Tackle : Skill
         coolDown = 10f;
         cost = 30f;
         this.context = context;
-
-        this.dashRange = dashRange;
-        this.dashDuration = dashDuration;
     }
 
     public override void Use()
     {
-        Debug.Log("Used tackle skill");
+        if (isDashing)
+            return;
+        isDashing = true;
+        dashElapsed = 0f;
     }
 
-    private IEnumerator DashRoutine(GameObject user)
+    public override void Tick(float deltaTime)
     {
-        isDashing = true;
+        if (!isDashing)
+            return;
 
-        if (user.TryGetComponent(out CharacterController ctrl))
-            ctrl.enabled = false;
+        dashElapsed += Time.deltaTime;
+        float t = dashElapsed / data.dashDuration;
+        float speed = data.dashRange / data.dashDuration;
 
-        float elapsedTime = 0f;
-        while (elapsedTime < dashDuration)
-        {
-            float normalizedTime = elapsedTime / dashDuration;
-            user.transform.Translate(Vector3.forward * Time.deltaTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
+        if (context.User.TryGetComponent(out CharacterController ctrl))
+            ctrl.Move(deltaTime * speed * context.User.transform.forward);
 
-        if (user.TryGetComponent(out CharacterController _))
-            ctrl.enabled = false;
-
-        isDashing = false;
+        if (dashElapsed >= data.dashDuration)
+            isDashing = false;
     }
 
     public override void HoldUse(bool isHolding) {}

@@ -9,9 +9,8 @@ public class SkillManager : MonoBehaviour
     public Skill EquippedPhysSkill { get; private set; }
     private SkillContext context;
 
-    [Header("Tackle Setting")]
-    [SerializeField] private float dashRange = 1f;
-    [SerializeField] private float dashDuration = 1f;
+    [Header("Skills Data")]
+    [SerializeField] private TackleData tackleData;
 
     private PlayerInputHandler inputHandler;
 
@@ -33,14 +32,20 @@ public class SkillManager : MonoBehaviour
 
     void Start()
     {
-        AllPhysSkills.Add(new Tackle(context, dashRange, dashDuration));
+        // AllPhysSkills.Add(new Tackle(tackleData, context));
         EquippedPhysSkill = AllPhysSkills.FirstOrDefault();
+    }
 
-        Debug.Log(EquippedPhysSkill.skillName);
+    void Update()
+    {
+        EquippedPhysSkill?.Tick(Time.deltaTime);
     }
 
     public void UseEquippedPhysSkill(bool isHolding)
     {
+        if (EquippedPhysSkill == null)
+            return;
+
         switch(EquippedPhysSkill.usage)
         {
             case SkillUsage.Press:

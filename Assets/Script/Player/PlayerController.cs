@@ -109,6 +109,7 @@ public class PlayerController : MonoBehaviour
         UpdateColliderSize();
 
         camController.Update();
+        camController.isTired = stamina.isExhausted;
     }
 
     private void UpdatePlayerState()

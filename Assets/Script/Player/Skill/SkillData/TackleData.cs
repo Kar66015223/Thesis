@@ -1,13 +1,14 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Skills/Tackle")]
+[CreateAssetMenu(menuName = "Scriptable Objects/Skills/Tackle")]
 public class TackleData : ScriptableObject
 {
     public string skillName = "Tackle";
+    public string skillDesc = "Dash and tackle targeted enemy, push them back and stun them briefly";
     public float dashRange = 1f;
     public float dashDuration = 1f;
     public float coolDown = 10f;
     public float cost = 30f;
     public SkillUsage usage = SkillUsage.Press;
-    // add icons, descriptions, etc.
+    public Sprite icon;
 }
