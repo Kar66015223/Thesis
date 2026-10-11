@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c940f67efb94947984c2d0dc22a529, type: 3}
   m_Name: MerchantDialogue
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
-  npcName: 
-  dialogueText: 
-  choices: []
+  npcName: YoungerBrother
+  dialogueText: 1
+  choices:
+  - choiceText: 11
+    responseText: 111
+  - choiceText: 22
+    responseText: 222
+  - choiceText: 33
+    responseText: 333
