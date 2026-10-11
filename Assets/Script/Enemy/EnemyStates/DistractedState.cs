@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class DistractedState : IEnemyState
 {
@@ -32,7 +31,7 @@ public class DistractedState : IEnemyState
         }
         else
         {
-            ctrl.Agent.SetDestination(sound.Position);
+            ctrl.SetDestination(sound.Position);
             GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.DistractedMove);
         }
     }
@@ -67,13 +66,12 @@ public class DistractedState : IEnemyState
 
     private void HandleMoveTo()
     {
-        bool reachedDestination =
-            !ctrl.Agent.pathPending && ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance;
+        EnemyDoorNavigation doorNav = ctrl.DoorNavigation;
+        bool atPathEnd = !ctrl.Agent.pathPending &&
+            ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance;
 
-        bool isInvalidPath =
-            !ctrl.Agent.pathPending && ctrl.Agent.pathStatus == NavMeshPathStatus.PathInvalid;
-
-        if (reachedDestination || isInvalidPath)
+        bool finished = doorNav.HasArrived || (doorNav.IsBlocked && atPathEnd);
+        if (finished)
         {
             if (sound.Reaction == EnemyReaction.RunTo)
                 ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);

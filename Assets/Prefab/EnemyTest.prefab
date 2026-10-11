@@ -80,7 +80,8 @@ GameObject:
   - component: {fileID: 929758801589411030}
   - component: {fileID: 8598886566586778322}
   - component: {fileID: 605987399963757269}
-  m_Layer: 8
+  - component: {fileID: 6438899143919878195}
+  m_Layer: 0
   m_Name: EnemyTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -341,6 +342,23 @@ MonoBehaviour:
     DissipationDistance: 100
     PropagationSpeed: 343
   DefaultVelocity: {x: 0.1, y: 0, z: 0}
+--- !u!114 &6438899143919878195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8649723213959183877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee4cfda07fc875145b0c0c4d6ca6faef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDoorNavigation
+  destSearchRadius: 100
+  doorArrivalTolerance: 0.2
+  repathDelay: 0.2
+  retryDelay: 1
+  destReachTolerance: 1.5
 --- !u!1001 &525169585230772938
 PrefabInstance:
   m_ObjectHideFlags: 0

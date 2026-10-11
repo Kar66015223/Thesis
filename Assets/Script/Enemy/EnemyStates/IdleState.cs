@@ -15,7 +15,7 @@ public class IdleState : IEnemyState
         ctrl.Agent.updateRotation = true;
         ctrl.Agent.stoppingDistance = 0f;
 
-        ctrl.Agent.SetDestination(ctrl.idlePoint.position);
+        ctrl.SetDestination(ctrl.idlePoint.position);
         arrived = false;
     }
 

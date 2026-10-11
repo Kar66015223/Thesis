@@ -27,7 +27,7 @@ public class PatrolState : IEnemyState
 
         if (!destinationSet)
         {
-            ctrl.Agent.SetDestination(points[curTargetIndex].position);
+            ctrl.SetDestination(points[curTargetIndex].position);
             destinationSet = true;
             return;
         }

@@ -1,13 +1,15 @@
 using System.Collections;
-using Unity.AI.Navigation;
+using UnityEngine.AI;
 using UnityEngine;
+using Unity.AI.Navigation;
 
 public class Door : Interactable
 {
     private readonly int IsOpenHash = Animator.StringToHash("IsOpen");
     private Animator anim;
-    private bool isOpen = false;
 
+    private bool isOpen = false;
+    public bool IsOpen => isOpen;
     private Lock currentLock;
 
     [SerializeField] private Transform playerPointFront;
@@ -57,15 +59,7 @@ public class Door : Interactable
             interactor.transform.position = targetPoint.position;
         }
 
-        isOpen = !isOpen;
-
-        if(link != null)
-            link.enabled = isOpen;
-            
-        anim.SetBool(IsOpenHash, isOpen);
-        StartCoroutine(TurnOffCollider(colDisableWaitTime));
-
-        Debug.Log($"door interacted by {interactor.name}");
+        SetDoorOpen(!isOpen);
     }
 
     IEnumerator TurnOffCollider(float offTime)
@@ -84,5 +78,81 @@ public class Door : Interactable
         float distanceToB = Vector3.Distance(playerPos, playerPointBack.position);
 
         return distanceToA < distanceToB ? playerPointFront : playerPointBack;
+    }
+
+    public bool TryGetReachableApproach(
+        Vector3 from,
+        int areaMask,
+        out Transform approachPoint)
+    {
+        approachPoint = null;
+
+        bool canReachFront = TryGetPathLenght(
+            from, playerPointFront, areaMask, out float frontLength);
+
+        bool canReachBack = TryGetPathLenght(
+            from, playerPointBack, areaMask, out float backLength);
+
+        if (!canReachFront && !canReachBack)
+            return false;
+
+        if (canReachFront &&
+            (!canReachBack || frontLength <= backLength))
+        {
+            approachPoint = playerPointFront;
+        }
+        else
+            approachPoint = playerPointBack;
+
+        return true;
+    }
+
+    private bool TryGetPathLenght(
+        Vector3 from,
+        Transform point,
+        int areaMask,
+        out float pathLength)
+    {
+        pathLength = 0f;
+
+        if (point == null)
+            return false;
+
+        NavMeshPath path = new();
+        bool calculated = NavMesh.CalculatePath(from, point.position, areaMask, path);
+
+        if (!calculated || path.status != NavMeshPathStatus.PathComplete)
+            return false;
+
+        Vector3[] corners = path.corners;
+        for (int i = 1; i < corners.Length; i++)
+        {
+            pathLength += Vector3.Distance(corners[i - 1], corners[i]);
+        }
+
+        return true;
+    }
+
+    public bool OpenForEnemy()
+    {
+        if (isOpen)
+            return true;
+
+        if (currentLock != null && currentLock.IsLocked)
+            currentLock.ForceUnlock();
+
+        SetDoorOpen(true);
+        return true;
+    }
+
+    private void SetDoorOpen(bool open)
+    {
+        isOpen = open;
+
+        if (link != null)
+            link.enabled = true;
+
+        anim.SetBool(IsOpenHash, isOpen);
+        StartCoroutine(TurnOffCollider(colDisableWaitTime));
     }
 }

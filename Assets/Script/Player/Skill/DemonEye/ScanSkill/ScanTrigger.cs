@@ -23,7 +23,6 @@ public class ScanTrigger : MonoBehaviour
             if (!allScannedObjtive.Contains(objtive))
             {
                 allScannedObjtive.Add(objtive);
-                Debug.Log($"Scanned: {other.gameObject.name}");
             }
         }
     }
@@ -45,7 +44,6 @@ public class ScanTrigger : MonoBehaviour
             if (allScannedObjtive.Contains(objtive))
             {
                 allScannedObjtive.Remove(objtive);
-                Debug.Log($"Removed: {other.gameObject.name}");
             }
         }
     }

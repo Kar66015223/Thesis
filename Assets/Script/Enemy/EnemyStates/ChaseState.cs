@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class ChaseState : IEnemyState
 {
@@ -24,7 +23,7 @@ public class ChaseState : IEnemyState
         ctrl.Agent.stoppingDistance = 2f;
         giveUpTimer = 0f;
 
-        ctrl.Agent.SetDestination(target.position);
+        ctrl.SetDestination(target.position);
         lastTargetPos = target.position;
 
         GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.Chase);
@@ -37,7 +36,7 @@ public class ChaseState : IEnemyState
 
         if (Vector3.Distance(target.position, lastTargetPos) > 0.5f)
         {
-            ctrl.Agent.SetDestination(target.position);
+            ctrl.SetDestination(target.position);
             lastTargetPos = target.position;
         }
 
@@ -49,13 +48,9 @@ public class ChaseState : IEnemyState
         float actualDistance = direction.magnitude;
         float catchDistance  = ctrl.Agent.stoppingDistance + 0.5f;
 
-        bool reachedNavMeshDestination =
-            !ctrl.Agent.pathPending && ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance;
-
-        bool isInvalidOrPartialPath =
-            !ctrl.Agent.pathPending &&
-            (ctrl.Agent.pathStatus == NavMeshPathStatus.PathInvalid ||
-                ctrl.Agent.pathStatus == NavMeshPathStatus.PathPartial);
+        EnemyDoorNavigation doorNav = ctrl.DoorNavigation;
+        bool reachedNavMeshDest = doorNav.HasArrived;
+        bool isInvalidOrPartialPath = doorNav.IsBlocked;
 
         PlayerStruggle player = target.GetComponentInParent<PlayerStruggle>();
 
@@ -73,13 +68,15 @@ public class ChaseState : IEnemyState
                 ctrl.ChangeState(new CatchingState(ctrl, player));
             }
         }
-        else if (reachedNavMeshDestination || isInvalidOrPartialPath)
+        else if (reachedNavMeshDest || isInvalidOrPartialPath)
         {
             giveUpTimer += Time.deltaTime;
             if (giveUpTimer >= ctrl.distractWaitTime)
             {
                 ctrl.ReturnToDefaultState();
             }
+
+            Debug.Log("Path invalid");
         }
         else
         {

@@ -6,6 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyVision))]
 [RequireComponent(typeof(EnemyMovement))]
+[RequireComponent(typeof(EnemyDoorNavigation))]
 public class EnemyController : MonoBehaviour, IHearable
 {
     public NavMeshAgent Agent { get; private set; }
@@ -13,6 +14,7 @@ public class EnemyController : MonoBehaviour, IHearable
     public EnemyMovement Movement { get; private set; }
     public IEnemyState CurrentState { get; private set; }
     public CinemachineImpulseSource ImpulseSource { get; private set; }
+    public EnemyDoorNavigation DoorNavigation { get; private set; }
     public EnemyStepTracking tracking = new();
 
     [SerializeField] private TMP_Text stateUIText;
@@ -47,6 +49,8 @@ public class EnemyController : MonoBehaviour, IHearable
         Vision = GetComponent<EnemyVision>();
         Movement = GetComponent<EnemyMovement>();
         ImpulseSource = GetComponent<CinemachineImpulseSource>();
+        DoorNavigation = GetComponent<EnemyDoorNavigation>();
+        DoorNavigation.Initialize(this);
 
         tracking.Initialize(this);
     }
@@ -55,7 +59,10 @@ public class EnemyController : MonoBehaviour, IHearable
 
     void Update()
     {
-        CurrentState?.Update();
+        bool handlingDoor = DoorNavigation != null && DoorNavigation.TickBeforeStateUpdate();
+        
+        if(!handlingDoor)
+            CurrentState?.Update();
 
         if (stateUIText != null && CurrentState != null)
             stateUIText.text = CurrentState.GetType().Name;
@@ -83,6 +90,8 @@ public class EnemyController : MonoBehaviour, IHearable
 
     public void ChangeState(IEnemyState newState)
     {
+        DoorNavigation.CancelDoorApproach();
+        
         CurrentState?.Exit();
         CurrentState = newState;
         CurrentState?.Enter();
@@ -118,7 +127,7 @@ public class EnemyController : MonoBehaviour, IHearable
         idlePoint = point;
         patrolPoints = new Transform[0];
         if (idlePoint != null)
-            Agent.SetDestination(idlePoint.position);
+            SetDestination(idlePoint.position);
     }
 
     public void ApplyPatrolPoints(Transform[] points)
@@ -127,8 +136,6 @@ public class EnemyController : MonoBehaviour, IHearable
         idlePoint = null;
     }
 
-    public void ShakeScreen()
-    {
-        ImpulseSource.GenerateImpulse();
-    }
+    public void ShakeScreen() => ImpulseSource.GenerateImpulse();
+    public void SetDestination(Vector3 dest) => DoorNavigation.SetDestination(dest);
 }

@@ -78,7 +78,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5397496004980002200
 Transform:
   m_ObjectHideFlags: 0
@@ -550,6 +550,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Door
   <InteractPromptPos>k__BackingField: {fileID: 3040639045008216916}
   interactPromptText: '[Space]'
+  highlight: {fileID: 0}
+  hasInteracted: 0
   playerPointFront: {fileID: 154731593054687011}
   playerPointBack: {fileID: 2639513790578623354}
   colDisableWaitTime: 0.5
@@ -567,7 +569,7 @@ NavMeshObstacle:
   m_Extents: {x: 0.08, y: 1, z: 0.5}
   m_MoveThreshold: 0.1
   m_Carve: 1
-  m_CarveOnlyStationary: 0
+  m_CarveOnlyStationary: 1
   m_Center: {x: -0.042000003, y: 1, z: 0.5}
   m_TimeToStationary: 0.5
 --- !u!1 &8355957685578504703
