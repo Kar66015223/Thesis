@@ -32,7 +32,7 @@ public class SkillManager : MonoBehaviour
 
     void Start()
     {
-        // AllPhysSkills.Add(new Tackle(tackleData, context));
+        AllPhysSkills.Add(new Tackle(tackleData, context));
         EquippedPhysSkill = AllPhysSkills.FirstOrDefault();
     }
 

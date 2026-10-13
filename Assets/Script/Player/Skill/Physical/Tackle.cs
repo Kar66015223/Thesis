@@ -33,11 +33,11 @@ public class Tackle : Skill
 
     public override void Use()
     {
-        if (isDashing /* || target == null */)
-            return;
+        // if (isDashing /* || target == null */)
+        //     return;
             
-        isDashing = true;
-        dashElapsed = 0f;
+        // isDashing = true;
+        // dashElapsed = 0f;
     }
 
     public override void Tick(float deltaTime)
