@@ -4,4 +4,6 @@ using UnityEngine;
 public class ItemData : ScriptableObject
 {
     public string itemName;
+    public Sprite icon;
+    [Min(1)] public int maxStack = 1;
 }

@@ -34,6 +34,11 @@ public class Item : MonoBehaviour, IInteractable
                     controller.CurrentState == PlayerState.Hiding)
                     return false;
             }
+
+            // Inventory inv = interactor.GetComponentInChildren<Inventory>();
+            // if (inv == null || Data == null)
+            //     return false;
+
         }
 
         return true;
