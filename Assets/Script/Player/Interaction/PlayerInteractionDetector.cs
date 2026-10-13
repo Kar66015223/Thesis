@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
@@ -9,11 +10,13 @@ public class PlayerInteractionDetector
 
     private GameObject player;
     private PlayerInteractionUI ui;
+    private Collider detectionCol;
 
-    public void Initialize(GameObject player, PlayerInteractionUI ui)
+    public void Initialize(GameObject player, PlayerInteractionUI ui, Collider col)
     {
         this.player = player;
         this.ui = ui;
+        detectionCol = col;
     }
 
     public void AddDetected(Collider other)
@@ -52,21 +55,75 @@ public class PlayerInteractionDetector
 
     public void RemoveInvalids()
     {
-        if (allDetected.Count == 0 && allDetectedObj.Count == 0)
-            return;
-            
         for (int i = allDetected.Count - 1; i >= 0; i--)
         {
-            if (allDetected[i] == null || allDetected[i].Owner == null)
+            IInteractable interactable = allDetected[i];
+
+            bool invalid =
+                interactable == null || (interactable is Object unityObj && unityObj == null);
+
+            GameObject owner = null;
+
+            if (!invalid)
             {
-                allDetected.RemoveAt(i);
+                owner = interactable.Owner;
+
+                invalid =
+                    owner == null || !interactable.CanInteract(player) || !IsOverlapping(owner);
+            }
+
+            if (!invalid)
+                continue;
+
+            string objName =
+                owner != null ? owner.name : "<destroyed interactable>";
+
+            allDetected.RemoveAt(i);
+
+            if (i < allDetectedObj.Count)
                 allDetectedObj.RemoveAt(i);
 
-                Debug.Log($"Removed {allDetected[i].Owner.name}");
-            }
+            // Debug.Log($"Removed invalid: {objName}");
         }
 
         ui.UpdateDisplay();
+    }
+    
+    private bool IsOverlapping(GameObject owner)
+    {
+        if (detectionCol == null || !detectionCol.enabled || !detectionCol.gameObject.activeInHierarchy)
+            return false;
+
+        Collider[] targetCol = owner.GetComponentsInChildren<Collider>();
+        foreach (Collider target in targetCol)
+        {
+            if (target == null ||
+                target == detectionCol ||
+                !target.enabled ||
+                !target.gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            if (!detectionCol.bounds.Intersects(target.bounds))
+                continue;
+
+            bool overlapping = Physics.ComputePenetration(
+                detectionCol,
+                detectionCol.transform.position,
+                detectionCol.transform.rotation,
+                target,
+                target.transform.position,
+                target.transform.rotation,
+                out _,
+                out _
+            );
+
+            if (overlapping)
+                return true;
+        }
+
+        return false;
     }
 
     public List<IInteractable> GetAllDetected() => allDetected;

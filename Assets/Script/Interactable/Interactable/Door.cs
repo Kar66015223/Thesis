@@ -41,14 +41,17 @@ public class Door : Interactable
             currentLock.Interact(interactor);
             return;
         }
-        
+
         Transform targetPoint = GetClosestPoint(interactor.transform.position);
+        if (interactor.TryGetComponent(out PlayerController ctrl))
+            ctrl.SetCanMove(false);
 
         if (interactor.TryGetComponent(out CharacterController charController))
         {
             charController.enabled = false;
 
             interactor.transform.position = targetPoint.position;
+            
             if (charController.TryGetComponent(out PlayerController controller))
                 controller.SetModelRotation(targetPoint);
 

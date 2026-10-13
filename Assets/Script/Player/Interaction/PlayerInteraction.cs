@@ -11,8 +11,9 @@ public class PlayerInteraction : MonoBehaviour
     void Awake()
     {
         player = GetComponentInParent<PlayerController>().gameObject;
+        Collider col = GetComponent<Collider>();
 
-        detector.Initialize(player, ui);
+        detector.Initialize(player, ui, col);
         handler.Initialize(player);
         ui.Initialize(player, detector, handler);
     }

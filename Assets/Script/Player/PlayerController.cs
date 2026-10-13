@@ -83,8 +83,6 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnInteractSpacebarInput += HandleInteractSpacebarInput;
 
         inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage; // <-- Move to SkillManager later
-
-        // GameEvent.OnSwitchActionMap += SwitchActionMap;
     }
 
     void OnDisable()
@@ -96,8 +94,6 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnInteractSpacebarInput -= HandleInteractSpacebarInput;
 
         inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage; // <-- Move to SkillManager later
-
-        // GameEvent.OnSwitchActionMap -= SwitchActionMap;
     }
 
     void Update()
@@ -129,8 +125,7 @@ public class PlayerController : MonoBehaviour
             ChangeState(PlayerState.Normal);
     }
 
-    private void HandleMoveInput(Vector2 input) 
-        => moveInput = input;
+    private void HandleMoveInput(Vector2 input) => moveInput = input;
 
     private void HandleRunInput(bool isInput)
     {
@@ -210,6 +205,16 @@ public class PlayerController : MonoBehaviour
         camController.camRight.Normalize();
 
         moveDir = camController.camForward * moveInput.y + camController.camRight * moveInput.x;
+
+        if(!canMove)
+        {
+            isMoving = false;
+
+            if (stamina != null)
+                stamina.isMoving = false;
+
+            return;
+        }
 
         if (charController.isGrounded && verticalVelocity < 0)
         {
@@ -298,8 +303,15 @@ public class PlayerController : MonoBehaviour
     public void SetCanMove(bool flag)
     {
         canMove = flag;
+        
         if (!canMove)
+        {
+            isMoving = false;
+            if (stamina != null)
+                stamina.isMoving = false;
+
             anim.SetMove(0);
+        }
     }
 
     public void SetHiding(bool flag, Hidable place, Vector3 targetPos)
@@ -321,12 +333,6 @@ public class PlayerController : MonoBehaviour
         => CurrentState = newState;
 
     public Vector3 GetForward() => playerModel.transform.forward;
-
-    // private void SwitchActionMap(string mapName)
-    // {
-    //     bool isUI = mapName == PlayerConstants.ACTIONMAP_UI;
-    //     // camController.ToggleCameraInput(!isUI);
-    // }
     
     // public void ToggleShake(bool isOn) => camController.ToggleShake(isOn);
 }
