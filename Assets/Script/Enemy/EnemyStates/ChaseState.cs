@@ -26,7 +26,7 @@ public class ChaseState : IEnemyState
         ctrl.SetDestination(target.position);
         lastTargetPos = target.position;
 
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.Chase);
+        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.Chase);
     }
 
     public void Update()
@@ -88,7 +88,7 @@ public class ChaseState : IEnemyState
     public void Exit()
     {
         ctrl.Agent.updateRotation = true;
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.None);
+        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.None);
 
         ctrl.tracking.ResumeInterruptedStep();
     }

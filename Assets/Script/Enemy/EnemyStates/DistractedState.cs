@@ -27,12 +27,12 @@ public class DistractedState : IEnemyState
             ctrl.Agent.updateRotation = false;
             ctrl.Agent.isStopped = true;
 
-            GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.DistractedLook);
+            GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.DistractedLook);
         }
         else
         {
             ctrl.SetDestination(sound.Position);
-            GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.DistractedMove);
+            GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.DistractedMove);
         }
     }
 
@@ -88,7 +88,7 @@ public class DistractedState : IEnemyState
         ctrl.Agent.updateRotation = true;
         ctrl.Agent.isStopped = false;
 
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.None);
+        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.None);
     }
     
     public void OnHearSound(SoundSignal newSound) => ctrl.ChangeState(new DistractedState(ctrl, newSound));

@@ -11,8 +11,8 @@ public class SkillRadialMenu : MonoBehaviour
     [SerializeField] private GameObject slotPrefab;
 
     public List<RectTransform> slots = new();
-    [SerializeField] private RectTransform selectedSlot;
-    [SerializeField] private float shortestDistance = 400f;
+    // [SerializeField] private RectTransform selectedSlot;
+    // [SerializeField] private float shortestDistance = 400f;
     private Dictionary<Skill, GameObject> skillSlotPair = new();
 
     private SkillManager manager;
@@ -37,7 +37,6 @@ public class SkillRadialMenu : MonoBehaviour
     void Update()
     {
         UpdateLayout();
-        selectedSlot = GetClosestSlotToCursor();
     }
 
     void ToggleMenu(bool isOn)
@@ -77,36 +76,36 @@ public class SkillRadialMenu : MonoBehaviour
         }
     }
     
-    RectTransform GetClosestSlotToCursor()
-    {
-        Vector3 mouseScreenPos = Input.mousePosition;
+    // RectTransform GetClosestSlotToCursor()
+    // {
+    //     Vector3 mouseScreenPos = Input.mousePosition;
 
-        RectTransform closest = null;
-        float minDist = float.MaxValue;
+    //     RectTransform closest = null;
+    //     float minDist = float.MaxValue;
 
-        foreach (var slot in slots)
-        {
-            Vector2 slotScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, slot.position);
-            float distance = Vector2.Distance(mouseScreenPos, slotScreenPos);
+    //     foreach (var slot in slots)
+    //     {
+    //         Vector2 slotScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, slot.position);
+    //         float distance = Vector2.Distance(mouseScreenPos, slotScreenPos);
 
-            if (slot.TryGetComponent(out SkillSlot ss))
-                ss.isSelected = false;
+    //         if (slot.TryGetComponent(out SkillSlot ss))
+    //             ss.isSelected = false;
 
-            if (distance < minDist)
-            {
-                minDist = distance;
-                closest = slot;
-            }
-        }
+    //         if (distance < minDist)
+    //         {
+    //             minDist = distance;
+    //             closest = slot;
+    //         }
+    //     }
 
-        if(closest != null && minDist <= shortestDistance)
-        {
-            if (closest.TryGetComponent(out SkillSlot ss))
-                ss.isSelected = true;
+    //     if(closest != null && minDist <= shortestDistance)
+    //     {
+    //         if (closest.TryGetComponent(out SkillSlot ss))
+    //             ss.isSelected = true;
 
-            return closest;
-        }
+    //         return closest;
+    //     }
 
-        return null;
-    }
+    //     return null;
+    // }
 }

@@ -20,6 +20,8 @@ public class EnemyController : MonoBehaviour, IHearable
     [SerializeField] private TMP_Text stateUIText;
 
     [Header("Shared Settings")]
+    public Transform stateUIPoint;
+    
     public float walkSpeed = 3f;
     public float runSpeed = 5f;
 

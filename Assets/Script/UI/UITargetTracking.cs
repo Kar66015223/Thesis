@@ -27,10 +27,10 @@ public class UITargetTracking : MonoBehaviour
         //     screenPos.y <= margin ||
         //     screenPos.y >= Screen.height - margin;
 
-        imageUI.gameObject.SetActive(true);
-
         Vector3 screenPos = cam.WorldToScreenPoint(target.position);
         PositionImage(screenPos);
+
+        imageUI.gameObject.SetActive(true);
     }
 
     private void PositionImage(Vector3 screenPos)

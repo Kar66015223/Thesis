@@ -21,7 +21,7 @@ public class ConfirmingState : IEnemyState
         ctrl.Agent.isStopped = true;
         ctrl.Agent.updateRotation = false;
 
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.transform, EnemyState.Confirming);
+        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.Confirming);
     }
 
     public void Update()
