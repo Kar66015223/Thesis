@@ -2609,6 +2609,49 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+--- !u!114 &1236639710 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4278840840141453418, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+  m_PrefabInstance: {fileID: 1236639709}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+--- !u!224 &1236639711 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3968953079910377066, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+  m_PrefabInstance: {fileID: 1236639709}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1236639712 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7868796299918643988, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+  m_PrefabInstance: {fileID: 1236639709}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1236639713 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 889704396706555617, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+  m_PrefabInstance: {fileID: 1236639709}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &1236639714 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 767914199627536315, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+  m_PrefabInstance: {fileID: 1236639709}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1256285063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3139,6 +3182,56 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2114281511}
   m_SourcePrefab: {fileID: 100100000, guid: 6cd109157820382499991e760a74c654, type: 3}
+--- !u!1 &1789847931
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1789847933}
+  - component: {fileID: 1789847932}
+  m_Layer: 0
+  m_Name: DialogueManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1789847932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789847931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f57bad3ea664104591fbfb4ba14c192, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
+  dialoguePanel: {fileID: 1236639714}
+  npcNameText: {fileID: 1236639713}
+  dialogueText: {fileID: 1236639712}
+  choicesParent: {fileID: 1236639711}
+  choiceButtonPrefab: {fileID: 1038674080205216261, guid: 6becce70786edf34592992cf985fec73, type: 3}
+  playerMovement: {fileID: 1236639710}
+--- !u!4 &1789847933
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1789847931}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.12798, y: 0, z: 16.86736}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1813731728
 GameObject:
   m_ObjectHideFlags: 0
@@ -4131,6 +4224,7 @@ SceneRoots:
   - {fileID: 664307289}
   - {fileID: 1028936630}
   - {fileID: 1983876400}
+  - {fileID: 1789847933}
   - {fileID: 1236639709}
   - {fileID: 266988256}
   - {fileID: 519780300}

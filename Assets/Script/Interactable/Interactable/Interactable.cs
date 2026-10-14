@@ -8,7 +8,7 @@ public class Interactable : MonoBehaviour, IInteractable
     [SerializeField] private string interactPromptText = "[Space]";
 
     [SerializeField] private ObjectiveHighlight highlight;
-    public bool hasInteracted = false;
+    [HideInInspector] public bool hasInteracted = false;
 
     protected virtual void Awake()
     {
