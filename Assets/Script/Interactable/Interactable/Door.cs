@@ -23,6 +23,8 @@ public class Door : Interactable
     protected override void Awake()
     {
         base.Awake();
+        InteractButton = InteractButton.F;
+        
         Owner = gameObject;
         anim = GetComponentInChildren<Animator>();
         col = GetComponent<Collider>();

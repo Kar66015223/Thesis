@@ -5,7 +5,9 @@ public class Interactable : MonoBehaviour, IInteractable
 {
     public GameObject Owner { get; set; }
     [field: SerializeField] public Transform InteractPromptPos { get; private set; }
-    [SerializeField] private string interactPromptText = "[Space]";
+
+    private InteractButton _interactButton;
+    public InteractButton InteractButton { get => _interactButton; set => _interactButton = value; }
 
     [SerializeField] private ObjectiveHighlight highlight;
     [HideInInspector] public bool hasInteracted = false;
@@ -60,11 +62,9 @@ public class Interactable : MonoBehaviour, IInteractable
 
         Camera cam = Camera.main;
 
-        // prompt.enabled = isShow;
-
         if (isShow)
         {
-            prompt.text = interactPromptText;
+            prompt.text = $"[{InteractButton}]";
             prompt.transform.position = cam.WorldToScreenPoint(InteractPromptPos.position);
         }
         else

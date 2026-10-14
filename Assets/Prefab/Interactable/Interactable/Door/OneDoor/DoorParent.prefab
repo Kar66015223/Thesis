@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 906526054027363077}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0.3}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -549,7 +549,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
   <InteractPromptPos>k__BackingField: {fileID: 3040639045008216916}
-  interactPromptText: '[Space]'
   highlight: {fileID: 0}
   hasInteracted: 0
   playerPointFront: {fileID: 154731593054687011}

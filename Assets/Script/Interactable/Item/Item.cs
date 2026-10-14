@@ -5,12 +5,16 @@ public class Item : MonoBehaviour, IInteractable
     public GameObject Owner { get; set; }
     [field: SerializeField] public ItemData Data { get; private set; }
 
+    private InteractButton _interactButton;
+    public InteractButton InteractButton { get => _interactButton; set => _interactButton = value; }
+
     [SerializeField] private ObjectiveHighlight highlight;
-    public bool hasInteracted = false;
+    [HideInInspector] public bool hasInteracted = false;
 
     void Awake()
     {
         Owner = gameObject;
+        InteractButton = InteractButton.F;
     }
 
     void OnEnable()
@@ -48,6 +52,8 @@ public class Item : MonoBehaviour, IInteractable
     {
         if (!CanInteract(interactor))
             return;
+
+        Debug.Log($"{Owner.name} interacted");
 
         if (highlight != null && !hasInteracted && highlight.canHighlight)
             GameEvent.OnChangeObjective?.Invoke();

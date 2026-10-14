@@ -82,7 +82,7 @@ public class PlayerInteractionUI
         }
 
         selection.UpdateSelection(allItems);
-        handler.SetSelectedItem(selection.GetSelectedItem());
+        handler.SetSelected(selection.GetSelectedItem());
     }
     
     private void UpdateInteractableDisplay()
@@ -106,9 +106,9 @@ public class PlayerInteractionUI
         currentActiveInteractables = allInteractable;
 
         if (allInteractable.Count > 0)
-            handler.SetSelectedInteractable(allInteractable[0]);
+            handler.SetSelected(allInteractable[0]);
         else
-            handler.SetSelectedInteractable(null);
+            handler.SetSelected(null);
     }
 
     public Dictionary<Item, GameObject> GetAllItemButtonsPair() => allItemButtonsPair;

@@ -10,6 +10,12 @@ public class Vaultable : Interactable
     [SerializeField] private float vaultHeight = 1.0f;
     private bool isVaulting = false;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        InteractButton = InteractButton.Spacebar;
+    }
+
     public override bool CanInteract(GameObject interactor)
     {
         return base.CanInteract(interactor) && !isVaulting;

@@ -33,27 +33,27 @@ public class Tackle : Skill
 
     public override void Use()
     {
-        // if (isDashing /* || target == null */)
-        //     return;
+        if (isDashing || target == null)
+            return;
             
-        // isDashing = true;
-        // dashElapsed = 0f;
+        isDashing = true;
+        dashElapsed = 0f;
     }
 
     public override void Tick(float deltaTime)
     {
-        // Collider[] cols = Physics.OverlapSphere(
-        //     context.User.transform.position, data.dashRange, data.enemyLayer);
+        Collider[] cols = Physics.OverlapSphere(
+            context.User.transform.position, data.dashRange, data.enemyLayer);
 
-        // if (cols.Length == 0) 
-        //     return;
+        if (cols.Length == 0) 
+            return;
 
-        // Collider best = cols.OrderBy(
-        //     c => Vector3.Distance(context.User.transform.position, c.transform.position)).First();
+        Collider best = cols.OrderBy(
+            c => Vector3.Distance(context.User.transform.position, c.transform.position)).First();
 
-        // target = best.GetComponent<EnemyController>();
+        target = best.GetComponent<EnemyController>();
         
-        if (!isDashing /* || target == null */)
+        if (!isDashing || target == null)
             return;
 
         dashElapsed += Time.deltaTime;
@@ -70,6 +70,7 @@ public class Tackle : Skill
         {
             isDashing = false;
             playerCtrl.SetCanMove(true);
+            target.ChangeState(new StunnedState(target));
         }
     }
 

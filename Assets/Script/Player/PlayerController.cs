@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -158,7 +160,11 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        canInteract = interaction.detector.GetAllDetectedItems().Count > 0;
+        List<IInteractable> validDetected = interaction.detector.GetAllDetected()
+            .Where(d => d.InteractButton == InteractButton.F)
+            .ToList();
+
+        canInteract = validDetected.Count > 0;
         if (!canInteract)
             return;
 
@@ -174,7 +180,11 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        canInteract = interaction.detector.GetAllDetectedInteractables().Count > 0;
+        List<IInteractable> validDetected = interaction.detector.GetAllDetected()
+            .Where(d => d.InteractButton == InteractButton.Spacebar)
+            .ToList();
+
+        canInteract = validDetected.Count > 0;
         if (!canInteract)
             return;
 
