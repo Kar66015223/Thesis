@@ -1,54 +1,51 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PatrolState : IEnemyState
+/// <summary>Loops through the patrol points, pausing briefly at each one.</summary>
+public class PatrolState : EnemyStateBase
 {
-    private EnemyController ctrl;
+    private const float ArrivalTolerance = 0.1f;
+
     private int curTargetIndex;
     private float nextMoveTime;
-
     private bool destinationSet;
 
-    public PatrolState(EnemyController ctrl) 
-        => this.ctrl = ctrl;
+    public PatrolState(EnemyController ctrl) : base(ctrl) { }
 
-    public void Enter()
+    public override void Enter()
     {
-        ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
+        ctrl.Movement.SetBaseSpeed(ctrl.WalkSpeed);
         ctrl.Agent.stoppingDistance = 0f;
         destinationSet = false;
     }
 
-    public void Update()
+    public override void Update()
     {
-        var points = ctrl.patrolPoints;
-        if (points == null || points.Length == 0 || Time.time < nextMoveTime) return;
+        IReadOnlyList<Transform> points = ctrl.PatrolPoints;
+        if (points == null || points.Count == 0 || Time.time < nextMoveTime)
+            return;
 
-        curTargetIndex %= points.Length;
+        curTargetIndex %= points.Count;
 
         if (!destinationSet)
         {
-            ctrl.SetDestination(points[curTargetIndex].position);
+            if (points[curTargetIndex] != null)
+                ctrl.SetDestination(points[curTargetIndex].position);
+
             destinationSet = true;
             return;
         }
 
-        if (!ctrl.Agent.pathPending &&
-            ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance + 0.1f)
+        if (HasReachedDestination(ArrivalTolerance))
         {
-            nextMoveTime = Time.time + ctrl.patrolWaitTime;
-            curTargetIndex = (curTargetIndex + 1) % points.Length;
+            nextMoveTime = Time.time + ctrl.PatrolWaitTime;
+            curTargetIndex = (curTargetIndex + 1) % points.Count;
             destinationSet = false;
         }
     }
 
-    public void Exit()
-    {
-        ctrl.Agent.stoppingDistance = 2f;
-    }
+    public override void Exit() => ctrl.Agent.stoppingDistance = ApproachStoppingDistance;
 
-    public void OnHearSound(SoundSignal sound)
-        => ctrl.ChangeState(new DistractedState(ctrl, sound));
-
-    public void OnSeenTarget(Transform target)
-        => ctrl.ChangeState(new ConfirmingState(ctrl, target));
+    public override void OnHearSound(SoundSignal sound) => ctrl.ChangeState(new DistractedState(ctrl, sound));
+    public override void OnSeenTarget(Transform target) => ctrl.ChangeState(new ConfirmingState(ctrl, target));
 }

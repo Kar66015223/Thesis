@@ -1,20 +1,24 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerController))]
+/// <summary>
+/// The player's side of being caught: takes periodic damage, counts button mashes,
+/// and tells the catcher how it ended. It runs its own loop and only knows the catcher
+/// through <see cref="IPlayerCatcher"/>, so it no longer creates enemy states itself.
+/// </summary>
 [RequireComponent(typeof(PlayerHealth))]
 public class PlayerStruggle : MonoBehaviour
 {
     [SerializeField] private float struggleThreshold = 100f;
     [SerializeField] private float struggleValue = 10f;
-    private float struggleProgress = 0f;
 
-    private float damageCooldownTimer;
-
-    public bool IsCatched { get; private set; } = false;
-    public EnemyController CatchingEnemy { get; private set; }
+    private float struggleProgress;
+    private float damageTimer;
 
     private PlayerHealth hp;
     private PlayerInputHandler inputHandler;
+
+    public bool IsCaught { get; private set; }
+    public IPlayerCatcher CatchingEnemy { get; private set; }
 
     void Awake()
     {
@@ -24,68 +28,75 @@ public class PlayerStruggle : MonoBehaviour
 
     void OnEnable()
     {
-        inputHandler.OnStruggleInput += OnStruggleInput;
+        if (inputHandler != null)
+            inputHandler.OnStruggleInput += HandleStruggleInput;
     }
 
     void OnDisable()
     {
-        inputHandler.OnStruggleInput -= OnStruggleInput;
+        if (inputHandler != null)
+            inputHandler.OnStruggleInput -= HandleStruggleInput;
+
+        if (IsCaught)
+            InputModeService.SetStruggling(false);
     }
 
-    public void EnterStruggle(EnemyController eCtrl)
+    void Update()
     {
-        IsCatched = true;
-        GameEvent.OnSwitchActionMap?.Invoke(PlayerConstants.ACTIONMAP_STRUGGLE);
-        CatchingEnemy = eCtrl;
+        if (!IsCaught)
+            return;
 
-        GameEvent.OnToggleStruggleUI?.Invoke(true);
-    }
-
-    public void UpdateStruggle(float catchDamage, float damageCooldown)
-    {
-        damageCooldownTimer += Time.deltaTime;
-
-        if (damageCooldownTimer >= damageCooldown)
+        damageTimer += Time.deltaTime;
+        if (damageTimer >= CatchingEnemy.DamageInterval)
         {
-            damageCooldownTimer = 0f;
-            hp.TakeDamage(catchDamage);
-            CatchingEnemy.ShakeScreen();
+            damageTimer = 0f;
+            hp.TakeDamage(CatchingEnemy.CatchDamage);
+            CatchingEnemy.OnCatchDamageDealt();
         }
 
-        if (struggleProgress >= struggleThreshold || hp.IsDead)
-        {
-            EndStruggle(hp.IsDead);
-            GameEvent.OnToggleStruggleUI?.Invoke(false);
-        }
+        if (hp.IsDead)
+            EndStruggle(playerEscaped: false);
+        else if (struggleProgress >= struggleThreshold)
+            EndStruggle(playerEscaped: true);
     }
-    
-    private void OnStruggleInput()
-    {
-        AddStruggle(struggleValue);
-    }
-    
-    public void AddStruggle(float amount)
-    {
-        struggleProgress += amount;
-        GameEvent.OnStruggleProgressChanged?.Invoke(Mathf.Clamp01(struggleProgress / struggleThreshold));
-    }
-    
-    public void EndStruggle(bool playerDead)
-    {
-        IsCatched = false;
-        GameEvent.OnSwitchActionMap?.Invoke(PlayerConstants.ACTIONMAP_PLAYER);
 
-        if (!playerDead)
-        {
-            CatchingEnemy.ChangeState(new StunnedState(CatchingEnemy));
-            CatchingEnemy = null;
-        }
-        else
-        {
-            CatchingEnemy.ReturnToDefaultState();
-            CatchingEnemy = null;
-        }
+    /// <summary>Returns false if the player can't be caught right now (already caught or dead).</summary>
+    public bool TryBeginStruggle(IPlayerCatcher catcher)
+    {
+        if (catcher == null || IsCaught || hp.IsDead)
+            return false;
 
+        IsCaught = true;
+        CatchingEnemy = catcher;
         struggleProgress = 0f;
+        damageTimer = 0f;
+
+        InputModeService.SetStruggling(true);
+        PlayerEvents.RaiseStruggleToggled(true);
+        PlayerEvents.RaiseStruggleProgressChanged(0f);
+        return true;
+    }
+
+    private void HandleStruggleInput()
+    {
+        if (!IsCaught)
+            return;
+
+        struggleProgress += struggleValue;
+        PlayerEvents.RaiseStruggleProgressChanged(Mathf.Clamp01(struggleProgress / struggleThreshold));
+    }
+
+    private void EndStruggle(bool playerEscaped)
+    {
+        IPlayerCatcher catcher = CatchingEnemy;
+
+        IsCaught = false;
+        CatchingEnemy = null;
+        struggleProgress = 0f;
+
+        InputModeService.SetStruggling(false);
+        PlayerEvents.RaiseStruggleToggled(false);
+
+        catcher.ReleasePlayer(playerEscaped);
     }
 }

@@ -1,40 +1,25 @@
 using UnityEngine;
 
+/// <summary>Opens freely from <see cref="unlockableSide"/>; from the other side only while the power is out.</summary>
 public class ElectricLock : Lock
 {
     [SerializeField] private bool canUnlock = false;
     [SerializeField] private Transform unlockableSide;
 
-    void OnEnable()
+    void OnEnable() => WorldEvents.LightsOutChanged += SetCanUnlock;
+    void OnDisable() => WorldEvents.LightsOutChanged -= SetCanUnlock;
+
+    public override bool TryUnlock(GameObject interactor)
     {
-        GameEvent.OnLightsOut += SetCanUnlock;
-    }
-
-    void OnDisable()
-    {
-        GameEvent.OnLightsOut -= SetCanUnlock;
-    }
-
-    public override void Interact(GameObject interactor)
-    {
-        base.Interact(interactor);
-
-        Transform playerSide = CurrentDoor.GetClosestPoint(interactor.transform.position);
-        bool isOnUnlockableSide = playerSide == unlockableSide;
-
-        if ((!isOnUnlockableSide && canUnlock) || isOnUnlockableSide)
+        if (IsOnSide(interactor, unlockableSide) || canUnlock)
         {
-            IsLocked = false;
-            CurrentDoor.Interact(interactor);
-            return;
+            SetLocked(false);
+            return true;
         }
 
-        if (!isOnUnlockableSide && !canUnlock)
-        {
-            GameEvent.OnShowTips?.Invoke("Can't open, need to cut the power first");
-            return;
-        }
+        UIEvents.ShowTip("Can't open, need to cut the power first");
+        return false;
     }
 
-    private void SetCanUnlock(bool flag) => canUnlock = flag;
+    private void SetCanUnlock(bool isLightsOut) => canUnlock = isLightsOut;
 }

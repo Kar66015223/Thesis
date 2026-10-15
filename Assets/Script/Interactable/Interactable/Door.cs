@@ -1,122 +1,108 @@
 using System.Collections;
-using UnityEngine.AI;
-using UnityEngine;
+using System.Collections.Generic;
 using Unity.AI.Navigation;
+using UnityEngine;
+using UnityEngine.AI;
 
+/// <summary>
+/// A door the player walks through and enemies can open. Locking rules are delegated to an optional
+/// <see cref="Lock"/> child (Strategy pattern), so new lock types never require changing this class.
+/// </summary>
 public class Door : Interactable
 {
-    private readonly int IsOpenHash = Animator.StringToHash("IsOpen");
-    private Animator anim;
+    private static readonly int IsOpenHash = Animator.StringToHash("IsOpen");
 
-    private bool isOpen = false;
-    public bool IsOpen => isOpen;
-    private Lock currentLock;
+    // Registry so enemies don't have to call FindObjectsByType<Door>() every time they're blocked.
+    private static readonly List<Door> activeDoors = new();
+    public static IReadOnlyList<Door> ActiveDoors => activeDoors;
 
     [SerializeField] private Transform playerPointFront;
     [SerializeField] private Transform playerPointBack;
-
-    private Collider col;
     [SerializeField] private float colDisableWaitTime;
-
     [SerializeField] private NavMeshLink link;
 
-    protected override void Awake()
+    private Animator anim;
+    private Collider col;
+    private Lock currentLock;
+    private Coroutine colliderRoutine;
+
+    public bool IsOpen { get; private set; }
+
+    void Awake()
     {
-        base.Awake();
-        InteractButton = InteractButton.F;
-        
-        Owner = gameObject;
         anim = GetComponentInChildren<Animator>();
         col = GetComponent<Collider>();
         currentLock = GetComponentInChildren<Lock>();
 
-        if(link != null)
-            link.enabled = isOpen;
+        // Closed doors block enemy paths until an enemy opens one (see EnemyDoorNavigation).
+        if (link != null)
+            link.enabled = IsOpen;
     }
 
-    public override void Interact(GameObject interactor)
-    {
-        base.Interact(interactor);
+    void OnEnable() => activeDoors.Add(this);
+    void OnDisable() => activeDoors.Remove(this);
 
-        if (currentLock != null && currentLock.IsLocked)
-        {
-            currentLock.Interact(interactor);
+    protected override void OnInteract(GameObject interactor)
+    {
+        if (currentLock != null && currentLock.IsLocked && !currentLock.TryUnlock(interactor))
             return;
-        }
 
+        PassThrough(interactor);
+    }
+
+    private void PassThrough(GameObject interactor)
+    {
         Transform targetPoint = GetClosestPoint(interactor.transform.position);
-        if (interactor.TryGetComponent(out PlayerController ctrl))
-            ctrl.SetCanMove(false);
 
-        if (interactor.TryGetComponent(out CharacterController charController))
-        {
-            charController.enabled = false;
-
-            interactor.transform.position = targetPoint.position;
-            
-            if (charController.TryGetComponent(out PlayerController controller))
-                controller.SetModelRotation(targetPoint);
-
-            charController.enabled = true;
-        }
+        // Movement is locked by the interact animation (InteractStateBehavior), not here:
+        // locking it here froze the player after a password door, which plays no animation.
+        if (interactor.TryGetComponent(out IInteractorBody body))
+            body.Teleport(targetPoint.position, targetPoint.rotation);
         else
-        {
             interactor.transform.position = targetPoint.position;
-        }
 
-        SetDoorOpen(!isOpen);
+        SetDoorOpen(!IsOpen);
     }
 
-    IEnumerator TurnOffCollider(float offTime)
+    public Transform GetClosestPoint(Vector3 position)
     {
-        if (col == null)
-            yield return null;
+        float distanceToFront = (position - playerPointFront.position).sqrMagnitude;
+        float distanceToBack = (position - playerPointBack.position).sqrMagnitude;
 
-        col.enabled = false;
-        yield return new WaitForSeconds(offTime);
-        col.enabled = true;
+        return distanceToFront < distanceToBack ? playerPointFront : playerPointBack;
     }
 
-    public Transform GetClosestPoint(Vector3 playerPos)
-    {
-        float distanceToA = Vector3.Distance(playerPos, playerPointFront.position);
-        float distanceToB = Vector3.Distance(playerPos, playerPointBack.position);
-
-        return distanceToA < distanceToB ? playerPointFront : playerPointBack;
-    }
-
-    public bool TryGetReachableApproach(
-        Vector3 from,
-        int areaMask,
-        out Transform approachPoint)
+    public bool TryGetReachableApproach(Vector3 from, int areaMask, out Transform approachPoint)
     {
         approachPoint = null;
 
-        bool canReachFront = TryGetPathLenght(
-            from, playerPointFront, areaMask, out float frontLength);
-
-        bool canReachBack = TryGetPathLenght(
-            from, playerPointBack, areaMask, out float backLength);
+        bool canReachFront = TryGetPathLength(from, playerPointFront, areaMask, out float frontLength);
+        bool canReachBack = TryGetPathLength(from, playerPointBack, areaMask, out float backLength);
 
         if (!canReachFront && !canReachBack)
             return false;
 
-        if (canReachFront &&
-            (!canReachBack || frontLength <= backLength))
-        {
-            approachPoint = playerPointFront;
-        }
-        else
-            approachPoint = playerPointBack;
+        approachPoint = canReachFront && (!canReachBack || frontLength <= backLength)
+            ? playerPointFront
+            : playerPointBack;
 
         return true;
     }
 
-    private bool TryGetPathLenght(
-        Vector3 from,
-        Transform point,
-        int areaMask,
-        out float pathLength)
+    /// <summary>Enemies ignore locks.</summary>
+    public bool OpenForEnemy()
+    {
+        if (IsOpen)
+            return true;
+
+        if (currentLock != null && currentLock.IsLocked)
+            currentLock.ForceUnlock();
+
+        SetDoorOpen(true);
+        return true;
+    }
+
+    private static bool TryGetPathLength(Vector3 from, Transform point, int areaMask, out float pathLength)
     {
         pathLength = 0f;
 
@@ -131,33 +117,36 @@ public class Door : Interactable
 
         Vector3[] corners = path.corners;
         for (int i = 1; i < corners.Length; i++)
-        {
             pathLength += Vector3.Distance(corners[i - 1], corners[i]);
-        }
 
-        return true;
-    }
-
-    public bool OpenForEnemy()
-    {
-        if (isOpen)
-            return true;
-
-        if (currentLock != null && currentLock.IsLocked)
-            currentLock.ForceUnlock();
-
-        SetDoorOpen(true);
         return true;
     }
 
     private void SetDoorOpen(bool open)
     {
-        isOpen = open;
+        IsOpen = open;
 
+        // Once a door has been opened the link stays on, so an agent that is already
+        // crossing it never has the link disabled under its feet.
         if (link != null)
             link.enabled = true;
 
-        anim.SetBool(IsOpenHash, isOpen);
-        StartCoroutine(TurnOffCollider(colDisableWaitTime));
+        if (anim != null)
+            anim.SetBool(IsOpenHash, IsOpen);
+
+        if (colliderRoutine != null)
+            StopCoroutine(colliderRoutine);
+        colliderRoutine = StartCoroutine(DisableColliderFor(colDisableWaitTime));
+    }
+
+    private IEnumerator DisableColliderFor(float seconds)
+    {
+        if (col == null)
+            yield break;
+
+        col.enabled = false;
+        yield return new WaitForSeconds(seconds);
+        col.enabled = true;
+        colliderRoutine = null;
     }
 }

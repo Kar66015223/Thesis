@@ -1,22 +1,21 @@
 using UnityEngine;
 
+/// <summary>Locks movement while the "Interact" animation state plays.</summary>
 public class InteractStateBehavior : StateMachineBehaviour
 {
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        PlayerController controller = animator.GetComponentInParent<PlayerController>();
-        if (controller != null)
-        {
-            controller.SetCanMove(false);
-        }
-    }
+    private IInteractorBody body;
 
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        => GetBody(animator)?.SetCanMove(false);
+
+    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        => GetBody(animator)?.SetCanMove(true);
+
+    private IInteractorBody GetBody(Animator animator)
     {
-        PlayerController controller = animator.GetComponentInParent<PlayerController>();
-        if (controller != null)
-        {
-            controller.SetCanMove(true);
-        }
+        if (body == null)
+            body = animator.GetComponentInParent<IInteractorBody>();
+
+        return body;
     }
 }

@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// Wraps NavMeshAgent.SetDestination: when the path to the destination is blocked by a closed door,
+/// it walks to the door, opens it, then re-paths. States just call SetDestination and check HasArrived.
+/// </summary>
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyDoorNavigation : MonoBehaviour
 {
     [SerializeField] private float destSearchRadius = 10f;
@@ -9,7 +14,9 @@ public class EnemyDoorNavigation : MonoBehaviour
     [SerializeField] private float retryDelay = 1f;
     [SerializeField] private float destReachTolerance = 1.5f;
 
-    private EnemyController ctrl;
+    private const float DoorApproachStoppingDistance = 0.1f;
+    private const float MinRepathDelay = 0.05f;
+
     private NavMeshAgent agent;
 
     private Vector3 finalDest;
@@ -33,18 +40,14 @@ public class EnemyDoorNavigation : MonoBehaviour
         PathReachesDestination() &&
         agent.remainingDistance <= agent.stoppingDistance;
 
-    public void Initialize(EnemyController ctrl)
-    {
-        this.ctrl = ctrl;
-        agent = ctrl.Agent;
-    }
+    public void Initialize(NavMeshAgent agent) => this.agent = agent;
 
     public void SetDestination(Vector3 dest)
     {
         finalDest = dest;
         hasDest = true;
 
-        if (goingToDoor || waitingToRepath)
+        if (agent == null || goingToDoor || waitingToRepath)
             return;
 
         agent.SetDestination(dest);
@@ -98,7 +101,7 @@ public class EnemyDoorNavigation : MonoBehaviour
             approachPoint = side;
 
             previousStoppingDistance = agent.stoppingDistance;
-            agent.stoppingDistance = 0.1f;
+            agent.stoppingDistance = DoorApproachStoppingDistance;
             agent.isStopped = false;
 
             goingToDoor = true;
@@ -118,8 +121,7 @@ public class EnemyDoorNavigation : MonoBehaviour
 
         float bestDistance = float.PositiveInfinity;
 
-        Door[] doors = FindObjectsByType<Door>(FindObjectsSortMode.None);
-        foreach (Door door in doors)
+        foreach (Door door in Door.ActiveDoors)
         {
             if (door == null || door.IsOpen)
                 continue;
@@ -130,10 +132,7 @@ public class EnemyDoorNavigation : MonoBehaviour
                 continue;
 
             if (!door.TryGetReachableApproach(transform.position, agent.areaMask, out Transform side))
-            {
-                Debug.Log($"{door.name} TryGetReachableApproach returns false");
                 continue;
-            }
 
             bestDoor = door;
             bestApproachPoint = side;
@@ -179,7 +178,7 @@ public class EnemyDoorNavigation : MonoBehaviour
         agent.stoppingDistance = previousStoppingDistance;
 
         waitingToRepath = true;
-        repathTimer = Mathf.Max(0.05f, repathDelay);
+        repathTimer = Mathf.Max(MinRepathDelay, repathDelay);
     }
 
     private void AbortDoorAttempt()

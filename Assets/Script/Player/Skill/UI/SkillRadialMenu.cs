@@ -2,18 +2,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Hold-to-open ring of physical skills. Slots are rebuilt only when the skill list changes
+/// (it used to re-check and re-layout every frame).
+/// </summary>
 public class SkillRadialMenu : MonoBehaviour
 {
     [SerializeField] private GameObject slotParent;
-    
     [SerializeField] private float radius = 300f;
     [SerializeField] private float startAngle = 90f;
     [SerializeField] private GameObject slotPrefab;
 
-    public List<RectTransform> slots = new();
-    // [SerializeField] private RectTransform selectedSlot;
-    // [SerializeField] private float shortestDistance = 400f;
-    private Dictionary<Skill, GameObject> skillSlotPair = new();
+    private readonly Dictionary<Skill, RectTransform> skillSlots = new();
+    private readonly List<RectTransform> slots = new();
 
     private SkillManager manager;
     private PlayerInputHandler inputHandler;
@@ -27,85 +28,52 @@ public class SkillRadialMenu : MonoBehaviour
     void OnEnable()
     {
         inputHandler.OnPhysSkillMenuInput += ToggleMenu;
+        manager.SkillsChanged += RebuildSlots;
+        RebuildSlots();
     }
 
     void OnDisable()
     {
         inputHandler.OnPhysSkillMenuInput -= ToggleMenu;
+        manager.SkillsChanged -= RebuildSlots;
+        InputModeService.RequestCursor(this, false);
     }
 
-    void Update()
-    {
-        UpdateLayout();
-    }
-
-    void ToggleMenu(bool isOn)
+    private void ToggleMenu(bool isOn)
     {
         slotParent.SetActive(isOn);
-        Cursor.lockState = isOn ? CursorLockMode.None : CursorLockMode.Locked;
+        InputModeService.RequestCursor(this, isOn);
     }
 
-    void UpdateLayout()
+    private void RebuildSlots()
     {
-        foreach (var skill in manager.AllPhysSkills)
+        foreach (Skill skill in manager.AllPhysSkills)
         {
-            if (!skillSlotPair.ContainsKey(skill))
-            {
-                GameObject slot = Instantiate(slotPrefab, slotParent.transform);
-                if (slot.TryGetComponent(out Image img))
-                {
-                    img.sprite = skill.icon;
-                }
+            if (skillSlots.ContainsKey(skill))
+                continue;
 
-                RectTransform slotRT = slot.GetComponent<RectTransform>();
+            GameObject slot = Instantiate(slotPrefab, slotParent.transform);
+            if (slot.TryGetComponent(out Image image))
+                image.sprite = skill.Icon;
 
-                skillSlotPair.Add(skill, slot);
-                slots.Add(slotRT);
-            }
+            RectTransform slotRect = slot.GetComponent<RectTransform>();
+            skillSlots.Add(skill, slotRect);
+            slots.Add(slotRect);
         }
 
-        int count = slots.Count;
-        float step = 360f / count;
+        LayoutSlots();
+    }
 
-        for (int i = 0; i < count; i++)
+    private void LayoutSlots()
+    {
+        if (slots.Count == 0)
+            return;
+
+        float step = 360f / slots.Count;
+        for (int i = 0; i < slots.Count; i++)
         {
-            float angle = startAngle - step * i;
-            float rad = angle * Mathf.Deg2Rad;
-
-            slots[i].anchoredPosition = new(Mathf.Cos(rad) * radius, Mathf.Sin(rad) * radius);
+            float angle = (startAngle - step * i) * Mathf.Deg2Rad;
+            slots[i].anchoredPosition = new Vector2(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius);
         }
     }
-    
-    // RectTransform GetClosestSlotToCursor()
-    // {
-    //     Vector3 mouseScreenPos = Input.mousePosition;
-
-    //     RectTransform closest = null;
-    //     float minDist = float.MaxValue;
-
-    //     foreach (var slot in slots)
-    //     {
-    //         Vector2 slotScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, slot.position);
-    //         float distance = Vector2.Distance(mouseScreenPos, slotScreenPos);
-
-    //         if (slot.TryGetComponent(out SkillSlot ss))
-    //             ss.isSelected = false;
-
-    //         if (distance < minDist)
-    //         {
-    //             minDist = distance;
-    //             closest = slot;
-    //         }
-    //     }
-
-    //     if(closest != null && minDist <= shortestDistance)
-    //     {
-    //         if (closest.TryGetComponent(out SkillSlot ss))
-    //             ss.isSelected = true;
-
-    //         return closest;
-    //     }
-
-    //     return null;
-    // }
 }

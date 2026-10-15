@@ -1,114 +1,75 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
 
+/// <summary>
+/// Eyes of the enemy: finds visible targets a few times per second and runs the two-step
+/// "glimpse -> confirmed" timer, reporting both moments to the controller.
+/// </summary>
 [RequireComponent(typeof(EnemyController))]
 public class EnemyVision : MonoBehaviour
 {
-    public float viewRadius;
-    [Range(0, 360)] public float viewAngle;
-    public float viewHeight;
+    private const int MaxTargetsPerScan = 16;
+
+    [SerializeField] private float viewRadius;
+    [Range(0, 360)][SerializeField] private float viewAngle;
+    [SerializeField] private float viewHeight;
 
     [SerializeField] private float defaultViewRadius = 10f;
     [SerializeField] private float viewRadiusChasing = 30f;
-
-    public Vector3 EyePosition => transform.position + Vector3.up * viewHeight;
+    [SerializeField] private float scanInterval = 0.1f;
 
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
 
-    [SerializeField] private float confirmTimer;
-
-    [field: SerializeField] public List<Transform> VisibleTargets { get; private set; } = new();
-    [field: SerializeField] public List<Transform> ConfirmedTargets { get; private set; } = new();
+    private readonly Collider[] overlapBuffer = new Collider[MaxTargetsPerScan];
+    private readonly List<Transform> visibleTargets = new();
+    private readonly List<Transform> confirmedTargets = new();
 
     private EnemyController controller;
+    private Coroutine scanRoutine;
+    private float confirmTimer;
 
-    void Awake()
-    {
-        controller = GetComponent<EnemyController>();
-    }
+    public float ViewRadius => viewRadius;
+    public float ViewAngle => viewAngle;
+    public Vector3 EyePosition => transform.position + Vector3.up * viewHeight;
+    public IReadOnlyList<Transform> VisibleTargets => visibleTargets;
+    public IReadOnlyList<Transform> ConfirmedTargets => confirmedTargets;
 
-    void Start()
-    {
-        EnableVision();
-    }
+    void Awake() => controller = GetComponent<EnemyController>();
+
+    void OnEnable() => EnableVision();
+
+    // Unity stops coroutines on disable; forget the handle so OnEnable can restart scanning.
+    void OnDisable() => scanRoutine = null;
 
     void Update()
     {
-        if (VisibleTargets.Count > 0)
-        {
-            Transform target = VisibleTargets[0].transform;
+        if (visibleTargets.Count > 0)
+            UpdateConfirmation(visibleTargets[0]);
+        else if (confirmTimer > 0f)
+            ResetConfirmation();
 
-            if (confirmTimer == 0f)
-                controller.OnSeenTarget(target);
-
-            confirmTimer += Time.deltaTime;
-            float fillRatio = Mathf.Clamp01(confirmTimer / controller.confirmWaitTime);
-
-            GameEvent.OnUpdateConfirmTimer?.Invoke(transform, fillRatio);
-
-            if (confirmTimer >= controller.confirmWaitTime && !ConfirmedTargets.Contains(target))
-            {
-                ConfirmedTargets.Add(target);
-                controller.OnSeenTarget(target);
-            }
-        }
-        else
-        {
-            if (confirmTimer > 0f)
-            {
-                confirmTimer = 0f;
-                ConfirmedTargets.Clear();
-                GameEvent.OnUpdateConfirmTimer?.Invoke(transform, 0f);
-            }
-        }
-
-        UpdateViewRadiusChange();
+        viewRadius = controller.IsChasing ? viewRadiusChasing : defaultViewRadius;
     }
 
     public void EnableVision()
     {
-        // DisableVision();
-        StartCoroutine(FindTargetsWithDelay(0.1f));
-    }
-    
-    public void DisableVision() => StopAllCoroutines();
-    
-    IEnumerator FindTargetsWithDelay(float delay)
-    {
-        while(true)
-        {
-            yield return new WaitForSeconds(delay);
-            FindVisibleTargets();
-        }
+        if (scanRoutine == null)
+            scanRoutine = StartCoroutine(ScanLoop());
     }
 
-    void FindVisibleTargets()
+    /// <summary>Stops scanning and forgets what it saw (e.g. while stunned).</summary>
+    public void DisableVision()
     {
-        VisibleTargets.Clear();
-        Collider[] targetsInView = Physics.OverlapSphere(EyePosition, viewRadius, targetMask);
-
-        foreach(Collider col in targetsInView)
+        if (scanRoutine != null)
         {
-            Transform target = col.transform;
-
-            Vector3 targetCenter = col.bounds.center;
-            targetCenter.y = col.bounds.max.y;
-
-            Vector3 dirToTarget = (targetCenter - EyePosition).normalized;
-
-            if(Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2)
-            {
-                float distanceToTarget = Vector3.Distance(transform.position, target.position);
-
-                if(!Physics.Raycast(EyePosition, dirToTarget, distanceToTarget, obstacleMask))
-                {
-                    if(!VisibleTargets.Contains(target))
-                        VisibleTargets.Add(target);
-                }
-            }
+            StopCoroutine(scanRoutine);
+            scanRoutine = null;
         }
+
+        visibleTargets.Clear();
+        ResetConfirmation();
     }
 
     public Vector3 DirFromAngle(float angleInDegree, bool angleIsGlobal)
@@ -119,13 +80,64 @@ public class EnemyVision : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegree * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegree * Mathf.Deg2Rad));
     }
 
-    private void UpdateViewRadiusChange()
+    private void UpdateConfirmation(Transform target)
     {
-        if (controller.CurrentState is ChaseState)
+        // First glimpse...
+        if (confirmTimer == 0f)
+            controller.OnSeenTarget(target);
+
+        confirmTimer += Time.deltaTime;
+        float progress = controller.ConfirmWaitTime > 0f ? Mathf.Clamp01(confirmTimer / controller.ConfirmWaitTime) : 1f;
+        EnemyEvents.RaiseConfirmProgressChanged(transform, progress);
+
+        // ...then confirmed after looking long enough.
+        if (confirmTimer >= controller.ConfirmWaitTime && !confirmedTargets.Contains(target))
         {
-            viewRadius = viewRadiusChasing;
+            confirmedTargets.Add(target);
+            controller.OnSeenTarget(target);
         }
-        else
-            viewRadius = defaultViewRadius;
+    }
+
+    private void ResetConfirmation()
+    {
+        confirmTimer = 0f;
+        confirmedTargets.Clear();
+        EnemyEvents.RaiseConfirmProgressChanged(transform, 0f);
+    }
+
+    private IEnumerator ScanLoop()
+    {
+        WaitForSeconds wait = new(scanInterval);
+        while (true)
+        {
+            yield return wait;
+            FindVisibleTargets();
+        }
+    }
+
+    private void FindVisibleTargets()
+    {
+        visibleTargets.Clear();
+
+        Vector3 eye = EyePosition;
+        int count = Physics.OverlapSphereNonAlloc(eye, viewRadius, overlapBuffer, targetMask);
+
+        for (int i = 0; i < count; i++)
+        {
+            Collider col = overlapBuffer[i];
+
+            Vector3 targetTop = col.bounds.center;
+            targetTop.y = col.bounds.max.y;
+
+            Vector3 toTarget = targetTop - eye;
+            if (Vector3.Angle(transform.forward, toTarget) >= viewAngle / 2f)
+                continue;
+
+            if (Physics.Raycast(eye, toTarget.normalized, toTarget.magnitude, obstacleMask))
+                continue;
+
+            if (!visibleTargets.Contains(col.transform))
+                visibleTargets.Add(col.transform);
+        }
     }
 }

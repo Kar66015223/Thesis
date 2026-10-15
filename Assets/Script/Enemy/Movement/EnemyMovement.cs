@@ -1,13 +1,19 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
 
-[RequireComponent(typeof(EnemyController))]
+/// <summary>
+/// Final agent speed = base speed (set by the current state) x every active multiplier
+/// (route step, future slow/haste effects...). Each source owns its own key, so they never overwrite each other.
+/// </summary>
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] private EnemyController ctrl;
-    
-    private float baseSpeed;
     private readonly Dictionary<string, float> speedModifiers = new();
+    private NavMeshAgent agent;
+    private float baseSpeed;
+
+    private NavMeshAgent Agent => agent != null ? agent : agent = GetComponent<NavMeshAgent>();
 
     public void SetBaseSpeed(float speed)
     {
@@ -29,10 +35,10 @@ public class EnemyMovement : MonoBehaviour
 
     private void ApplySpeed()
     {
-        float mult = 1f;
-        foreach (var m in speedModifiers.Values)
-            mult *= m;
+        float multiplier = 1f;
+        foreach (float m in speedModifiers.Values)
+            multiplier *= m;
 
-        ctrl.Agent.speed = baseSpeed * mult;
+        Agent.speed = baseSpeed * multiplier;
     }
 }

@@ -1,130 +1,104 @@
 using UnityEngine;
 
+/// <summary>
+/// Footstep and breathing audio, plus the matching noise that enemies can hear.
+/// Footsteps are triggered by animation events (PlayerAnimationEventHandler);
+/// the tired sound reacts to <see cref="PlayerStamina.Exhausted"/>.
+/// </summary>
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(SoundEmitter))]
 public class PlayerSound : MonoBehaviour
 {
-    private AudioSource source;
-    private SoundEmitter emitter;
-    private PlayerStamina stamina;
-
     [Header("Footstep Audio")]
     [SerializeField] private AudioClip[] footstepClips;
     [SerializeField] private AudioClip tiredClip;
 
     [Header("Volume")]
-    [SerializeField, Range(0f, 1f)]
-    private float walkVolume = 1f;
-
-    [SerializeField, Range(0f, 1f)]
-    private float runVolume = 1f;
-
-    [SerializeField, Range(0f, 1f)]
-    private float tiredVolume = 1f;
+    [SerializeField, Range(0f, 1f)] private float walkVolume = 1f;
+    [SerializeField, Range(0f, 1f)] private float runVolume = 1f;
+    [SerializeField, Range(0f, 1f)] private float tiredVolume = 1f;
 
     [Header("Random Variation")]
-    [SerializeField, Range(0f, 0.1f)]
-    private float pitchVariation = 0.02f;
+    [SerializeField, Range(0f, 0.1f)] private float pitchVariation = 0.02f;
+    [SerializeField, Range(0f, 0.1f)] private float volumeVariation = 0.04f;
 
-    [SerializeField, Range(0f, 0.1f)]
-    private float volumeVariation = 0.04f;
+    [Header("Noise (heard by enemies)")]
+    [SerializeField] private float walkSoundRadius = 5f;
+    [SerializeField] private float runSoundRadius = 7f;
+    [SerializeField] private EnemyReaction footstepReaction = EnemyReaction.WalkTo;
 
-    [Header("Sound Radius")]
-    public const float walkSoundRadius = 5f;
-    public const float runSoundRadius = 7f;
-
-    public const EnemyReaction walkSoundReaction = EnemyReaction.WalkTo;
-
+    private AudioSource source;
+    private SoundEmitter emitter;
+    private PlayerStamina stamina;
     private int lastClipIndex = -1;
 
-    private void Awake()
+    void Awake()
     {
         source = GetComponent<AudioSource>();
         emitter = GetComponent<SoundEmitter>();
         stamina = GetComponent<PlayerStamina>();
 
-        // ป้องกัน AudioSource เล่นเองตอนเริ่มเกม
+        // Don't let the AudioSource play by itself when the game starts.
         source.playOnAwake = false;
         source.loop = false;
     }
 
-    public void PlayWalkSound()
+    void OnEnable()
     {
-        PlayFootstep(
-            walkVolume,
-            walkSoundRadius,
-            walkSoundReaction
-        );
+        if (stamina != null)
+            stamina.Exhausted += PlayTiredSound;
     }
 
-    public void PlayRunSound()
+    void OnDisable()
     {
-        PlayFootstep(
-            runVolume,
-            runSoundRadius,
-            walkSoundReaction
-        );
+        if (stamina != null)
+            stamina.Exhausted -= PlayTiredSound;
     }
+
+    public void PlayWalkSound() => PlayFootstep(walkVolume, walkSoundRadius);
+    public void PlayRunSound() => PlayFootstep(runVolume, runSoundRadius);
 
     public void PlayTiredSound()
     {
+        if (tiredClip == null)
+            return;
+
+        source.pitch = 1f;
         source.PlayOneShot(tiredClip, tiredVolume);
     }
 
-    private void PlayFootstep(
-        float baseVolume,
-        float soundRadius,
-        EnemyReaction reaction
-    )
+    private void PlayFootstep(float baseVolume, float noiseRadius)
     {
         if (footstepClips == null || footstepClips.Length == 0)
             return;
 
-        int clipIndex = GetRandomClipIndex();
-
-        AudioClip clip = footstepClips[clipIndex];
-
+        AudioClip clip = footstepClips[GetRandomClipIndex()];
         if (clip == null)
             return;
 
-        // Random Volume
-        float volume = baseVolume * Random.Range(
-            1f - volumeVariation,
-            1f + volumeVariation
-        );
+        float volume = baseVolume * Random.Range(1f - volumeVariation, 1f + volumeVariation);
+        source.pitch = Random.Range(1f - pitchVariation, 1f + pitchVariation);
 
-        // Random Pitch
-        source.pitch = Random.Range(
-            1f - pitchVariation,
-            1f + pitchVariation
-        );
-
-        // เล่นเสียงโดยไม่ต้องเปลี่ยน source.clip
+        // PlayOneShot doesn't need to swap source.clip.
         source.PlayOneShot(clip, volume);
 
-        // แจ้ง AI ว่าผู้เล่นสร้างเสียง
-        emitter.MakeSound(soundRadius, reaction);
+        // Let the AI know the player made a noise.
+        emitter.MakeSound(noiseRadius, footstepReaction);
     }
 
+    /// <summary>Random clip that never repeats the previous one (no retry loop needed).</summary>
     private int GetRandomClipIndex()
     {
-        // มีแค่เสียงเดียว
         if (footstepClips.Length == 1)
-        {
-            lastClipIndex = 0;
-            return 0;
-        }
+            return lastClipIndex = 0;
 
-        int index;
+        if (lastClipIndex < 0 || lastClipIndex >= footstepClips.Length)
+            return lastClipIndex = Random.Range(0, footstepClips.Length);
 
-        do
-        {
-            index = Random.Range(0, footstepClips.Length);
-        }
-        while (index == lastClipIndex);
+        int index = Random.Range(0, footstepClips.Length - 1);
+        if (index >= lastClipIndex)
+            index++;
 
-        lastClipIndex = index;
-
-        return index;
+        return lastClipIndex = index;
     }
 }

@@ -1,41 +1,42 @@
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>Builds the code from the digit slots and submits it to the lock. It never sees the correct code.</summary>
 public class PasswordInputUI : MonoBehaviour
 {
     [SerializeField] private List<PasswordSlot> allSlots = new();
-    [SerializeField] private string currentPassword;
-    private PasswordLock currentLock;
-
     [SerializeField] private Button closeButton;
     [SerializeField] private Button submitButton;
 
+    private IPasswordLock currentLock;
+
     void Awake()
     {
-        closeButton.onClick.AddListener(() => GameEvent.OnShowPasswordInputUI?.Invoke(false, null));
+        closeButton.onClick.AddListener(() => UIEvents.TogglePasswordPanel(false));
         submitButton.onClick.AddListener(SubmitPassword);
     }
 
+    public void SetCurrentLock(IPasswordLock passwordLock) => currentLock = passwordLock;
+
     public void SubmitPassword()
     {
-        currentPassword = "";
+        if (currentLock == null)
+            return;
 
-        foreach(PasswordSlot slot in allSlots)
-        {
-            currentPassword += slot.CurrentNumber.ToString();
-        }
-
-        if (currentPassword == currentLock.GetCorrectPassword())
-        {
-            currentLock.Unlock();
-            GameEvent.OnShowPasswordInputUI?.Invoke(false, null);
-        }
+        if (currentLock.TrySubmit(BuildCode()))
+            UIEvents.TogglePasswordPanel(false);
         else
-        {
-            GameEvent.OnShowTips?.Invoke("Wrong Password");
-        }
+            UIEvents.ShowTip("Wrong Password");
     }
 
-    public void SetCurrentLock(PasswordLock pLock) => currentLock = pLock; 
+    private string BuildCode()
+    {
+        StringBuilder code = new(allSlots.Count);
+        foreach (PasswordSlot slot in allSlots)
+            code.Append(slot.CurrentNumber);
+
+        return code.ToString();
+    }
 }

@@ -1,47 +1,50 @@
 using UnityEngine;
-using System.Collections.Generic;
 using UnityEngine.UI;
 
+/// <summary>
+/// Shows a single screen-edge marker for the current tracking target (e.g. the tackle target).
+/// Switching targets now removes the old marker (it used to be left behind).
+/// </summary>
 public class TrackingUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject trackingImgPrefab;
-    private Dictionary<Transform, GameObject> activeTrackingUIs = new();
 
-    void OnEnable()
-    {
-        GameEvent.OnShowTrackingUI += CreateOrUpdateTrackingUI;
-    }
+    private GameObject activeMarker;
+    private Transform activeTarget;
+
+    void OnEnable() => UIEvents.TrackingTargetChanged += ShowTarget;
 
     void OnDisable()
     {
-        GameEvent.OnShowTrackingUI -= CreateOrUpdateTrackingUI;
+        UIEvents.TrackingTargetChanged -= ShowTarget;
+        Clear();
     }
 
-    private void CreateOrUpdateTrackingUI(Transform target, Sprite sprite)
+    private void ShowTarget(Transform target, Sprite icon)
     {
-        if(target == null)
-        {
-            foreach (var kv in activeTrackingUIs)
-                Destroy(kv.Value);
-
-            activeTrackingUIs.Clear();
+        if (target == activeTarget && activeMarker != null)
             return;
-        }
-        
-        GameObject uiObj;
 
-        if (activeTrackingUIs.ContainsKey(target))
-            uiObj = activeTrackingUIs[target];
-        else
-        {
-            uiObj = Instantiate(trackingImgPrefab, gameObject.transform);
-            activeTrackingUIs.Add(target, uiObj);
+        Clear();
+        if (target == null || trackingImgPrefab == null)
+            return;
 
-            if (uiObj.TryGetComponent(out Image img))
-                img.sprite = sprite;
+        activeTarget = target;
+        activeMarker = Instantiate(trackingImgPrefab, transform);
 
-            if (uiObj.TryGetComponent(out UITargetTracking tracking))
-                tracking.SetTarget(target);
-        }
-    }   
+        if (activeMarker.TryGetComponent(out Image image))
+            image.sprite = icon;
+
+        if (activeMarker.TryGetComponent(out UITargetTracking tracking))
+            tracking.SetTarget(target);
+    }
+
+    private void Clear()
+    {
+        if (activeMarker != null)
+            Destroy(activeMarker);
+
+        activeMarker = null;
+        activeTarget = null;
+    }
 }

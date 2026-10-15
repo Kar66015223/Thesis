@@ -1,81 +1,97 @@
-using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Dashes forward and stuns the enemy that was targeted when the dash started.
+/// Talks to enemies only through <see cref="IStunnable"/>, so it no longer creates enemy states itself.
+/// </summary>
 public class Tackle : Skill
 {
-    private TackleData data;
+    private const int MaxCandidates = 8;
 
-    private bool isDashing = false;
-    private float dashElapsed = 0f;
+    private readonly TackleData data;
+    private readonly Collider[] overlapBuffer = new Collider[MaxCandidates];
 
-    private EnemyController target;
+    private Component trackedTarget;   // nearest stunnable in range (shown by the tracking UI)
+    private Component dashTarget;      // locked when the dash starts
+    private bool isDashing;
+    private float dashElapsed;
 
-    public Tackle(TackleData data, SkillContext context)
+    public Tackle(TackleData data, SkillContext context) : base(data, context) => this.data = data;
+
+    public override void OnInputPressed()
     {
-        this.data = data;
-        skillName = data.skillName;
-        skillDesc = data.skillDesc;
-        type = data.type;
-        usage = data.usage;
-        coolDown = data.cooldown;
-        cost = data.cost;
-        icon = data.icon;
-
-        this.context = context;
-    }
-
-    public override void Use()
-    {
-        if (isDashing || target == null)
+        if (isDashing || trackedTarget == null || Context.Body == null)
             return;
-            
+
+        // Lock the target now: losing sight of it mid-dash used to leave the player frozen forever.
+        dashTarget = trackedTarget;
         isDashing = true;
         dashElapsed = 0f;
+        Context.Body.SetCanMove(false);
     }
 
     public override void Tick(float deltaTime)
     {
-        Collider[] cols = Physics.OverlapSphere(
-            context.User.transform.position, data.dashRange, data.enemyLayer);
+        UpdateTrackedTarget();
 
-        if (cols.Length == 0)
-        {
-            target = null;
-            GameEvent.OnShowTrackingUI?.Invoke(null, null);
-            return;
-        }
-
-        Collider best = cols.OrderBy(
-            c => Vector3.Distance(context.User.transform.position, c.transform.position)).First();
-
-        var newTarget = best.GetComponent<EnemyController>();
-        if (newTarget != target)
-        {
-            target = newTarget;
-            GameEvent.OnShowTrackingUI?.Invoke(target.transform, data.usePromptIcon);
-        }
-        
-        if (!isDashing || target == null)
-            return;
-
-        dashElapsed += Time.deltaTime;
-        float speed = data.dashRange / data.dashDuration;
-        PlayerController playerCtrl = context.User.GetComponent<PlayerController>();
-
-        if (context.User.TryGetComponent(out CharacterController charCtrl) && playerCtrl != null)
-        {
-            playerCtrl.SetCanMove(false);
-            charCtrl.Move(deltaTime * speed * playerCtrl.GetForward());
-        }
-
-        if (dashElapsed >= data.dashDuration)
-        {
-            isDashing = false;
-            playerCtrl.SetCanMove(true);
-            target.ChangeState(new StunnedState(target));
-        }
+        if (isDashing)
+            UpdateDash(deltaTime);
     }
 
-    public override void HoldUse(bool isHolding) {}
-    public override void HandleUse() {}
+    private void UpdateDash(float deltaTime)
+    {
+        dashElapsed += deltaTime;
+
+        float speed = data.dashRange / data.dashDuration;
+        Context.Body.Dash(deltaTime * speed * Context.Body.Forward);
+
+        if (dashElapsed < data.dashDuration)
+            return;
+
+        isDashing = false;
+        Context.Body.SetCanMove(true);
+
+        if (dashTarget != null && dashTarget is IStunnable stunnable)
+            stunnable.Stun();
+
+        dashTarget = null;
+    }
+
+    private void UpdateTrackedTarget()
+    {
+        Component nearest = FindNearestStunnable();
+        if (nearest == trackedTarget)
+            return;
+
+        trackedTarget = nearest;
+        UIEvents.SetTrackingTarget(trackedTarget != null ? trackedTarget.transform : null, data.usePromptIcon);
+    }
+
+    private Component FindNearestStunnable()
+    {
+        if (Context.Body == null)
+            return null;
+
+        Vector3 origin = Context.Body.Position;
+        int count = Physics.OverlapSphereNonAlloc(origin, data.dashRange, overlapBuffer, data.enemyLayer);
+
+        Component nearest = null;
+        float nearestSqr = float.PositiveInfinity;
+
+        for (int i = 0; i < count; i++)
+        {
+            IStunnable stunnable = overlapBuffer[i].GetComponentInParent<IStunnable>();
+            if (!(stunnable is Component component))
+                continue;
+
+            float sqr = (component.transform.position - origin).sqrMagnitude;
+            if (sqr < nearestSqr)
+            {
+                nearestSqr = sqr;
+                nearest = component;
+            }
+        }
+
+        return nearest;
+    }
 }

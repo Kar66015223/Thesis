@@ -1,9 +1,12 @@
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Composition root for the HUD. It only holds the Inspector references and hands them to one
+/// presenter per panel; each presenter owns exactly one piece of UI behaviour.
+/// (Field names are unchanged so the references on the Player prefab survive.)
+/// </summary>
 public class UIManager : MonoBehaviour
 {
     [Header("Read UI")]
@@ -13,7 +16,6 @@ public class UIManager : MonoBehaviour
 
     [Header("Tips")]
     [SerializeField] private TMP_Text tipsText;
-    private Coroutine fadeCo;
 
     [Header("Password Input")]
     [SerializeField] private GameObject passwordInputPanel;
@@ -23,193 +25,47 @@ public class UIManager : MonoBehaviour
     [Header("Enemy State")]
     [SerializeField] private Transform enemyStateUIParent;
     [SerializeField] private GameObject enemyStateUIPrefab;
+    [SerializeField] private Sprite seeSprite;
+    [SerializeField] private Sprite hearSprite;
+    [SerializeField] private Sprite walkSprite;
+    [SerializeField] private Sprite chaseSprite;
+    [SerializeField] private Sprite stunnedSprite;
 
-    private Dictionary<Transform, GameObject> activeEnemyUIs = new();
-
-    public Sprite seeSprite;
-    public Sprite hearSprite;
-    public Sprite walkSprite;
-    public Sprite chaseSprite;
-    public Sprite stunnedSprite;
-
+    [Header("Game Over")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Button restartButton;
 
+    private IUIPresenter[] presenters;
+
     void Awake()
     {
-        if (readUIText != null)
-            readUIText.text = "";
-
-        if (closeButton != null)
-            closeButton.onClick.AddListener(() => GameEvent.OnToggleReadUI?.Invoke(false, ""));
-
-        if (restartButton != null)
-            restartButton.onClick.AddListener(Restart);
+        presenters = new IUIPresenter[]
+        {
+            new ReadPanelPresenter(readUIPanel, readUIText, closeButton),
+            new TipPresenter(tipsText),
+            new PasswordPanelPresenter(passwordInputPanel),
+            new LightsOutPresenter(lightsOutEffect),
+            new EnemyIndicatorPresenter(enemyStateUIParent, enemyStateUIPrefab, new EnemyIndicatorPresenter.Sprites
+            {
+                See = seeSprite,
+                Hear = hearSprite,
+                Walk = walkSprite,
+                Chase = chaseSprite,
+                Stunned = stunnedSprite,
+            }),
+            new GameOverPresenter(gameOverPanel, restartButton),
+        };
     }
 
     void OnEnable()
     {
-        GameEvent.OnToggleReadUI += ToggleReadUI;
-        GameEvent.OnShowTips += ShowTipsText;
-        GameEvent.OnShowPasswordInputUI += TogglePasswordInputUI;
-        GameEvent.OnLightsOut += ToggleLightsOutEffect;
-
-        GameEvent.OnShowEnemyState += ToggleEnemyStateUI;
-        GameEvent.OnUpdateConfirmTimer += UpdateConfirmUI;
-
-        GameEvent.OnToggleGameOverUI += ToggleGameOverUI;
+        foreach (IUIPresenter presenter in presenters)
+            presenter.Bind();
     }
 
     void OnDisable()
     {
-        GameEvent.OnToggleReadUI -= ToggleReadUI;
-        GameEvent.OnShowTips -= ShowTipsText;
-        GameEvent.OnShowPasswordInputUI -= TogglePasswordInputUI;
-        GameEvent.OnLightsOut -= ToggleLightsOutEffect;
-
-        GameEvent.OnShowEnemyState -= ToggleEnemyStateUI;
-        GameEvent.OnUpdateConfirmTimer -= UpdateConfirmUI;
-
-        GameEvent.OnToggleGameOverUI -= ToggleGameOverUI;
-    }
-
-    public void ToggleReadUI(bool isOn, string text)
-    {
-        readUIPanel.SetActive(isOn);
-        readUIText.text = text;
-
-        Cursor.lockState = isOn ? CursorLockMode.None : CursorLockMode.Locked;
-        GameEvent.OnSwitchActionMap?.Invoke(
-            isOn ? PlayerConstants.ACTIONMAP_UI : PlayerConstants.ACTIONMAP_PLAYER);
-    }
-
-    public void ShowTipsText(string text)
-    {
-        tipsText.text = text;
-
-        if (fadeCo != null)
-            StopCoroutine(fadeCo);
-
-        if (tipsText.TryGetComponent(out FadeOutText fade))
-        {
-            fade.SetAlphaToFull();
-            fadeCo = StartCoroutine(fade.FadeOut());
-        }
-    }
-
-    public void TogglePasswordInputUI(bool isOn, PasswordLock curLock)
-    {
-        passwordInputPanel.SetActive(isOn);
-        if (passwordInputPanel.TryGetComponent(out PasswordInputUI ui))
-            ui.SetCurrentLock(curLock);
-
-        Cursor.lockState = isOn ? CursorLockMode.None : CursorLockMode.Locked;
-        GameEvent.OnSwitchActionMap?.Invoke(
-            isOn ? PlayerConstants.ACTIONMAP_UI : PlayerConstants.ACTIONMAP_PLAYER);
-    }
-
-    public void ToggleLightsOutEffect(bool isOn)
-    {
-        lightsOutEffect.SetActive(isOn);
-    }
-
-    public void ToggleEnemyStateUI(Transform target, EnemyState state)
-    {
-        switch (state)
-        {
-            case EnemyState.None:
-                RemoveEnemyStateUI(target);
-                break;
-
-            case EnemyState.DistractedLook:
-                CreateOrUpdateEnemyStateUI(target, hearSprite, seeSprite);
-                break;
-
-            case EnemyState.DistractedMove:
-                CreateOrUpdateEnemyStateUI(target, hearSprite, walkSprite);
-                break;
-
-            case EnemyState.Confirming:
-                CreateOrUpdateEnemyStateUI(target, seeSprite, null);
-                break;
-
-            case EnemyState.Chase:
-                CreateOrUpdateEnemyStateUI(target, chaseSprite, null);
-                break;
-
-            case EnemyState.Stunned:
-                CreateOrUpdateEnemyStateUI(target, stunnedSprite, null);
-                break;
-        }
-    }
-
-    private void CreateOrUpdateEnemyStateUI(Transform target, Sprite main, Sprite sub)
-    {
-        GameObject enemyStateUI;
-
-        if (activeEnemyUIs.ContainsKey(target))
-            enemyStateUI = activeEnemyUIs[target];
-        else
-        {
-            enemyStateUI = Instantiate(enemyStateUIPrefab, enemyStateUIParent);
-            activeEnemyUIs.Add(target, enemyStateUI);
-
-            if (enemyStateUI.TryGetComponent(out UITargetTracking tracking))
-                tracking.SetTarget(target);
-        }
-
-        if (enemyStateUI.TryGetComponent(out EnemyStateUI ui))
-        {
-            ui.mainImg.sprite = main;
-
-            if (sub != null)
-            {
-                ui.subImg.enabled = true;
-                ui.subImg.sprite = sub;
-            }
-            else
-                ui.subImg.enabled = false;
-        }
-    }
-
-    private void RemoveEnemyStateUI(Transform target)
-    {
-        if (activeEnemyUIs.TryGetValue(target, out GameObject uiInstance))
-        {
-            Destroy(uiInstance);
-            activeEnemyUIs.Remove(target);
-        }
-    }
-
-    public void UpdateConfirmUI(Transform target, float fillAmount)
-    {
-        if (!activeEnemyUIs.TryGetValue(target, out GameObject uiInstance))
-            return;
-
-        if (!uiInstance.TryGetComponent(out EnemyStateUI ui))
-            return;
-
-        if (target.TryGetComponent(out EnemyController ctrl))
-        {
-            if (ctrl.CurrentState is ChaseState)
-            {
-                ui.mainImg.fillAmount = 1f;
-                return;
-            }
-        }
-
-        ui.mainImg.fillAmount = fillAmount;
-    }
-
-    public void ToggleGameOverUI(bool isOn)
-    {
-        gameOverPanel.SetActive(isOn);
-        Cursor.lockState = isOn ? CursorLockMode.None : CursorLockMode.Locked;
-    }
-    
-    public void Restart()
-    {
-        GameEvent.OnToggleGameOverUI?.Invoke(false);
-        SceneLoader.RestartScene();
+        foreach (IUIPresenter presenter in presenters)
+            presenter.Unbind();
     }
 }

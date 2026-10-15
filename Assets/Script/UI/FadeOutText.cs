@@ -1,38 +1,49 @@
-using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine;
 
+/// <summary>Shows a message at full alpha, then fades it out. Owns its own coroutine.</summary>
 public class FadeOutText : MonoBehaviour
 {
     [SerializeField] private TMP_Text text;
     [SerializeField] private float fadeDuration = 2f;
 
+    private Coroutine fadeRoutine;
+
     void Awake()
     {
-        text = GetComponent<TMP_Text>();
+        if (text == null)
+            text = GetComponent<TMP_Text>();
     }
 
-    public IEnumerator FadeOut()
+    public void Show(string message)
     {
-        float elapsed = 0f;
-        Color c = text.color;
+        text.text = message;
+        SetAlpha(1f);
 
-        while (elapsed < fadeDuration)
+        if (fadeRoutine != null)
+            StopCoroutine(fadeRoutine);
+
+        // Coroutines can't start on an inactive object; just show the text in that case.
+        fadeRoutine = isActiveAndEnabled ? StartCoroutine(FadeOut()) : null;
+    }
+
+    private IEnumerator FadeOut()
+    {
+        for (float elapsed = 0f; elapsed < fadeDuration; elapsed += Time.deltaTime)
         {
-            elapsed += Time.deltaTime;
-            c.a = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
-            text.color = c;
+            SetAlpha(Mathf.Lerp(1f, 0f, elapsed / fadeDuration));
             yield return null;
         }
 
-        c.a = 0f;
-        text.color = c;
+        SetAlpha(0f);
+        fadeRoutine = null;
     }
 
-    public void SetAlphaToFull()
+    private void SetAlpha(float alpha)
     {
-        Color c = text.color;
-        c.a = 1f;
-        text.color = c;
+        Color color = text.color;
+        color.a = alpha;
+        text.color = color;
     }
 }

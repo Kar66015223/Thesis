@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class PlayerFlashbangReceiver : MonoBehaviour
+public class PlayerFlashbangReceiver : MonoBehaviour, IFlashable
 {
     [Header("Volume Reference")]
     public Volume globalVolume;

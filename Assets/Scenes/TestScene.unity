@@ -258,9 +258,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
   highlight: {fileID: 0}
-  hasInteracted: 0
+  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!43 &184039339
 Mesh:
   m_ObjectHideFlags: 0
@@ -564,9 +563,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
   highlight: {fileID: 0}
-  hasInteracted: 0
+  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!114 &254283770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -706,9 +704,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
   highlight: {fileID: 0}
-  hasInteracted: 0
+  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!114 &306563216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1375,9 +1372,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
   highlight: {fileID: 0}
-  hasInteracted: 0
+  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!1 &523102008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1410,7 +1406,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!65 &523102010
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2145,12 +2140,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d837f97416a84734b9e7c2e0ac381af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveManager
-  AllObjtive:
+  allObjectives:
   - {fileID: 2132274329}
   - {fileID: 523102009}
   - {fileID: 1871986100}
-  curObjtiveIndex: 0
-  next: 0
+  currentIndex: 0
 --- !u!4 &846463191
 Transform:
   m_ObjectHideFlags: 0
@@ -2695,9 +2689,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd1c50c144395634fa5adf130582e20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundEmitter
+  hearableMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   curRadius: 0
   curReaction: 1
-  makeSound: 0
+  debugRadius: 10
 --- !u!4 &1290198890
 Transform:
   m_ObjectHideFlags: 0
@@ -2772,7 +2769,7 @@ PrefabInstance:
       objectReference: {fileID: 184039339}
     - target: {fileID: 2611583037318952553, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
       propertyPath: m_VersionIndex
-      value: 6666
+      value: 6669
       objectReference: {fileID: 0}
     - target: {fileID: 5709245980062750489, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
       propertyPath: m_Mesh
@@ -3014,7 +3011,7 @@ PrefabInstance:
       objectReference: {fileID: 599654615}
     - target: {fileID: 2611583037318952553, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
       propertyPath: m_VersionIndex
-      value: 6669
+      value: 6672
       objectReference: {fileID: 0}
     - target: {fileID: 4069221809959497045, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
       propertyPath: m_IsActive
@@ -3473,9 +3470,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
   highlight: {fileID: 0}
-  hasInteracted: 0
+  <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!1 &1871986099
 GameObject:
   m_ObjectHideFlags: 0
@@ -3508,7 +3504,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!65 &1871986101
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4047,7 +4042,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!1001 &4479583520027225045
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,112 +1,104 @@
+using System;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerController))]
+/// <summary>
+/// Health rules only: damage, heal, death. Reacting to death (stop moving, game-over screen)
+/// is done by listeners, so this class no longer depends on PlayerController or the UI.
+/// </summary>
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float _curHP;
-    public float CurHP
-    {
-        get => _curHP;
-        set
-        {
-            _curHP = Mathf.Clamp(value, 0, maxHP);
-            if (_curHP == 0)
-                Die();
-        } 
-    }
     [SerializeField] private float maxHP = 100f;
 
-    public bool IsDead { get; private set; } = false;
-
+    // The blood-effect settings stay on this component so existing Inspector values survive.
+    // Ideally move them to their own "PlayerHealthEffects" component in the Editor.
     [Header("Blood Effect")]
     [SerializeField] private Material bloodFX;
-    private const string VignettePower = "_VignettePower";
-    private const string BreathFrequency = "_BreathFrequency";
-
-    private float curVignettePower;
     [SerializeField] private float normalVignettePower = 20f;
     [SerializeField] private float halfHPVignettePower = 10f;
     [SerializeField] private float lowHPVignettePower = 8f;
-
-    private float curBreathFrequency;
     [SerializeField] private float normalBreathFrequency = 2f;
     [SerializeField] private float lowHPBreathFrequency = 5f;
+    [SerializeField, Range(0f, 1f)] private float lowHealthRatio = 0.5f;
 
-    public bool takeDamage = false;
-    public bool heal = false;
+    private HealthScreenEffect screenEffect;
 
-    private PlayerController ctrl;
+    public float CurHP => _curHP;
+    public float MaxHP => maxHP;
+    public bool IsDead { get; private set; }
+
+    /// <summary>(current, max)</summary>
+    public event Action<float, float> HealthChanged;
+    public event Action Died;
 
     void Awake()
     {
-        ctrl = GetComponent<PlayerController>();
-        CurHP = maxHP;
+        screenEffect = new HealthScreenEffect(bloodFX, new HealthScreenEffect.Settings
+        {
+            NormalVignettePower = normalVignettePower,
+            HurtVignettePower = halfHPVignettePower,
+            LowVignettePower = lowHPVignettePower,
+            NormalBreathFrequency = normalBreathFrequency,
+            LowBreathFrequency = lowHPBreathFrequency,
+            LowHealthRatio = lowHealthRatio,
+        });
+
+        _curHP = maxHP;
+    }
+
+    void OnEnable()
+    {
+        HealthChanged += screenEffect.Apply;
+        screenEffect.Apply(_curHP, maxHP);
     }
 
     void OnDisable()
     {
-        ResetBloodFX();
+        HealthChanged -= screenEffect.Apply;
+        screenEffect.Restore();
     }
 
-    void OnApplicationQuit()
-    {
-        ResetBloodFX();
-    }
-
-    void Update()
-    {
-        if (takeDamage)
-            TakeDamage(10);
-        if (heal)
-            Heal(10);
-        
-        UpdateScreenEffect();
-    }
+    void OnApplicationQuit() => screenEffect.Restore();
 
     public void TakeDamage(float damage)
     {
-        takeDamage = false;
-        heal = false;
-        CurHP -= damage;
-        Debug.Log($"{gameObject.name} take {damage} damage");
+        if (IsDead || damage <= 0f)
+            return;
+
+        SetHealth(_curHP - damage);
     }
 
     public void Heal(float amount)
     {
-        takeDamage = false;
-        heal = false;
-        CurHP += amount;
+        if (IsDead || amount <= 0f)
+            return;
+
+        SetHealth(_curHP + amount);
     }
 
-    public void Die()
+    private void SetHealth(float value)
     {
+        _curHP = Mathf.Clamp(value, 0f, maxHP);
+        HealthChanged?.Invoke(_curHP, maxHP);
+
+        if (_curHP <= 0f)
+            Die();
+    }
+
+    private void Die()
+    {
+        if (IsDead)
+            return;
+
         IsDead = true;
-        GameEvent.OnToggleGameOverUI?.Invoke(true);
-        ctrl.SetCanMove(false);
+        Died?.Invoke();
+        PlayerEvents.RaiseDied();
     }
 
-    private void UpdateScreenEffect()
-    {
-        if (CurHP < maxHP && CurHP > 50f)
-            curVignettePower = halfHPVignettePower;
-        else if (CurHP <= 50f)
-        {
-            curVignettePower = lowHPVignettePower;
-            curBreathFrequency = lowHPBreathFrequency;
-        }
-        else
-        {
-            curVignettePower = normalVignettePower;
-            curBreathFrequency = normalBreathFrequency;
-        }
+    // Replaces the old "takeDamage / heal" bools that were polled every frame.
+    [ContextMenu("Debug/Take 10 Damage")]
+    private void DebugTakeDamage() => TakeDamage(10f);
 
-        bloodFX.SetFloat(VignettePower, curVignettePower);
-        bloodFX.SetFloat(BreathFrequency, curBreathFrequency);
-    }
-    
-    private void ResetBloodFX()
-    {
-        bloodFX.SetFloat(VignettePower, normalVignettePower);
-        bloodFX.SetFloat(BreathFrequency, normalBreathFrequency);
-    }
+    [ContextMenu("Debug/Heal 10")]
+    private void DebugHeal() => Heal(10f);
 }

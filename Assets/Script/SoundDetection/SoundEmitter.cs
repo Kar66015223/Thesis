@@ -1,43 +1,42 @@
+using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>Broadcasts a noise to every <see cref="IHearable"/> in range.</summary>
 public class SoundEmitter : MonoBehaviour
 {
+    private const int MaxColliders = 32;
+
+    [SerializeField] private LayerMask hearableMask = ~0;
+
+    [Header("Debug")]
+    [Tooltip("Radius of the last sound (drawn as a gizmo).")]
     [SerializeField] private float curRadius = 0f;
-    public EnemyReaction curReaction;
+    [SerializeField] private EnemyReaction curReaction;
+    [SerializeField] private float debugRadius = 10f;
 
-    public bool makeSound = false;
-
-    void Update()
-    {
-        if(makeSound)
-        {
-            MakeSound(10f, curReaction);
-        }
-    }
+    private readonly Collider[] overlapBuffer = new Collider[MaxColliders];
+    private readonly HashSet<IHearable> notified = new();
 
     public void MakeSound(float radius, EnemyReaction reaction)
     {
-        makeSound = false;
+        curRadius = radius;
+        curReaction = reaction;
 
-        if (curRadius != radius)
-            curRadius = radius;
+        SoundSignal signal = new(transform.position, radius, reaction);
+        int count = Physics.OverlapSphereNonAlloc(transform.position, radius, overlapBuffer, hearableMask);
 
-        if (curReaction != reaction)
-            curReaction = reaction;
-        
-        Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
-
-        foreach (var col in colliders)
+        // A listener with several colliders should still only hear the sound once.
+        notified.Clear();
+        for (int i = 0; i < count; i++)
         {
-            if (col.TryGetComponent(out IHearable hearable))
-            {
-                SoundSignal signal = new(transform.position, radius, reaction);
+            if (overlapBuffer[i].TryGetComponent(out IHearable hearable) && notified.Add(hearable))
                 hearable.OnHearSound(signal);
-            }
         }
-
-        // Debug.Log($"Sound Made by {gameObject.name}!!!");
     }
+
+    // Replaces the old "makeSound" bool that was polled every frame.
+    [ContextMenu("Debug/Make Sound")]
+    private void DebugMakeSound() => MakeSound(debugRadius, curReaction);
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()

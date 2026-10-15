@@ -1,17 +1,11 @@
 using UnityEngine;
 
+/// <summary>Mission 1 goal item: picking it up restores power and sends enemies to their next route step.</summary>
 public class MorseCode : Item
 {
-    public override void Interact(GameObject interactor)
+    protected override void OnPickedUp(GameObject interactor)
     {
-        base.Interact(interactor);
-
-        if(interactor.TryGetComponent(out PlayerController ctrl))
-        {
-            ctrl.hasMorseCode = true;
-            // GameEvent.OnShowTips?.Invoke("Player has morse code, light comes back, can return now");
-            GameEvent.OnLightsOut?.Invoke(false);
-            GameEvent.OnChangeAllEnemyPath?.Invoke();
-        }
+        WorldEvents.SetLightsOut(false);
+        EnemyEvents.RequestAdvanceAllRoutes();
     }
 }

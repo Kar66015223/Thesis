@@ -1,44 +1,46 @@
 using UnityEngine;
 
-public class ObjectiveHighlight : MonoBehaviour
+/// <summary>
+/// One step of the level's objective chain. It owns its own state (is it the current objective,
+/// has it been completed) instead of every interactable keeping a "hasInteracted" copy.
+/// </summary>
+public class ObjectiveHighlight : MonoBehaviour, IScannable
 {
     public const string layerName = "ObjectiveHighlight";
-    private int highlightLayerIndex;
-    private int originalLayer;
 
-    private bool isHighlighted = false;
-    public bool canHighlight = false;
+    private LayerHighlighter highlighter;
+    private bool isCompleted;
 
-    void Start()
+    public bool IsCurrent { get; private set; }
+
+    // Lazy, so it also works when ObjectiveManager reaches an object that is still inactive.
+    private LayerHighlighter Highlighter => highlighter ??= new LayerHighlighter(gameObject, layerName);
+
+    /// <summary>Called by ObjectiveManager. Becoming current again resets completion.</summary>
+    public void SetCurrent(bool isCurrent)
     {
-        originalLayer = gameObject.layer;
+        IsCurrent = isCurrent;
+        isCompleted = false;
 
-        highlightLayerIndex = LayerMask.NameToLayer(layerName);
-        if (highlightLayerIndex == -1)
-            Debug.LogError($"No layer: {layerName}!");
+        if (!isCurrent)
+            Highlighter.Remove();
     }
 
-    public void ApplyHighlight()
+    /// <summary>Called by the interactable linked to this objective.</summary>
+    public void ReportInteraction()
     {
-        if (isHighlighted || !canHighlight)
+        if (!IsCurrent || isCompleted)
             return;
 
-        SetLayerRecursively(gameObject, highlightLayerIndex);
-        isHighlighted = true;
+        isCompleted = true;
+        WorldEvents.RaiseObjectiveCompleted(this);
     }
 
-    public void RemoveHighlight()
+    public void OnScanEnter()
     {
-        SetLayerRecursively(gameObject, originalLayer);
-        isHighlighted = false;
+        if (IsCurrent)
+            Highlighter.Apply();
     }
 
-    private void SetLayerRecursively(GameObject obj, int newLayer)
-    {
-        obj.layer = newLayer;
-        foreach (Transform child in obj.transform)
-        {
-            SetLayerRecursively(child.gameObject, newLayer);
-        }
-    }
+    public void OnScanExit() => Highlighter.Remove();
 }

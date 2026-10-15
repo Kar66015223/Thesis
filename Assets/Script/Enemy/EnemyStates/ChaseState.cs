@@ -1,98 +1,88 @@
 using UnityEngine;
 
-public class ChaseState : IEnemyState
+/// <summary>Runs after the target until close enough to catch it, or gives up when it can't reach it.</summary>
+public class ChaseState : EnemyStateBase
 {
-    private EnemyController ctrl;
-    private Transform target;
+    private const float RepathDistance = 0.5f;
+    private const float CatchRangePadding = 0.5f;
+
+    private readonly Transform target;
+    private PlayerStruggle targetStruggle;
     private float giveUpTimer;
     private Vector3 lastTargetPos;
 
-    public ChaseState(EnemyController ctrl, Transform target)
-    {
-        this.ctrl = ctrl;
-        this.target = target;
-    }
+    public ChaseState(EnemyController ctrl, Transform target) : base(ctrl) => this.target = target;
 
-    public void Enter()
-    {
-        ctrl.tracking.InterruptCurrentStep();
+    public override EnemyState Indicator => EnemyState.Chase;
 
-        ctrl.Movement.SetBaseSpeed(ctrl.runSpeed);
+    public override void Enter()
+    {
+        ctrl.Tracking.InterruptCurrentStep();
+
+        ctrl.Movement.SetBaseSpeed(ctrl.RunSpeed);
         ctrl.Agent.updateRotation = false;
         ctrl.Agent.isStopped = false;
-        ctrl.Agent.stoppingDistance = 2f;
+        ctrl.Agent.stoppingDistance = ApproachStoppingDistance;
         giveUpTimer = 0f;
 
-        ctrl.SetDestination(target.position);
-        lastTargetPos = target.position;
+        if (target == null)
+            return;
 
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.Chase);
+        targetStruggle = target.GetComponentInParent<PlayerStruggle>();
+        lastTargetPos = target.position;
+        ctrl.SetDestination(lastTargetPos);
     }
 
-    public void Update()
+    public override void Update()
     {
         if (target == null)
             return;
 
-        if (Vector3.Distance(target.position, lastTargetPos) > 0.5f)
-        {
-            ctrl.SetDestination(target.position);
-            lastTargetPos = target.position;
-        }
-
-        Vector3 direction = target.position - ctrl.transform.position;
-        direction.y = 0;
-        if (direction != Vector3.zero)
-            ctrl.transform.rotation = Quaternion.LookRotation(direction);
-
-        float actualDistance = direction.magnitude;
-        float catchDistance  = ctrl.Agent.stoppingDistance + 0.5f;
-
-        EnemyDoorNavigation doorNav = ctrl.DoorNavigation;
-        bool reachedNavMeshDest = doorNav.HasArrived;
-        bool isInvalidOrPartialPath = doorNav.IsBlocked;
-
-        PlayerStruggle player = target.GetComponentInParent<PlayerStruggle>();
-
-        if (player != null && player.IsCatched && player.CatchingEnemy != ctrl)
+        // Someone else already caught the player.
+        if (targetStruggle != null && targetStruggle.IsCaught && !ReferenceEquals(targetStruggle.CatchingEnemy, ctrl))
         {
             ctrl.ReturnToDefaultState();
             return;
         }
 
-        if (actualDistance <= catchDistance)
+        if (Vector3.Distance(target.position, lastTargetPos) > RepathDistance)
+        {
+            lastTargetPos = target.position;
+            ctrl.SetDestination(lastTargetPos);
+        }
+
+        FaceInstantly(target.position);
+
+        float distance = FlatDirectionTo(target.position).magnitude;
+        float catchDistance = ctrl.Agent.stoppingDistance + CatchRangePadding;
+
+        if (distance <= catchDistance)
         {
             ctrl.Agent.isStopped = true;
-            if (player != null && !player.IsCatched)
-            {
-                ctrl.ChangeState(new CatchingState(ctrl, player));
-            }
+            if (targetStruggle != null && !targetStruggle.IsCaught)
+                ctrl.ChangeState(new CatchingState(ctrl, targetStruggle));
+            return;
         }
-        else if (reachedNavMeshDest || isInvalidOrPartialPath)
-        {
-            giveUpTimer += Time.deltaTime;
-            if (giveUpTimer >= ctrl.distractWaitTime)
-            {
-                ctrl.ReturnToDefaultState();
-            }
 
-            Debug.Log("Path invalid");
-        }
-        else
+        ctrl.Agent.isStopped = false;
+
+        EnemyDoorNavigation doorNav = ctrl.DoorNavigation;
+        if (doorNav.HasArrived || doorNav.IsBlocked)
         {
-            if(!ctrl.Agent.pathPending)
-                giveUpTimer = 0f;
+            // Reached the last known spot (or can't get there) without catching: give up after a moment.
+            giveUpTimer += Time.deltaTime;
+            if (giveUpTimer >= ctrl.DistractWaitTime)
+                ctrl.ReturnToDefaultState();
+        }
+        else if (!ctrl.Agent.pathPending)
+        {
+            giveUpTimer = 0f;
         }
     }
 
-    public void Exit()
+    public override void Exit()
     {
         ctrl.Agent.updateRotation = true;
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.None);
-
-        ctrl.tracking.ResumeInterruptedStep();
+        ctrl.Tracking.ResumeInterruptedStep();
     }
-    
-    public void OnHearSound(SoundSignal sound) { }
-    public void OnSeenTarget(Transform target) { }
 }

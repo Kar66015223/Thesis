@@ -92,7 +92,8 @@ public class FlashbangGrenade : MonoBehaviour
     {
         if (hitTargets.Contains(other)) return;
 
-        if (other.TryGetComponent(out PlayerFlashbangReceiver player))
+        // Depends on the IFlashable contract, so enemies or cameras can react to flashbangs too.
+        if (other.TryGetComponent(out IFlashable flashable))
         {
             hitTargets.Add(other);
 
@@ -104,7 +105,7 @@ public class FlashbangGrenade : MonoBehaviour
             }
 
             float intensity = Mathf.Clamp01(1f - (distance / maxRadius));
-            player.ApplyFlash(intensity);
+            flashable.ApplyFlash(intensity);
         }
     }
 }

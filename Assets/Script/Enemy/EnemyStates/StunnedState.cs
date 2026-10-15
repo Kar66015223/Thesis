@@ -1,41 +1,34 @@
 using UnityEngine;
 
-public class StunnedState : IEnemyState
+/// <summary>Blind and frozen for <see cref="EnemyController.StunTime"/> seconds.</summary>
+public class StunnedState : EnemyStateBase
 {
-    private EnemyController ctrl;
     private float timer;
 
-    public StunnedState(EnemyController ctrl)
-        => this.ctrl = ctrl;
+    public StunnedState(EnemyController ctrl) : base(ctrl) { }
 
-    public void Enter()
+    public override EnemyState Indicator => EnemyState.Stunned;
+
+    public override void Enter()
     {
-        ctrl.tracking.InterruptCurrentStep();
+        ctrl.Tracking.InterruptCurrentStep();
 
         ctrl.Agent.isStopped = true;
         ctrl.Vision.DisableVision();
-
         timer = 0f;
-
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.Stunned);
     }
 
-    public void Update()
+    public override void Update()
     {
         timer += Time.deltaTime;
-        if (timer >= ctrl.stunTime)
-        {
+        if (timer >= ctrl.StunTime)
             ctrl.ReturnToDefaultState();
-            GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.None);
-        }
     }
-    
-    public void Exit()
+
+    public override void Exit()
     {
         ctrl.Vision.EnableVision();
-        ctrl.tracking.ResumeInterruptedStep();
+        ctrl.Tracking.ResumeInterruptedStep();
         ctrl.Agent.isStopped = false;
-    } 
-    public void OnHearSound(SoundSignal sound) { }
-    public void OnSeenTarget(Transform target) { }
+    }
 }

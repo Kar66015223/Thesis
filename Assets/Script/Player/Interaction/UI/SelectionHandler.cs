@@ -2,79 +2,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>Highlights the selected item button and keeps it scrolled into view.</summary>
 [System.Serializable]
 public class SelectionHandler
 {
     [SerializeField] private ScrollRect scrollRect;
-    
-    private Dictionary<Item, GameObject> allItemButtons = new();
-    private List<Item> allItems = new();
-    private int selectedIndex = 0;
 
-    public void Initialize(Dictionary<Item, GameObject> allItemButtons)
+    private int lastIndex = -1;
+    private int lastCount = -1;
+
+    public void Render(IReadOnlyDictionary<Item, InteractItemUI> buttons, IReadOnlyList<Item> items, int selectedIndex)
     {
-        this.allItemButtons = allItemButtons;
-    }
+        Item selectedItem = items.Count > 0 ? items[selectedIndex] : null;
 
-    public void UpdateSelection(List<Item> currentInter)
-    {
-        allItems = currentInter;
-
-        if (allItems.Count == 0)
-            return;
-
-        if (selectedIndex >= allItems.Count)
+        foreach (var pair in buttons)
         {
-            selectedIndex = allItems.Count - 1;
+            if (pair.Value != null)
+                pair.Value.SetSelected(pair.Key == selectedItem);
         }
 
-        UpdateUI();
-    }
+        // Only scroll when the selection changes, so the player can still scroll the list manually.
+        bool selectionChanged = selectedIndex != lastIndex || items.Count != lastCount;
+        if (scrollRect != null && items.Count > 1 && selectionChanged)
+            scrollRect.verticalNormalizedPosition = 1f - (float)selectedIndex / (items.Count - 1);
 
-    public void UpdateUI()
-    {
-        Item selectedItem = allItems[selectedIndex];
-
-        foreach (var kvp in allItemButtons)
-        {
-            InteractItemUI itemUI = kvp.Value.GetComponent<InteractItemUI>();
-            itemUI.isSelected = kvp.Key == selectedItem;
-        }
-        
-        if(scrollRect != null && allItems.Count > 1)
-        {
-            float normalizedScroll = 1f - ((float)selectedIndex / (allItems.Count - 1));
-            scrollRect.verticalNormalizedPosition = normalizedScroll;
-        }
-    }
-
-    public void HandleScrollSelect()
-    {
-        if (allItems.Count <= 1)
-            return;
-
-        float scroll = Input.mouseScrollDelta.y;
-        if (scroll != 0)
-        {
-            if (scroll > 0)
-                selectedIndex--;
-            else
-                selectedIndex++;
-
-            if (selectedIndex < 0)
-                selectedIndex = allItems.Count - 1;
-            else if (selectedIndex >= allItems.Count)
-                selectedIndex = 0;
-
-            UpdateUI();
-        }
-    }
-    
-    public Item GetSelectedItem()
-    {
-        if (allItems.Count == 0)
-            return null;
-
-        return allItems[selectedIndex];
+        lastIndex = selectedIndex;
+        lastCount = items.Count;
     }
 }

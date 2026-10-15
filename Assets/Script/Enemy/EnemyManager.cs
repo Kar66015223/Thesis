@@ -1,104 +1,100 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Feeds each enemy its scripted route, one step at a time. An enemy advances when its own timed
+/// wait finishes, or all enemies advance together when a level event asks for it.
+/// </summary>
 public class EnemyManager : MonoBehaviour
 {
-    public List<EnemyMovementPointPair> allEnemiesMovementPair = new();
-    private Dictionary<EnemyController, EnemyMovementPointPair> dictEnemies = new();
-    private Dictionary<EnemyController, int> currentStepIndex = new();
+    [SerializeField] private List<EnemyMovementPointPair> allEnemiesMovementPair = new();
 
-    private float toNextStepTimer;
+    private readonly Dictionary<EnemyController, EnemyMovementPointPair> routes = new();
+    private readonly Dictionary<EnemyController, int> stepIndex = new();
 
     void Awake()
     {
-        foreach (var pair in allEnemiesMovementPair)
+        foreach (EnemyMovementPointPair pair in allEnemiesMovementPair)
         {
             if (pair.ctrl == null)
                 continue;
 
-            dictEnemies[pair.ctrl] = pair;
-            currentStepIndex[pair.ctrl] = 0;
-        }
-    }
-
-    void Start()
-    {
-        foreach (var pair in dictEnemies.Values)
-        {
-            ApplyCurrentStep(pair.ctrl);
+            routes[pair.ctrl] = pair;
+            stepIndex[pair.ctrl] = 0;
         }
     }
 
     void OnEnable()
     {
-        GameEvent.OnChangeEnemyPath += HandlePathChange;
-        GameEvent.OnChangeAllEnemyPath += HandlePathChangeAllEnemy;
+        EnemyEvents.AdvanceAllRoutesRequested += AdvanceAll;
+        foreach (EnemyController enemy in routes.Keys)
+            enemy.Tracking.StepWaitCompleted += Advance;
     }
 
     void OnDisable()
     {
-        GameEvent.OnChangeEnemyPath -= HandlePathChange;
-        GameEvent.OnChangeAllEnemyPath -= HandlePathChangeAllEnemy;
-    }
-
-    private void HandlePathChange(EnemyController ctrl)
-    {
-        if (!dictEnemies.ContainsKey(ctrl))
-            return;
-
-        currentStepIndex[ctrl]++;
-        ApplyCurrentStep(ctrl);
-    }
-    
-    private void HandlePathChangeAllEnemy()
-    {
-        foreach (var pair in dictEnemies.Values)
+        EnemyEvents.AdvanceAllRoutesRequested -= AdvanceAll;
+        foreach (EnemyController enemy in routes.Keys)
         {
-            EnemyController ctrl = pair.ctrl;
-            currentStepIndex[ctrl]++;
-            ApplyCurrentStep(ctrl);
+            if (enemy != null)
+                enemy.Tracking.StepWaitCompleted -= Advance;
         }
     }
 
-    private void ApplyCurrentStep(EnemyController ctrl)
+    void Start()
     {
-        EnemyMovementPointPair pair = dictEnemies[ctrl];
-        int index = currentStepIndex[ctrl];
+        foreach (EnemyController enemy in routes.Keys)
+            ApplyCurrentStep(enemy);
+    }
 
-        if (index >= pair.movementSequence.Count)
+    private void Advance(EnemyController enemy)
+    {
+        if (!routes.ContainsKey(enemy))
+            return;
+
+        stepIndex[enemy]++;
+        ApplyCurrentStep(enemy);
+    }
+
+    private void AdvanceAll()
+    {
+        // Copy the keys: advancing can't change the dictionary, but this keeps it safe if it ever does.
+        foreach (EnemyController enemy in new List<EnemyController>(routes.Keys))
+            Advance(enemy);
+    }
+
+    private void ApplyCurrentStep(EnemyController enemy)
+    {
+        EnemyMovementPointPair route = routes[enemy];
+        int index = stepIndex[enemy];
+
+        if (index >= route.movementSequence.Count)
         {
-            Debug.Log($"{ctrl.gameObject.name} has completed its movement sequence");
+            Debug.Log($"{enemy.name} has completed its movement sequence", enemy);
             return;
         }
 
-        EnemyMovementStep step = pair.movementSequence[index];
+        EnemyMovementStep step = route.movementSequence[index];
+        if (!IsValid(step, enemy))
+            return;
 
-        switch(step.movementType)
+        enemy.Tracking.StartStep(step);
+    }
+
+    private static bool IsValid(EnemyMovementStep step, EnemyController enemy)
+    {
+        switch (step.movementType)
         {
-            case EnemyMovementType.Idle:
+            case EnemyMovementType.Idle when step.idlePoint == null:
+                Debug.LogWarning($"{enemy.name} has an Idle step with no idle point", enemy);
+                return false;
 
-                if (step.idlePoint == null)
-                {
-                    Debug.LogWarning($"{ctrl.gameObject.name} has an Idle step with no idle point");
-                    return;
-                }
+            case EnemyMovementType.Patrol when step.patrolPath.wayPoints == null || step.patrolPath.wayPoints.Length == 0:
+                Debug.LogWarning($"{enemy.name} has a Patrol step with no waypoints", enemy);
+                return false;
 
-                ctrl.Movement.SetSpeedModifier("Step", step.speedMultiplier);
-                ctrl.tracking.StartStep(pair, index);
-                break;
-
-            case EnemyMovementType.Patrol:
-
-                if (step.patrolPath.wayPoints == null ||
-                    step.patrolPath.wayPoints.Length == 0)
-                {
-                    Debug.LogWarning($"{ctrl.gameObject.name} has a Patrol step with no waypoints");
-                    return;
-                }
-
-                ctrl.Movement.SetSpeedModifier("Step", step.speedMultiplier);
-                ctrl.tracking.StartStep(pair, index);
-                break;
+            default:
+                return true;
         }
     }
 }

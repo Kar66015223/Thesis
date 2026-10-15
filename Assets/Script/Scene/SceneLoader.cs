@@ -6,11 +6,8 @@ public static class SceneLoader
     public static void LoadScene(string sceneName)
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene($"{sceneName}");
+        SceneManager.LoadScene(sceneName);
     }
 
-    public static void RestartScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
+    public static void RestartScene() => LoadScene(SceneManager.GetActiveScene().name);
 }

@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class ReadableItem : Item
 {
-    public override void Interact(GameObject interactor)
+    protected override void OnPickedUp(GameObject interactor)
     {
-        base.Interact(interactor);
-        ReadableItemData data = Data as ReadableItemData;
-        GameEvent.OnToggleReadUI?.Invoke(true, data.text);
+        if (Data is ReadableItemData readable)
+            UIEvents.ToggleReadPanel(true, readable.text);
+        else
+            Debug.LogWarning($"{name} is a ReadableItem but its Data is not ReadableItemData.", this);
     }
 }
