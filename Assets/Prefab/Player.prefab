@@ -2385,8 +2385,9 @@ GameObject:
   - component: {fileID: 4091028683622402558}
   - component: {fileID: 1550075315379293586}
   - component: {fileID: 7963218436116761709}
+  - component: {fileID: 3492857249604426699}
   m_Layer: 5
-  m_Name: EnemyStateUIPanel
+  m_Name: TrackingUIPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2449,6 +2450,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3492857249604426699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2415378584317242742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf8662110fbccce4994de8e44fc82150, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrackingUIManager
+  trackingImgPrefab: {fileID: 8427312992490417567, guid: 177268a29ae805e47ac11fe45ef0957a, type: 3}
+  m1Sprite: {fileID: 0}
 --- !u!1 &2584521329265045361
 GameObject:
   m_ObjectHideFlags: 0

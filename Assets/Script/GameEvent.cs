@@ -7,9 +7,11 @@ public static class GameEvent
 
     // UI
     public static Action<bool, string> OnToggleReadUI;
-    public static Action<string> OnShowTips;
     public static Action<bool, PasswordLock> OnShowPasswordInputUI;
     public static Action<bool> OnLightsOut;
+
+    public static Action<string> OnShowTips;
+    public static Action<Transform, Sprite> OnShowTrackingUI;
 
     public static Action<Transform, EnemyState> OnShowEnemyState;
     public static Action<Transform, float> OnUpdateConfirmTimer;

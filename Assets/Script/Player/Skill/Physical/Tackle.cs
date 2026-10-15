@@ -8,13 +8,6 @@ public class Tackle : Skill
     private bool isDashing = false;
     private float dashElapsed = 0f;
 
-    private Vector3 dashStart;
-    private Vector3 dashTargetPoint;
-    private Vector3 dashVelocity;
-    private float dashDurationLocal;
-    private float dashRangeLocal;
-    private float clearanceOffset = 0.12f; // tweak in inspector if needed
-
     private EnemyController target;
 
     public Tackle(TackleData data, SkillContext context)
@@ -24,7 +17,7 @@ public class Tackle : Skill
         skillDesc = data.skillDesc;
         type = data.type;
         usage = data.usage;
-        coolDown = data.coolDown;
+        coolDown = data.cooldown;
         cost = data.cost;
         icon = data.icon;
 
@@ -45,13 +38,22 @@ public class Tackle : Skill
         Collider[] cols = Physics.OverlapSphere(
             context.User.transform.position, data.dashRange, data.enemyLayer);
 
-        if (cols.Length == 0) 
+        if (cols.Length == 0)
+        {
+            target = null;
+            GameEvent.OnShowTrackingUI?.Invoke(null, null);
             return;
+        }
 
         Collider best = cols.OrderBy(
             c => Vector3.Distance(context.User.transform.position, c.transform.position)).First();
 
-        target = best.GetComponent<EnemyController>();
+        var newTarget = best.GetComponent<EnemyController>();
+        if (newTarget != target)
+        {
+            target = newTarget;
+            GameEvent.OnShowTrackingUI?.Invoke(target.transform, data.usePromptIcon);
+        }
         
         if (!isDashing || target == null)
             return;
