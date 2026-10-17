@@ -17,5 +17,8 @@ public class Item : InteractableBase
         OnPickedUp(interactor);
     }
     
-    protected virtual void OnPickedUp(GameObject interactor) {}
+    protected virtual void OnPickedUp(GameObject interactor)
+    {
+        Destroy(gameObject);
+    }
 }

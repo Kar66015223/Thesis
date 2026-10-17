@@ -4,5 +4,8 @@ using UnityEngine;
 public class KeyForBasement : Item
 {
     protected override void OnPickedUp(GameObject interactor)
-        => UIEvents.ShowTip("Player has key, can unlock basement door now");
+    {
+        base.OnPickedUp(interactor);
+        UIEvents.ShowTip("Player has key, can unlock basement door now");
+    }
 }
