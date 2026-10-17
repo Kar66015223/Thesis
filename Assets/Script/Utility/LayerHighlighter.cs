@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -7,15 +8,16 @@ using UnityEngine;
 public class LayerHighlighter
 {
     private readonly GameObject root;
-    private readonly int originalLayer;
     private readonly int highlightLayer;
+
+    // Each object's own layer, so children on another layer than the root (UI, Enemy...) get theirs back.
+    private readonly List<(GameObject obj, int layer)> originalLayers = new();
 
     public bool IsHighlighted { get; private set; }
 
     public LayerHighlighter(GameObject root, string highlightLayerName)
     {
         this.root = root;
-        originalLayer = root.layer;
         highlightLayer = LayerMask.NameToLayer(highlightLayerName);
 
         if (highlightLayer == -1)
@@ -27,7 +29,8 @@ public class LayerHighlighter
         if (IsHighlighted || highlightLayer == -1)
             return;
 
-        SetLayerRecursively(root.transform, highlightLayer);
+        originalLayers.Clear();
+        SetHighlightRecursively(root.transform);
         IsHighlighted = true;
     }
 
@@ -36,14 +39,27 @@ public class LayerHighlighter
         if (!IsHighlighted)
             return;
 
-        SetLayerRecursively(root.transform, originalLayer);
+        foreach ((GameObject obj, int layer) in originalLayers)
+        {
+            if (obj != null)
+                obj.layer = layer;
+        }
+
+        originalLayers.Clear();
         IsHighlighted = false;
     }
 
-    private static void SetLayerRecursively(Transform target, int layer)
+    private void SetHighlightRecursively(Transform target)
     {
-        target.gameObject.layer = layer;
+        // UI (e.g. a world-space FloatingText) is not drawn by the Render Objects passes,
+        // so moving it to the highlight layer would only hide it.
+        if (target is RectTransform)
+            return;
+
+        originalLayers.Add((target.gameObject, target.gameObject.layer));
+        target.gameObject.layer = highlightLayer;
+
         foreach (Transform child in target)
-            SetLayerRecursively(child, layer);
+            SetHighlightRecursively(child);
     }
 }

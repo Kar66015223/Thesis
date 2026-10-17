@@ -38,10 +38,11 @@ public class ObjectiveManager : MonoBehaviour
     {
         currentIndex = index;
 
-        for (int i = 0; i < allObjectives.Count; i++)
+        ObjectiveHighlight current = CurrentObjective;
+        foreach (ObjectiveHighlight objective in allObjectives)
         {
-            if (allObjectives[i] != null)
-                allObjectives[i].SetCurrent(i == index);
+            if (objective != null)
+                objective.SetCurrent(objective == current);
         }
     }
 }

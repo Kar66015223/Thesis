@@ -9,7 +9,7 @@ public class ScannableObject : MonoBehaviour, IScannable
 
     private LayerHighlighter highlighter;
 
-    // Lazy so the original layer is captured before the first highlight, whatever the init order.
+    // Lazy so it works whatever the init order.
     private LayerHighlighter Highlighter => highlighter ??= new LayerHighlighter(gameObject, highlightLayerName);
 
     public void OnScanEnter() => Highlighter.Apply();

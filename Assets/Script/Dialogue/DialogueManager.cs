@@ -13,9 +13,6 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private Transform choicesParent;
     [SerializeField] private Button choiceButtonPrefab;
 
-    [Header("Player Control")]
-    [SerializeField] private Behaviour playerMovement;
-
     private const string DefaultPlayerName = "Player";
 
     private enum DialogueStage
@@ -33,10 +30,6 @@ public class DialogueManager : MonoBehaviour
     // ระบบบทสนทนาต่อเนื่อง (sequential conversation)
     private bool isSequenceDialogue;
     private int currentLineIndex;
-
-    // สถานะก่อนเริ่มสนทนา (state saved before the conversation)
-    private bool previousMovementEnabled;
-    private bool hasSavedMovementState;
 
     // สถานะหลังเลือกคำตอบ (after picking a choice with no follow-up: click to close)
     private bool waitingForCloseClick;
@@ -115,14 +108,8 @@ public class DialogueManager : MonoBehaviour
         if (data == null || view == null || !view.IsValid || IsDialogueOpen)
             return;
 
-        // หยุดการเคลื่อนที่ของ Player (freeze the player)
-        hasSavedMovementState = playerMovement != null;
-        if (hasSavedMovementState)
-        {
-            previousMovementEnabled = playerMovement.enabled;
-            playerMovement.enabled = false;
-        }
-
+        // หยุดการเคลื่อนที่ของ Player (freeze the player): the UI action map turns the Player map off.
+        // Don't disable PlayerInput itself - it can't switch maps while disabled.
         InputModeService.RequestUI(this, true);
 
         waitForInputRelease = true;
@@ -144,10 +131,6 @@ public class DialogueManager : MonoBehaviour
         waitForInputRelease = false;
 
         // คืนสถานะการเดินเดิม (restore player movement)
-        if (playerMovement != null && hasSavedMovementState)
-            playerMovement.enabled = previousMovementEnabled;
-        hasSavedMovementState = false;
-
         InputModeService.RequestUI(this, false);
     }
 

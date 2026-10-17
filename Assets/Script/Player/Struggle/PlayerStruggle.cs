@@ -80,7 +80,7 @@ public class PlayerStruggle : MonoBehaviour
             return;
 
         struggleProgress += struggleValue;
-        PlayerEvents.RaiseStruggleProgressChanged(Mathf.Clamp01(struggleProgress / struggleProgress));
+        PlayerEvents.RaiseStruggleProgressChanged(Mathf.Clamp01(struggleProgress / struggleThreshold));
     }
     
     private void EndStruggle(bool playerEscaped)
