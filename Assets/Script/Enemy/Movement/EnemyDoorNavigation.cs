@@ -8,7 +8,9 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyDoorNavigation : MonoBehaviour
 {
-    [SerializeField] private float destSearchRadius = 10f;
+    [Tooltip("Doors further than this (straight line) from the destination are left out of the route search. " +
+             "Only bounds its cost; keep it large enough to include every door a route might need.")]
+    [SerializeField] private float destSearchRadius = 30f;
     [SerializeField] private float doorArrivalTolerance = 0.2f;
     [SerializeField] private float repathDelay = 0.2f;
     [SerializeField] private float retryDelay = 1f;
@@ -16,6 +18,8 @@ public class EnemyDoorNavigation : MonoBehaviour
 
     private const float DoorApproachStoppingDistance = 0.1f;
     private const float MinRepathDelay = 0.05f;
+    // Destinations (idle points) can sit a little above the floor; snap them onto the NavMesh before path queries.
+    private const float DestSampleRadius = 2f;
 
     private NavMeshAgent agent;
 
@@ -111,35 +115,24 @@ public class EnemyDoorNavigation : MonoBehaviour
 
         IsBlocked = true;
         nextDoorSearchTime = Time.time + retryDelay;
+
+        // A door that was just opened only stops carving the NavMesh once it stops swinging, which can be after
+        // the post-open re-path. Re-path now so the next check isn't judged on that stale path.
+        agent.SetDestination(finalDest);
         return false;
     }
 
-    private bool TryFindDoor(out Door bestDoor, out Transform bestApproachPoint)
+    /// <summary>
+    /// The first closed door on the cheapest route to the destination (see <see cref="DoorRoutePlanner"/>),
+    /// so when several doors stand in the way they're opened in route order.
+    /// </summary>
+    private bool TryFindDoor(out Door door, out Transform approachPoint)
     {
-        bestDoor = null;
-        bestApproachPoint = null;
+        Vector3 dest = NavMesh.SamplePosition(finalDest, out NavMeshHit hit, DestSampleRadius, agent.areaMask)
+            ? hit.position : finalDest;
 
-        float bestDistance = float.PositiveInfinity;
-
-        foreach (Door door in Door.ActiveDoors)
-        {
-            if (door == null || door.IsOpen)
-                continue;
-
-            float destDistance = Vector3.Distance(door.transform.position, finalDest);
-            if (destDistance > destSearchRadius ||
-                destDistance >= bestDistance)
-                continue;
-
-            if (!door.TryGetReachableApproach(transform.position, agent.areaMask, out Transform side))
-                continue;
-
-            bestDoor = door;
-            bestApproachPoint = side;
-            bestDistance = destDistance;
-        }
-
-        return bestDoor != null;
+        return DoorRoutePlanner.TryFindFirstDoor(transform.position, dest, agent.areaMask, destSearchRadius,
+            out door, out approachPoint);
     }
 
     private void UpdateDoorApproach()

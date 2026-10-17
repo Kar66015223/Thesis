@@ -26,21 +26,45 @@ public class Door : Interactable
     private Lock currentLock;
     private Coroutine colliderRoutine;
 
+    /// <summary>
+    /// Time.time when a door last opened, closed, appeared or disappeared, i.e. when enemy routes may have changed
+    /// (see <see cref="DoorRoutePlanner"/>).
+    /// </summary>
+    public static float LastRouteChangeTime { get; private set; } = float.NegativeInfinity;
+
     public bool IsOpen { get; private set; }
+    public Transform PlayerPointFront => playerPointFront;
+    public Transform PlayerPointBack => playerPointBack;
+
+    /// <summary>
+    /// The door enemies treat as one unit: the topmost Door above this one (a double door's root, whose
+    /// Animator swings both leaves), or this door itself.
+    /// </summary>
+    public Door Root { get; private set; }
 
     void Awake()
     {
         anim = GetComponentInChildren<Animator>();
         col = GetComponent<Collider>();
         currentLock = GetComponentInChildren<Lock>();
+        Root = FindRootDoor();
 
         // Closed doors block enemy paths until an enemy opens one (see EnemyDoorNavigation).
         if (link != null)
             link.enabled = IsOpen;
     }
 
-    void OnEnable() => activeDoors.Add(this);
-    void OnDisable() => activeDoors.Remove(this);
+    void OnEnable()
+    {
+        activeDoors.Add(this);
+        LastRouteChangeTime = Time.time;
+    }
+
+    void OnDisable()
+    {
+        activeDoors.Remove(this);
+        LastRouteChangeTime = Time.time;
+    }
 
     protected override void OnInteract(GameObject interactor)
     {
@@ -72,22 +96,6 @@ public class Door : Interactable
         return distanceToFront < distanceToBack ? playerPointFront : playerPointBack;
     }
 
-    public bool TryGetReachableApproach(Vector3 from, int areaMask, out Transform approachPoint)
-    {
-        approachPoint = null;
-
-        bool canReachFront = TryGetPathLength(from, playerPointFront, areaMask, out float frontLength);
-        bool canReachBack = TryGetPathLength(from, playerPointBack, areaMask, out float backLength);
-
-        if (!canReachFront && !canReachBack)
-            return false;
-
-        approachPoint = canReachFront && (!canReachBack || frontLength <= backLength)
-            ? playerPointFront : playerPointBack;
-
-        return true;
-    }
-
     public bool OpenForEnemy()
     {
         if (IsOpen)
@@ -100,29 +108,22 @@ public class Door : Interactable
         return true;
     }
 
-    private static bool TryGetPathLength(Vector3 from, Transform point, int areaMask, out float pathLength)
+    private Door FindRootDoor()
     {
-        pathLength = 0f;
+        Door root = this;
+        for (Transform parent = transform.parent; parent != null; parent = parent.parent)
+        {
+            if (parent.TryGetComponent(out Door door))
+                root = door;
+        }
 
-        if (point == null)
-            return false;
-
-        NavMeshPath path = new();
-        bool calculated = NavMesh.CalculatePath(from, point.position, areaMask, path);
-
-        if (!calculated || path.status != NavMeshPathStatus.PathComplete)
-            return false;
-
-        Vector3[] corners = path.corners;
-        for (int i = 1; i < corners.Length; i++)
-            pathLength += Vector3.Distance(corners[i - 1], corners[i]);
-
-        return true;
+        return root;
     }
 
     private void SetDoorOpen(bool open)
     {
         IsOpen = open;
+        LastRouteChangeTime = Time.time;
 
         // Once a door has been opened the link stays on, so an agent that is already
         // crossing it never has the link disabled under its feet.
