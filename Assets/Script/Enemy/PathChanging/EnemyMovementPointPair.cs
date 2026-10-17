@@ -25,6 +25,9 @@ public class EnemyMovementStep
     public PatrolPath patrolPath;
 
     public float speedMultiplier = 1f;
+
+    [Tooltip("Idle steps only. Seconds to wait at the idle point (unable to be distracted) before moving on to the next step by itself. " +
+             "0 = stay at the idle point until a level event advances the route (EnemyEvents.RequestAdvanceAllRoutes).")]
     public float toNextStepWaitTime = 0f;
 }
 

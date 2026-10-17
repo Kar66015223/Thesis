@@ -1,6 +1,4 @@
 using System;
-using Unity.VisualScripting;
-using UnityEngine.Assertions.Must;
 
 /// <summary>
 /// Tracks the enemy's current route step (from EnemyManager): applies its points and speed,
@@ -27,6 +25,8 @@ public class EnemyStepTracking
 
     public void StartStep(EnemyMovementStep step)
     {
+        // A level event can advance the route mid-wait; don't carry the old step's wait into the new one.
+        CancelWaiting();
         activeStep = step;
         stepInterrupted = false;
         ApplyActiveStep();
@@ -62,7 +62,7 @@ public class EnemyStepTracking
         if (duration <= 0f)
             return;
 
-        IsWaiting = false;
+        IsWaiting = true;
         waitDuration = duration;
         waitTimer = 0f;
     }
@@ -93,6 +93,8 @@ public class EnemyStepTracking
         ctrl.Movement.SetSpeedModifier(SpeedModifierKey, activeStep.speedMultiplier);
 
         if (activeStep.movementType == EnemyMovementType.Idle)
+            ctrl.ApplyIdlePoint(activeStep.idlePoint);
+        else
             ctrl.ApplyPatrolPoints(activeStep.patrolPath.wayPoints);
 
         // Only re-enter the routine state if the enemy is currently doing its routine.
