@@ -18,15 +18,18 @@ MonoBehaviour:
   npcName: TestNPC
   dialogueText: Go ahead. What do you want to know?
   choices:
-  - choiceText: How tall are you
-    responseText: I am 190 cm.
-    endDialogue: 0
+  - choiceText: Mission
+    responseText: 
+    endDialogue: 1
     nextDialogue: {fileID: 0}
+    openQuestUI: 1
   - choiceText: Number
     responseText: Ok
     endDialogue: 0
     nextDialogue: {fileID: 11400000, guid: 0faff74d595d3c349b90b969724eadd0, type: 2}
+    openQuestUI: 0
   - choiceText: No, that's all
     responseText: Ok
     endDialogue: 1
     nextDialogue: {fileID: 0}
+    openQuestUI: 0

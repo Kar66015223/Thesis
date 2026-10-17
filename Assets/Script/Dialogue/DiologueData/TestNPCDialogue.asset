@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c940f67efb94947984c2d0dc22a529, type: 3}
   m_Name: TestNPCDialogue
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  conversationLines: []
   playerName: Player
   playerDialogueText: 
   npcName: TestNPC
@@ -21,7 +22,13 @@ MonoBehaviour:
     responseText: 
     endDialogue: 0
     nextDialogue: {fileID: 11400000, guid: 3a574624853fef04199d9398c386be9f, type: 2}
+    onChoiceSelected:
+      m_PersistentCalls:
+        m_Calls: []
   - choiceText: No, that's all
     responseText: Ok
     endDialogue: 1
     nextDialogue: {fileID: 0}
+    onChoiceSelected:
+      m_PersistentCalls:
+        m_Calls: []

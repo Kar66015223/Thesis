@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 [CreateAssetMenu(
@@ -49,4 +48,7 @@ public class DialogueChoice
     public bool endDialogue;
 
     public DialogueData nextDialogue;
+
+    [Header("Quest System")]
+    public bool openQuestUI;
 }

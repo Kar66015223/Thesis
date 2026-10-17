@@ -1,4 +1,3 @@
-
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,40 +16,32 @@ public class DialogueManager : MonoBehaviour
     [Header("Player Control")]
     [SerializeField] private Behaviour playerMovement;
 
+    // --- State Variables ---
     private DialogueData currentDialogue;
-
-    private enum DialogueStage
-    {
-        PlayerLine,
-        NpcLine,
-        ChoiceResponse,
-        SequenceLine
-    }
-
     private DialogueStage dialogueStage;
+    private int currentLineIndex;
+    private bool isSequenceDialogue;
 
-    // สถานะก่อนเริ่มสนทนา
+    // --- Input & Timing State ---
+    private bool waitForInputRelease;
+    private bool waitingForCloseClick;
+    private int choiceSelectedFrame = -1;
+    private int dialogueOpenedFrame = -1;
+
+    // --- Player Original State ---
     private bool previousMovementEnabled;
     private bool previousCursorVisible;
     private CursorLockMode previousCursorLockMode;
     private bool hasSavedMovementState;
 
-    // สถานะหลังเลือกคำตอบ
-    private bool waitingForCloseClick;
-    private int choiceSelectedFrame = -1;
+    public bool IsDialogueOpen => dialoguePanel != null && dialoguePanel.activeSelf;
 
-    // ป้องกันการกดปุ่มเริ่มสนทนาแล้วข้ามประโยคแรกทันที
-    private bool waitForInputRelease;
+    private enum DialogueStage { PlayerLine, NpcLine, ChoiceResponse, SequenceLine }
 
-    // ป้องกันการรับอินพุตในเฟรมที่เริ่มสนทนา
-    private int dialogueOpenedFrame = -1;
-
-    // ระบบบทสนทนาต่อเนื่อง
-    private bool isSequenceDialogue;
-    private int currentLineIndex;
-
-    public bool IsDialogueOpen =>
-        dialoguePanel != null && dialoguePanel.activeSelf;
+    // --- Input Properties ---
+    private bool IsInputHeld => Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter);
+    private bool IsAdvanceInputDown => Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter);
+    private bool IsClickDown => Input.GetMouseButtonDown(0);
 
     private void Awake()
     {
@@ -61,71 +52,39 @@ public class DialogueManager : MonoBehaviour
         }
 
         Instance = this;
-
-        if (dialoguePanel != null)
-            dialoguePanel.SetActive(false);
+        dialoguePanel?.SetActive(false);
     }
 
     private void Update()
     {
-        if (!IsDialogueOpen)
-            return;
+        if (!IsDialogueOpen) return;
 
-        // รอให้ปล่อยปุ่มที่ใช้เปิด Dialogue ก่อน
         if (waitForInputRelease)
         {
-            bool inputHeld =
-                Input.GetMouseButton(0) ||
-                Input.GetKey(KeyCode.Space) ||
-                Input.GetKey(KeyCode.Return) ||
-                Input.GetKey(KeyCode.KeypadEnter);
-
-            if (!inputHeld)
-                waitForInputRelease = false;
-
+            if (!IsInputHeld) waitForInputRelease = false;
             return;
         }
 
-        // หลังเลือกคำตอบที่ไม่มีบทสนทนาถัดไป
-        // คลิกเมาส์อีกครั้งเพื่อปิด Panel
         if (waitingForCloseClick)
         {
-            if (Time.frameCount > choiceSelectedFrame &&
-                Input.GetMouseButtonDown(0))
+            if (Time.frameCount > choiceSelectedFrame && IsClickDown)
             {
                 EndDialogue();
             }
-
             return;
         }
 
-        // ป้องกันการรับคลิกในเฟรมที่เริ่มบทสนทนา
-        bool clicked =
-            Time.frameCount > dialogueOpenedFrame &&
-            Input.GetMouseButtonDown(0);
+        if (Time.frameCount <= dialogueOpenedFrame) return;
 
-        bool pressedContinue =
-            Input.GetKeyDown(KeyCode.Space) ||
-            Input.GetKeyDown(KeyCode.Return) ||
-            Input.GetKeyDown(KeyCode.KeypadEnter);
-
-        // บทสนทนาต่อเนื่องแบบไม่มีตัวเลือก
-        if (isSequenceDialogue)
+        if (IsAdvanceInputDown)
         {
-            if (clicked || pressedContinue)
-                AdvanceSequenceDialogue();
-
-            return;
+            if (isSequenceDialogue) AdvanceSequenceDialogue();
+            else AdvanceDialogue();
         }
-
-        // ระบบบทสนทนาเดิม
-        if (clicked || pressedContinue)
-            AdvanceDialogue();
     }
 
     private void LateUpdate()
     {
-        // แสดงเมาส์ตลอดเวลาที่เปิด Dialogue
         if (IsDialogueOpen)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -133,133 +92,75 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // =========================================
+    // Core Functions
+    // =========================================
+
     public void StartDialogue(DialogueData data)
     {
-        if (data == null || dialoguePanel == null)
-            return;
+        if (data == null || dialoguePanel == null || dialoguePanel.activeSelf) return;
 
-        // ป้องกันการเปิด Dialogue ซ้อน
-        if (dialoguePanel.activeSelf)
-            return;
-
-        // บันทึกสถานะเมาส์เดิม
-        previousCursorVisible = Cursor.visible;
-        previousCursorLockMode = Cursor.lockState;
-
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        // หยุดการเคลื่อนที่ของ Player
-        hasSavedMovementState = false;
-
-        if (playerMovement != null)
-        {
-            previousMovementEnabled = playerMovement.enabled;
-            hasSavedMovementState = true;
-            playerMovement.enabled = false;
-        }
-
-        // ป้องกันอินพุตที่ใช้เปิดบทสนทนาถูกอ่านซ้ำ
-        waitForInputRelease = true;
-        dialogueOpenedFrame = Time.frameCount;
-
-        waitingForCloseClick = false;
-        choiceSelectedFrame = -1;
-
+        SaveAndDisablePlayerState();
         dialoguePanel.SetActive(true);
 
-        LoadDialogue(data);
+        // โหลดบทสนทนาแรก พร้อมเปิดระบบป้องกันการกดปุ่มค้าง
+        LoadDialogue(data, true);
     }
 
-    private void LoadDialogue(DialogueData data)
+    // [แก้ไขแล้ว] แยกฟังก์ชัน LoadDialogue คืนมาเพื่อไม่ให้ติดเงื่อนไขป้องกันการเปิดหน้าต่างซ้อน
+    private void LoadDialogue(DialogueData data, bool isFirstTime)
     {
-        if (data == null)
-            return;
+        if (data == null) return;
 
         currentDialogue = data;
-
-        waitingForCloseClick = false;
-        choiceSelectedFrame = -1;
-        dialogueOpenedFrame = Time.frameCount;
-
-        currentLineIndex = 0;
-
         ClearChoices();
+        ResetDialogueState(Time.frameCount, isFirstTime);
 
-        // ถ้ามี Conversation Lines ให้ใช้ระบบต่อเนื่อง
-        isSequenceDialogue =
-            currentDialogue.conversationLines != null &&
-            currentDialogue.conversationLines.Length > 0;
+        isSequenceDialogue = currentDialogue.conversationLines != null && currentDialogue.conversationLines.Length > 0;
 
         if (isSequenceDialogue)
-        {
             ShowSequenceLine();
-        }
         else
-        {
-            // ถ้าไม่มี Conversation Lines ให้ใช้ระบบเดิม
             ShowPlayerDialogue();
-        }
+    }
+
+    public void EndDialogue(bool isOpeningOtherUI = false)
+    {
+        dialoguePanel?.SetActive(false);
+        ClearChoices();
+        ResetDialogueState(-1, false);
+        RestorePlayerState(isOpeningOtherUI);
+
+        currentDialogue = null;
     }
 
     // =========================================
-    // ระบบบทสนทนาต่อเนื่องแบบไม่มีตัวเลือก
+    // Sequence Dialogue (แบบต่อเนื่อง)
     // =========================================
 
     private void ShowSequenceLine()
     {
-        if (currentDialogue == null ||
-            currentDialogue.conversationLines == null)
+        if (currentDialogue?.conversationLines == null)
         {
             EndDialogue();
             return;
         }
 
-        // ข้ามบรรทัดที่ไม่ได้กำหนดข้อมูล
-        while (currentLineIndex <
-               currentDialogue.conversationLines.Length &&
-               currentDialogue.conversationLines[currentLineIndex] == null)
+        while (currentLineIndex < currentDialogue.conversationLines.Length && currentDialogue.conversationLines[currentLineIndex] == null)
         {
             currentLineIndex++;
         }
 
-        if (currentLineIndex >=
-            currentDialogue.conversationLines.Length)
+        if (currentLineIndex >= currentDialogue.conversationLines.Length)
         {
             EndDialogue();
             return;
         }
 
-        DialogueLine line =
-            currentDialogue.conversationLines[currentLineIndex];
-
+        DialogueLine line = currentDialogue.conversationLines[currentLineIndex];
         dialogueStage = DialogueStage.SequenceLine;
 
-        if (npcNameText != null)
-        {
-            string speaker;
-
-            // บรรทัดแรกใช้ชื่อจาก Player Name
-            if (currentLineIndex == 0)
-            {
-                speaker = currentDialogue.playerName;
-
-                // ถ้า Player Name ว่าง ให้ใช้ Speaker Name
-                if (string.IsNullOrWhiteSpace(speaker))
-                    speaker = line.speakerName;
-            }
-            else
-            {
-                // บรรทัดถัดไปใช้ Speaker Name
-                speaker = line.speakerName;
-            }
-
-            // ถ้าไม่มีชื่อ ให้ใช้ชื่อ NPC
-            if (string.IsNullOrWhiteSpace(speaker))
-                speaker = currentDialogue.npcName;
-
-            npcNameText.text = speaker;
-        }
+        UpdateSpeakerName(line);
 
         if (dialogueText != null)
             dialogueText.text = line.dialogueText;
@@ -267,231 +168,189 @@ public class DialogueManager : MonoBehaviour
 
     private void AdvanceSequenceDialogue()
     {
-        if (currentDialogue == null ||
-            currentDialogue.conversationLines == null)
-        {
-            EndDialogue();
-            return;
-        }
-
         currentLineIndex++;
-
-        if (currentLineIndex <
-            currentDialogue.conversationLines.Length)
-        {
+        if (currentLineIndex < currentDialogue.conversationLines.Length)
             ShowSequenceLine();
-        }
         else
-        {
-            // อ่านครบทุกบรรทัดแล้วปิด Panel
             EndDialogue();
-        }
     }
 
     // =========================================
-    // ระบบบทสนทนาเดิม
+    // Classic Dialogue (แบบถาม-ตอบ มีตัวเลือก)
     // =========================================
 
     private void ShowPlayerDialogue()
     {
-        if (currentDialogue == null)
-            return;
-
         waitingForCloseClick = false;
         dialogueStage = DialogueStage.PlayerLine;
-
         ClearChoices();
 
         if (npcNameText != null)
-        {
-            npcNameText.text =
-                string.IsNullOrWhiteSpace(currentDialogue.playerName)
-                ? "Player"
-                : currentDialogue.playerName;
-        }
+            npcNameText.text = string.IsNullOrWhiteSpace(currentDialogue.playerName) ? "Player" : currentDialogue.playerName;
 
         if (dialogueText != null)
             dialogueText.text = currentDialogue.playerDialogueText;
 
-        // ถ้าไม่มีข้อความ Player ให้เริ่มที่ NPC
-        if (string.IsNullOrWhiteSpace(
-            currentDialogue.playerDialogueText))
-        {
+        if (string.IsNullOrWhiteSpace(currentDialogue.playerDialogueText))
             ShowNpcDialogue();
-        }
     }
 
     private void ShowNpcDialogue()
     {
-        if (currentDialogue == null)
-            return;
-
         dialogueStage = DialogueStage.NpcLine;
 
-        if (npcNameText != null)
-            npcNameText.text = currentDialogue.npcName;
-
-        if (dialogueText != null)
-            dialogueText.text = currentDialogue.dialogueText;
+        if (npcNameText != null) npcNameText.text = currentDialogue.npcName;
+        if (dialogueText != null) dialogueText.text = currentDialogue.dialogueText;
 
         ShowChoices();
     }
 
     private void AdvanceDialogue()
     {
-        if (currentDialogue == null)
-            return;
-
         switch (dialogueStage)
         {
             case DialogueStage.PlayerLine:
-
-                // แสดงบทพูด NPC หลังจาก Player พูด
                 ShowNpcDialogue();
                 break;
 
             case DialogueStage.NpcLine:
-
-                // ถ้าไม่มีตัวเลือก คลิกอีกครั้งเพื่อปิด
-                if (currentDialogue.choices == null ||
-                    currentDialogue.choices.Length == 0)
-                {
+                if (currentDialogue.choices == null || currentDialogue.choices.Length == 0)
                     EndDialogue();
-                }
-
                 break;
 
             case DialogueStage.ChoiceResponse:
-
-                // การคลิกปิดถูกจัดการใน Update()
                 break;
         }
     }
 
     // =========================================
-    // ระบบตัวเลือก
+    // Choices System
     // =========================================
 
     private void ShowChoices()
     {
         ClearChoices();
 
-        if (currentDialogue == null ||
-            choicesParent == null ||
-            choiceButtonPrefab == null ||
-            currentDialogue.choices == null)
+        if (currentDialogue?.choices == null || choicesParent == null || choiceButtonPrefab == null) return;
+
+        foreach (var choice in currentDialogue.choices)
         {
-            return;
-        }
+            if (choice == null) continue;
 
-        foreach (DialogueChoice choice in currentDialogue.choices)
-        {
-            if (choice == null)
-                continue;
+            Button button = Instantiate(choiceButtonPrefab, choicesParent);
+            TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
 
-            DialogueChoice selectedChoice = choice;
+            if (buttonText != null) buttonText.text = choice.choiceText;
 
-            Button button = Instantiate(
-                choiceButtonPrefab,
-                choicesParent
-            );
-
-            TMP_Text buttonText =
-                button.GetComponentInChildren<TMP_Text>();
-
-            if (buttonText != null)
-                buttonText.text = selectedChoice.choiceText;
-
-            button.onClick.AddListener(() =>
-            {
-                SelectChoice(selectedChoice);
-            });
+            button.onClick.AddListener(() => SelectChoice(choice));
         }
     }
 
     private void SelectChoice(DialogueChoice choice)
     {
-        if (choice == null || currentDialogue == null)
-            return;
-
-        // ป้องกันการกดตัวเลือกซ้ำ
+        if (choice == null) return;
         ClearChoices();
 
-        // ถ้าติ๊ก End Dialogue ให้ปิดทันที
+        // 1. ถ้าเชื่อมกับระบบ Quest ให้ส่ง Event
+        if (choice.openQuestUI)
+        {
+            GameEvent.OnToggleUIQuestNPC?.Invoke(true);
+        }
+
+        // 2. ถ้าติ๊กจบบทสนทนา
         if (choice.endDialogue)
         {
-            EndDialogue();
+            EndDialogue(isOpeningOtherUI: choice.openQuestUI);
             return;
         }
 
-        // ถ้ามีบทสนทนาถัดไป ให้เปลี่ยนทันที
+        // 3. ถ้ามีบทสนทนาหน้าต่อไป (แก้เรียก LoadDialogue แทน)
         if (choice.nextDialogue != null)
         {
-            LoadDialogue(choice.nextDialogue);
+            LoadDialogue(choice.nextDialogue, false);
             return;
         }
 
-        // ไม่มีบทสนทนาถัดไป:
-        // แสดงคำตอบและรอคลิกเมาส์เพื่อปิด
+        // 4. ถ้าไม่มีบทต่อไป ให้แสดงคำตอบแล้วรอคลิกปิด
         waitingForCloseClick = true;
         choiceSelectedFrame = Time.frameCount;
-
         dialogueStage = DialogueStage.ChoiceResponse;
 
-        if (npcNameText != null)
-            npcNameText.text = currentDialogue.npcName;
-
-        if (dialogueText != null)
-            dialogueText.text = choice.responseText;
+        if (npcNameText != null) npcNameText.text = currentDialogue.npcName;
+        if (dialogueText != null) dialogueText.text = choice.responseText;
     }
 
     private void ClearChoices()
     {
-        if (choicesParent == null)
-            return;
+        if (choicesParent == null) return;
 
         foreach (Transform child in choicesParent)
         {
-            Button button = child.GetComponent<Button>();
-
-            if (button != null)
-                button.interactable = false;
-
+            if (child.TryGetComponent(out Button button)) button.interactable = false;
             Destroy(child.gameObject);
         }
     }
 
     // =========================================
-    // จบบทสนทนา
+    // Helper Methods
     // =========================================
 
-    public void EndDialogue()
+    private void UpdateSpeakerName(DialogueLine line)
     {
-        if (dialoguePanel != null)
-            dialoguePanel.SetActive(false);
+        if (npcNameText == null) return;
 
-        ClearChoices();
+        string speaker = line.speakerName;
 
-        currentDialogue = null;
+        if (currentLineIndex == 0 && string.IsNullOrWhiteSpace(speaker))
+            speaker = currentDialogue.playerName;
 
-        isSequenceDialogue = false;
-        currentLineIndex = 0;
+        if (string.IsNullOrWhiteSpace(speaker))
+            speaker = currentDialogue.npcName;
 
-        waitingForCloseClick = false;
-        choiceSelectedFrame = -1;
-        dialogueOpenedFrame = -1;
-        waitForInputRelease = false;
+        npcNameText.text = speaker;
+    }
 
-        // คืนสถานะการเดินเดิม
-        if (playerMovement != null && hasSavedMovementState)
+    private void SaveAndDisablePlayerState()
+    {
+        previousCursorVisible = Cursor.visible;
+        previousCursorLockMode = Cursor.lockState;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        if (playerMovement != null)
         {
-            playerMovement.enabled = previousMovementEnabled;
+            previousMovementEnabled = playerMovement.enabled;
+            hasSavedMovementState = true;
+            playerMovement.enabled = false;
         }
+    }
+
+    private void RestorePlayerState(bool isOpeningOtherUI)
+    {
+        if (playerMovement != null && hasSavedMovementState)
+            playerMovement.enabled = previousMovementEnabled;
 
         hasSavedMovementState = false;
 
-        // คืนสถานะเมาส์เดิม
-        Cursor.lockState = previousCursorLockMode;
-        Cursor.visible = previousCursorVisible;
+        if (!isOpeningOtherUI)
+        {
+            Cursor.lockState = previousCursorLockMode;
+            Cursor.visible = previousCursorVisible;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    private void ResetDialogueState(int frameCount, bool waitInput)
+    {
+        currentLineIndex = 0;
+        isSequenceDialogue = false;
+        waitingForCloseClick = false;
+        choiceSelectedFrame = -1;
+        dialogueOpenedFrame = frameCount;
+        waitForInputRelease = waitInput;
     }
 }
