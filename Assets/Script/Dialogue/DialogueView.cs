@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>Draws the dialogue panel: speaker name, line text and choice buttons. No flow logic.</summary>
 public class DialogueView
 {
     private readonly GameObject panel;

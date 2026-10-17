@@ -1,5 +1,6 @@
 using UnityEngine;
 
+/// <summary>Runs after the target until close enough to catch it, or gives up when it can't reach it.</summary>
 public class ChaseState : EnemyStateBase
 {
     private const float RepathDistance = 0.5f;

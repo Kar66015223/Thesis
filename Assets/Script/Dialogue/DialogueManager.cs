@@ -2,6 +2,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Runs a conversation from a <see cref="DialogueData"/> asset.
+/// Responsibilities are split: <see cref="DialogueView"/> draws, <see cref="DialogueInput"/> reads keys,
+/// <see cref="InputModeService"/> owns the cursor, and this class only drives the conversation flow.
+/// Conversations start from <see cref="UIEvents.RequestDialogue"/>, so NPCs don't need this singleton.
+/// </summary>
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
@@ -224,10 +230,10 @@ public class DialogueManager : MonoBehaviour
         view.ShowLine(currentDialogue.npcName, currentDialogue.dialogueText);
         view.ShowChoices(currentDialogue.choices, SelectChoice);
     }
-    
+
     private void AdvanceDialogue()
     {
-        switch(dialogueStage)
+        switch (dialogueStage)
         {
             case DialogueStage.PlayerLine:
                 // แสดงบทพูด NPC หลังจาก Player พูด
@@ -240,7 +246,7 @@ public class DialogueManager : MonoBehaviour
                     EndDialogue();
                 break;
 
-            // ChoiceResponse: closing is handled in Update().
+                // ChoiceResponse: closing is handled in Update().
         }
     }
 
@@ -271,6 +277,6 @@ public class DialogueManager : MonoBehaviour
         dialogueStage = DialogueStage.ChoiceResponse;
         view.ShowLine(currentDialogue.npcName, choice.responseText);
     }
-    
+
     #endregion
 }
