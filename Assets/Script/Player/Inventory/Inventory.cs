@@ -2,26 +2,69 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Grid view + context menu for an <see cref="InventoryModel"/>.
+/// Grid view + context menu for an <see cref="InventoryModel"/>, opened and closed with the inventory key (Tab).
 /// All item rules live in the model; this class only builds slot views and forwards clicks.
+/// Sits on an always-active object (PlayerCanvas), not on the panel it hides, so it still hears the key while closed.
 /// </summary>
 public class Inventory : MonoBehaviour
 {
     [Header("Inventory")]
+    [Tooltip("Root shown and hidden by the inventory key.")]
+    [SerializeField] private GameObject panel;
     [SerializeField] private InventorySlot slotPrefab;
+    [Tooltip("Grid the slots are spawned into.")]
     [SerializeField] private Transform inventoryPanel;
     [Tooltip("Only used when no PlayerController is found to provide the model.")]
     [SerializeField, Min(1)] private int slotAmount = 30;
 
+    [Header("Sort Buttons")]
+    [SerializeField] private Button sortAscendingButton;
+    [SerializeField] private Button sortDescendingButton;
+
     [Header("Mini Canvas")]
     [SerializeField] private RectTransform miniCanvas;
+    [SerializeField] private Button useButton;
+    [SerializeField] private Button destroyButton;
 
     private InventoryModel model;
     private InventorySlot[] slotViews = new InventorySlot[0];
     private GridLayoutGroup gridLayoutGroup;
+    private PlayerInputHandler inputHandler;
     private int contextSlotIndex = -1;
 
     public InventoryModel Model => model;
+    public bool IsOpen => panel != null && panel.activeSelf;
+
+    void Awake()
+    {
+        inputHandler = GetComponentInParent<PlayerInputHandler>();
+
+        if (sortAscendingButton != null)
+            sortAscendingButton.onClick.AddListener(() => SortItem(true));
+        if (sortDescendingButton != null)
+            sortDescendingButton.onClick.AddListener(() => SortItem(false));
+        if (useButton != null)
+            useButton.onClick.AddListener(UseItem);
+        if (destroyButton != null)
+            destroyButton.onClick.AddListener(DestroyItem);
+    }
+
+    void OnEnable()
+    {
+        if (inputHandler != null)
+            inputHandler.OnInventoryPressed += Toggle;
+
+        PlayerEvents.StruggleToggled += HandleStruggleToggled;
+    }
+
+    void OnDisable()
+    {
+        if (inputHandler != null)
+            inputHandler.OnInventoryPressed -= Toggle;
+
+        PlayerEvents.StruggleToggled -= HandleStruggleToggled;
+        InputModeService.RequestUI(this, false);
+    }
 
     void Start()
     {
@@ -33,12 +76,40 @@ public class Inventory : MonoBehaviour
 
         if (miniCanvas != null)
             miniCanvas.gameObject.SetActive(false);
+
+        if (panel != null)
+            panel.SetActive(false);
     }
 
     void OnDestroy()
     {
         if (model != null)
             model.Changed -= Refresh;
+    }
+
+    public void Toggle() => SetOpen(!IsOpen);
+
+    public void SetOpen(bool isOpen)
+    {
+        if (panel == null || isOpen == IsOpen)
+            return;
+
+        // Don't open on top of another UI (dialogue, password pad, ...) or while struggling.
+        if (isOpen && InputModeService.CurrentActionMap != PlayerConstants.ACTIONMAP_PLAYER)
+            return;
+
+        if (!isOpen)
+            OnFinishMiniCanvas();
+
+        panel.SetActive(isOpen);
+        InputModeService.RequestUI(this, isOpen);
+    }
+
+    // Getting grabbed switches to the Struggle map, where the inventory key can't close the panel.
+    private void HandleStruggleToggled(bool isStruggling)
+    {
+        if (isStruggling)
+            SetOpen(false);
     }
 
     public void Bind(InventoryModel newModel)

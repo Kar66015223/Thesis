@@ -59,7 +59,8 @@ public class ChaseState : EnemyStateBase
         if (distance <= catchDistance)
         {
             ctrl.Agent.isStopped = true;
-            if (targetStruggle != null && !targetStruggle.IsCaught)
+            // Not catchable (e.g. mid-tackle): hold position instead of grabbing.
+            if (targetStruggle != null && targetStruggle.CanBeCaught)
                 ctrl.ChangeState(new CatchingState(ctrl, targetStruggle));
 
             return;

@@ -1,7 +1,4 @@
-using Unity.VisualScripting;
-using UnityEditor.Build;
 using UnityEngine;
-using UnityEngine.XR;
 
 [RequireComponent(typeof(PlayerInputHandler))]
 [RequireComponent(typeof(PlayerHealth))]
@@ -18,6 +15,9 @@ public class PlayerStruggle : MonoBehaviour
 
     public bool IsCaught { get; private set; }
     public IPlayerCatcher CatchingEnemy { get; private set; }
+    /// <summary>Set by skills (e.g. mid-tackle) so enemies in reach can't grab the player.</summary>
+    public bool IsCatchImmune { get; private set; }
+    public bool CanBeCaught => !IsCaught && !IsCatchImmune && !hp.IsDead;
 
     void Awake()
     {
@@ -56,10 +56,12 @@ public class PlayerStruggle : MonoBehaviour
             EndStruggle(playerEscaped: true);
     }
 
-    /// <summary>Returns false if the player can't be caught right now (already caught or dead).</summary>
+    public void SetCatchImmune(bool isImmune) => IsCatchImmune = isImmune;
+
+    /// <summary>Returns false if the player can't be caught right now (already caught, immune or dead).</summary>
     public bool TryBeginStruggle(IPlayerCatcher catcher)
     {
-        if (catcher == null || IsCaught || hp.IsDead)
+        if (catcher == null || !CanBeCaught)
             return false;
 
         IsCaught = true;

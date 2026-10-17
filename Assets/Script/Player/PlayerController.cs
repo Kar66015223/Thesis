@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     private PlayerStamina stamina;
     private PlayerHealth health;
     private PlayerMotor motor;
+    private readonly List<Renderer> hiddenRenderers = new();
 
     private Vector2 moveInput;
     private Vector3 moveDir;
@@ -230,6 +232,13 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     /// <summary>Script-driven movement without gravity (e.g. the tackle dash).</summary>
     public void Dash(Vector3 delta) => motor.Displace(delta);
 
+    public void FaceDirection(Vector3 direction)
+    {
+        direction.y = 0f;
+        if (playerModel != null && direction != Vector3.zero)
+            playerModel.rotation = Quaternion.LookRotation(direction);
+    }
+
     #endregion
 
     #region IInteractorBody
@@ -277,10 +286,36 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         SetModelVisible(true);
     }
 
+    /// <summary>
+    /// Only toggles the renderers: deactivating the model would also disable everything parented to it,
+    /// including the interaction trigger that listens for the key to leave the hiding spot.
+    /// </summary>
     private void SetModelVisible(bool isVisible)
     {
-        if (playerModel != null)
-            playerModel.gameObject.SetActive(isVisible);
+        if (playerModel == null)
+            return;
+
+        if (isVisible)
+        {
+            // Restore only what we hid, so renderers that were already off (debug meshes) stay off.
+            foreach (Renderer hidden in hiddenRenderers)
+            {
+                if (hidden != null)
+                    hidden.enabled = true;
+            }
+
+            hiddenRenderers.Clear();
+            return;
+        }
+
+        foreach (Renderer modelRenderer in playerModel.GetComponentsInChildren<Renderer>())
+        {
+            if (!modelRenderer.enabled)
+                continue;
+
+            modelRenderer.enabled = false;
+            hiddenRenderers.Add(modelRenderer);
+        }
     }
 
     #endregion

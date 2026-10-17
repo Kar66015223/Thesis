@@ -28,6 +28,9 @@ public class PlayerInputHandler : MonoBehaviour
 
     public event Action OnStruggleInput;
 
+    /// <summary>Bound in both the Player and UI maps so the same key closes the inventory again.</summary>
+    public event Action OnInventoryPressed;
+
     public event Action<bool> OnPhysSkillMenuInput;
     public event Action<bool> OnPhysicalSkillInput;
     public event Action OnDemonEyeSkillPressed;
@@ -107,6 +110,12 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (context.performed)
             OnStruggleInput?.Invoke();
+    }
+
+    public void OnInventory(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            OnInventoryPressed?.Invoke();
     }
     
     private static void RaiseHold(InputAction.CallbackContext context, Action<bool> handler)
