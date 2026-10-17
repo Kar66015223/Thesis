@@ -1,11 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Rendering;
-using Unity.VisualScripting;
-using NUnit.Framework;
-using System.Data;
-using System.Data.SqlTypes;
 
 public class DialogueManager : MonoBehaviour
 {
