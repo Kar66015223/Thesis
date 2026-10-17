@@ -1,22 +1,32 @@
 using UnityEngine;
 
-public class PasswordLock : Lock
+/// <summary>
+/// Opens the password pad. The correct code never leaves this class: the UI submits a guess
+/// through <see cref="IPasswordLock.TrySubmit"/>.
+/// </summary>
+public class PasswordLock : Lock, IPasswordLock
 {
     [SerializeField] private string correctPassword = "1111";
-    private GameObject interactor;
+    private GameObject waitingInteractor;
 
-    public override void Interact(GameObject interactor)
+    public override bool TryUnlock(GameObject interactor)
     {
-        base.Interact(interactor);
-        this.interactor = interactor;
-        GameEvent.OnShowPasswordInputUI?.Invoke(true, this);
+        waitingInteractor = interactor;
+        UIEvents.TogglePasswordPanel(true, this);
+        return false; // Opens later, once the right code is submitted.
     }
 
-    public void Unlock()
+    public bool TrySubmit(string code)
     {
-        IsLocked = false;
-        CurrentDoor.Interact(interactor);
-    }
+        if (code != correctPassword)
+            return false;
 
-    public string GetCorrectPassword() => correctPassword;
+        SetLocked(false);
+
+        if (waitingInteractor != null && CurrentDoor != null)
+            CurrentDoor.Interact(waitingInteractor);
+
+        waitingInteractor = null;
+        return true;
+    }
 }

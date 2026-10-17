@@ -1,27 +1,44 @@
 using TMPro;
 using UnityEngine;
 
-public abstract class Lock : Interactable
+/// <summary>
+/// Locking strategy for a <see cref="Door"/>. A lock is not an interactable by itself - the door asks
+/// it whether the interactor may pass. Add a new lock type by subclassing; Door never changes.
+/// </summary>
+public abstract class Lock : MonoBehaviour
 {
-    public Door CurrentDoor { get; private set; }
-    public bool IsLocked { get; protected set; } = true;
-
     [SerializeField] protected TMP_Text stateUIText;
 
-    protected override void Awake()
+    public Door CurrentDoor{ get; private set; }
+    public bool IsLocked { get; private set; } = true;
+
+    protected virtual void Awake()
     {
-        base.Awake();
         CurrentDoor = GetComponentInParent<Door>();
+        RefreshStateText();
     }
 
-    protected virtual void Update()
+    /// <summary>
+    /// Called when the interactor tries to open a locked door.
+    /// Returns true if the door is now unlocked and should open immediately.
+    /// </summary>
+    public abstract bool TryUnlock(GameObject interactor);
+
+    public void ForceUnlock() => SetLocked(false);
+
+    protected void SetLocked(bool locked)
+    {
+        IsLocked = locked;
+        RefreshStateText();
+    }
+
+    /// <summary>True when the interactor stands on the given side of the door.</summary>
+    protected bool IsOnSide(GameObject interactor, Transform side)
+        => CurrentDoor != null && CurrentDoor.GetClosestPoint(interactor.transform.position) == side;
+
+    private void RefreshStateText()
     {
         if (stateUIText != null)
             stateUIText.text = IsLocked ? "Locked" : "Unlocked";
-    }
-
-    public void ForceUnlock()
-    {
-        IsLocked = false;
     }
 }

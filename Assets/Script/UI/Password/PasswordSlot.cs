@@ -2,43 +2,32 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>One 0-9 digit wheel of the password pad.</summary>
 public class PasswordSlot : MonoBehaviour
 {
-    public int CurrentNumber { get; private set; } = 0;
+    private const int DigitCount = 10;
 
     [SerializeField] private Button increaseButton;
     [SerializeField] private Button decreaseButton;
     [SerializeField] private TMP_Text numberText;
 
+    public int CurrentNumber { get; private set; }
+
     void Awake()
     {
         increaseButton.onClick.AddListener(IncreaseNumber);
         decreaseButton.onClick.AddListener(DecreaseNumber);
-
-        numberText.text = CurrentNumber.ToString();
+        Refresh();
     }
 
-    public void IncreaseNumber()
+    public void IncreaseNumber() => Step(+1);
+    public void DecreaseNumber() => Step(-1);
+
+    private void Step(int delta)
     {
-        CurrentNumber += 1;
-
-        if(CurrentNumber > 9)
-        {
-            CurrentNumber = 0;
-        }
-
-        numberText.text = CurrentNumber.ToString();
+        CurrentNumber = (CurrentNumber + delta + DigitCount) % DigitCount;
+        Refresh();
     }
-    
-    public void DecreaseNumber()
-    {
-        CurrentNumber -= 1;
 
-        if (CurrentNumber < 0)
-        {
-            CurrentNumber = 9;
-        }
-        
-        numberText.text = CurrentNumber.ToString();
-    }
+    private void Refresh() => numberText.text = CurrentNumber.ToString();
 }

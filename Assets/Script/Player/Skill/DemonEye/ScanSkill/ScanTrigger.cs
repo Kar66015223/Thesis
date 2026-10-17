@@ -1,70 +1,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The scan volume. Reveals anything that implements <see cref="IScannable"/> -
+/// new scannable types need no change here (it used to check each concrete type).
+/// </summary>
 public class ScanTrigger : MonoBehaviour
 {
-    private List<ScannableObject> allScannedEnemies = new();
-    private List<ObjectiveHighlight> allScannedObjtive = new();
+    private static readonly List<IScannable> componentBuffer = new();
+    private readonly HashSet<IScannable> scanned = new();
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out ScannableObject scannable))
+        other.GetComponents(componentBuffer);
+        foreach (IScannable scannable in componentBuffer)
         {
-            scannable.ApplyHighlight();
-            if (!allScannedEnemies.Contains(scannable))
-            {
-                allScannedEnemies.Add(scannable);
-            }
-        }
-
-        if(other.TryGetComponent(out ObjectiveHighlight objtive))
-        {
-            objtive.ApplyHighlight();
-            if (!allScannedObjtive.Contains(objtive))
-            {
-                allScannedObjtive.Add(objtive);
-            }
+            if (scanned.Add(scannable))
+                scannable.OnScanEnter();
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent(out ScannableObject scannable))
+        other.GetComponents(componentBuffer);
+        foreach (IScannable scannable in componentBuffer)
         {
-            scannable.RemoveHighlight();
-            if (allScannedEnemies.Contains(scannable))
-            {
-                allScannedEnemies.Remove(scannable);
-            }
-        }
-
-        if(other.TryGetComponent(out ObjectiveHighlight objtive))
-        {
-            objtive.RemoveHighlight();
-            if (allScannedObjtive.Contains(objtive))
-            {
-                allScannedObjtive.Remove(objtive);
-            }
+            if (scanned.Remove(scannable))
+                scannable.OnScanExit();
         }
     }
 
     void OnDisable()
     {
-        if (allScannedEnemies.Count > 0)
+        foreach (IScannable scannable in scanned)
         {
-            foreach (var scanned in allScannedEnemies)
-            {
-                scanned.RemoveHighlight();
-            }
+            if (scannable is Object unityObj && unityObj != null)
+                scannable.OnScanExit();
         }
 
-        if(allScannedObjtive.Count > 0)
-        {
-            foreach (var scanned in allScannedObjtive)
-                scanned.RemoveHighlight();
-        }
-
-        allScannedEnemies.Clear();
-        allScannedObjtive.Clear();
+        scanned.Clear();
     }
 }

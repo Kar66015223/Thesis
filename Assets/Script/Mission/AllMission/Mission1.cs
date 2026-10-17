@@ -1,46 +1,26 @@
-using UnityEngine;
-
+/// <summary>Get the morse code and return safely. Completes the moment the morse code is picked up.</summary>
 public class Mission1 : Mission
 {
     public Mission1()
+        : base("Mission1", "Get the morse code and return safely.", MissionType.Main, SceneConstants.MISSION1_NAME)
     {
-        missionName = "Mission1";
-        missionDesc = "Get the morse code and return safely.";
-        missionType = MissionType.Main;
-        missionStatus = MissionStatus.Pending;
     }
 
-    public override void OnAccept()
+    protected override void OnAccepted()
     {
-        if (missionStatus != MissionStatus.Accepted)
-        {
-            MissionManager.instance.SetOnProgressMission(this);
-            GameEvent.OnShowTips?.Invoke("Mission Accepted");
-            missionStatus = MissionStatus.OnProgress;
-
-            UpdateUIButton();
-        }
+        UIEvents.ShowTip("Mission Accepted");
+        WorldEvents.ItemCollected += HandleItemCollected;
     }
 
-    public override void CheckCompletion()
+    protected override void OnCompleted()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-        if(player.TryGetComponent(out PlayerController controller))
-            if(controller.hasMorseCode)
-                Complete();
+        WorldEvents.ItemCollected -= HandleItemCollected;
+        UIEvents.ShowTip($"{Name} completed");
     }
 
-    public override void Complete()
+    private void HandleItemCollected(Item item)
     {
-        missionStatus = MissionStatus.Completed;
-        GameEvent.OnShowTips?.Invoke($"{missionName} completed");
-        
-        UpdateUIButton();
-    }
-
-    public override void OnSubmit()
-    {
-        throw new System.NotImplementedException();
+        if (item is MorseCode)
+            Complete();
     }
 }

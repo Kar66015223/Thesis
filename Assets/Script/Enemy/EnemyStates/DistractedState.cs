@@ -1,96 +1,82 @@
 using UnityEngine;
 
-public class DistractedState : IEnemyState
+/// <summary>Reacts to a noise: either turns to look at it or walks/runs to it, then returns to its route.</summary>
+public class DistractedState : EnemyStateBase
 {
-    private EnemyController ctrl;
-    private SoundSignal sound;
+    private const float FacingToleranceDegrees = 5f;
+
+    private readonly SoundSignal sound;
     private float timer;
 
-    public DistractedState(EnemyController ctrl, SoundSignal sound)
-    {
-        this.ctrl = ctrl;
-        this.sound = sound;
-    }
+    public DistractedState(EnemyController ctrl, SoundSignal sound) : base(ctrl) => this.sound = sound;
 
-    public void Enter()
-    {
-        ctrl.Agent.stoppingDistance = 2f;
+    private bool IsLookOnly => sound.Reaction == EnemyReaction.LookAt;
 
+    public override EnemyState Indicator => IsLookOnly ? EnemyState.DistractedLook : EnemyState.DistractedMove;
+
+    public override void Enter()
+    {
+        ctrl.Agent.stoppingDistance = ApproachStoppingDistance;
         timer = 0f;
-        if (sound.Reaction == EnemyReaction.RunTo)
-            ctrl.Movement.SetBaseSpeed(ctrl.runSpeed);
-        else
-            ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
 
-        if (sound.Reaction == EnemyReaction.LookAt)
+        ctrl.Movement.SetBaseSpeed(sound.Reaction == EnemyReaction.RunTo ? ctrl.RunSpeed : ctrl.WalkSpeed);
+
+        if (IsLookOnly)
         {
             ctrl.Agent.updateRotation = false;
             ctrl.Agent.isStopped = true;
-
-            GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.DistractedLook);
         }
         else
         {
             ctrl.SetDestination(sound.Position);
-            GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.DistractedMove);
         }
     }
 
-    public void Update()
+    public override void Update()
     {
-        if (sound.Reaction == EnemyReaction.LookAt)
-            HandleLookAt();
+        if (IsLookOnly)
+            UpdateLookAt();
         else
-            HandleMoveTo();
+            UpdateMoveTo();
     }
 
-    private void HandleLookAt()
-    {
-        Vector3 direction = sound.Position - ctrl.transform.position;
-        direction.y = 0;
-
-        if (direction != Vector3.zero)
-        {
-            ctrl.transform.rotation = Quaternion.Slerp(
-                ctrl.transform.rotation,
-                Quaternion.LookRotation(direction),
-                ctrl.lookAtRotationSpeed * Time.deltaTime);
-
-            if (Vector3.Angle(ctrl.transform.forward, direction) < 5f)
-                timer += Time.deltaTime;
-        }
-
-        if (timer >= ctrl.distractWaitTime)
-            ctrl.ReturnToDefaultState();
-    }
-
-    private void HandleMoveTo()
-    {
-        EnemyDoorNavigation doorNav = ctrl.DoorNavigation;
-        bool atPathEnd = !ctrl.Agent.pathPending &&
-            ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance;
-
-        bool finished = doorNav.HasArrived || (doorNav.IsBlocked && atPathEnd);
-        if (finished)
-        {
-            if (sound.Reaction == EnemyReaction.RunTo)
-                ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
-
-            timer += Time.deltaTime;
-
-            if (timer >= ctrl.distractWaitTime)
-                ctrl.ReturnToDefaultState();
-        }
-    }
-
-    public void Exit()
+    public override void Exit()
     {
         ctrl.Agent.updateRotation = true;
         ctrl.Agent.isStopped = false;
-
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.None);
     }
-    
-    public void OnHearSound(SoundSignal newSound) => ctrl.ChangeState(new DistractedState(ctrl, newSound));
-    public void OnSeenTarget(Transform target) => ctrl.ChangeState(new ConfirmingState(ctrl, target));
+
+    public override void OnHearSound(SoundSignal newSound) => ctrl.ChangeState(new DistractedState(ctrl, newSound));
+    public override void OnSeenTarget(Transform target) => ctrl.ChangeState(new ConfirmingState(ctrl, target));
+
+    private void UpdateLookAt()
+    {
+        Vector3 direction = FlatDirectionTo(sound.Position);
+
+        if (direction != Vector3.zero)
+        {
+            RotateTowards(Quaternion.LookRotation(direction));
+
+            if (Vector3.Angle(ctrl.transform.forward, direction) < FacingToleranceDegrees)
+                timer += Time.deltaTime;
+        }
+
+        if (timer >= ctrl.DistractWaitTime)
+            ctrl.ReturnToDefaultState();
+    }
+
+    private void UpdateMoveTo()
+    {
+        EnemyDoorNavigation doorNav = ctrl.DoorNavigation;
+        bool finished = doorNav.HasArrived || (doorNav.IsBlocked && HasReachedDestination());
+        if (!finished)
+            return;
+
+        if (sound.Reaction == EnemyReaction.RunTo)
+            ctrl.Movement.SetBaseSpeed(ctrl.WalkSpeed);
+
+        timer += Time.deltaTime;
+        if (timer >= ctrl.DistractWaitTime)
+            ctrl.ReturnToDefaultState();
+    }
 }

@@ -1,348 +1,294 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Composition root for the player's body: turns movement input into motion and owns the
+/// movement state (crouch / run / hiding / using skill). The actual work is delegated to
+/// <see cref="PlayerMotor"/>, <see cref="PlayerCameraController"/> and <see cref="PlayerAnimation"/>.
+/// Interaction, skills, stamina and health live in their own components.
+/// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, IItemHolder, ISkillUser
 {
+    private const int InventoryCapacity = 30;
+    private const float MoveInputDeadZoneSqr = 0.1f;
+
     [field: SerializeField] public PlayerState CurrentState { get; private set; } = PlayerState.Normal;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float runSpeed = 15f;
     [SerializeField] private float crouchSpeed = 2f;
-    [SerializeField] private float lookSensitivity = 0.2f;
     [SerializeField] private float gravity = -9.81f;
-
     [SerializeField] private float rotationSpeed = 10f;
-    private Vector3 moveDir;
-
-    private Vector2 moveInput;
-    private float verticalVelocity;
-
-    [Header("States")]
-    private bool canMove = true;
-    private bool isMoving;
-    public bool IsCrouching { get; private set; } = false;
-    private bool canInteract;
-    private bool isUsingSkill;
-
-    private bool isHiding;
-    private Hidable curHidingPlace;
-
-    public bool hasKey = false; // <-- For testing, delete later when have inventory system.
-    public bool hasMorseCode = false; // <-- For testing, delete later when have inventory system.
 
     [Header("Collider Size")]
-    private float currentColliderY;
-    private float currentColliderHeight;
-    
     [SerializeField] private float standColliderY = 0.7f;
     [SerializeField] private float standColliderHeight = 1.3f;
-    
     [SerializeField] private float crouchColliderY = 0.5f;
     [SerializeField] private float crouchColliderHeight = 0.8f;
 
     [Header("Other")]
     [SerializeField] private Transform playerModel;
+    [SerializeField] private PlayerCameraController camController = new();
+    [SerializeField] private PlayerAnimation anim = new();
 
     private CharacterController charController;
     private PlayerInputHandler inputHandler;
-    [SerializeField] private PlayerCameraController camController = new();
-
     private PlayerStamina stamina;
-    private PlayerInteraction interaction;
-    private ScannerSkill scanSkill;
+    private PlayerHealth health;
+    private PlayerMotor motor;
 
-    [SerializeField] private PlayerAnimation anim = new();
+    private Vector2 moveInput;
+    private Vector3 moveDir;
+    private bool isRunHeld;
+    private bool canMove = true;
+    private bool isUsingSkill;
+
+    public bool IsCrouching { get; private set; }
+    public bool IsRunning => stamina != null && stamina.IsRunning;
+    public bool IsHiding => CurrentHidingPlace != null;
+    public Hidable CurrentHidingPlace { get; private set; }
+
+    /// <summary>Running, using a skill or hiding all block starting a new interaction.</summary>
+    public bool CanStartInteraction =>
+        CurrentState == PlayerState.Normal || CurrentState == PlayerState.Crouching;
+
+    /// <summary>
+    /// Collected items. Lives here only until the inventory gets its own component on the Player prefab;
+    /// other code talks to it through <see cref="IItemHolder"/>, so moving it later is a one-line change.
+    /// </summary>
+    public InventoryModel Inventory { get; } = new(InventoryCapacity);
 
     void Awake()
     {
         charController = GetComponent<CharacterController>();
         inputHandler = GetComponent<PlayerInputHandler>();
-        camController.Initialize(this);
+        stamina = GetComponent<PlayerStamina>();
+        health = GetComponent<PlayerHealth>();
+        motor = new PlayerMotor(charController);
+
         if (playerModel == null)
-            playerModel = GetComponentInChildren<Animator>().transform;
+        {
+            Animator animator = GetComponentInChildren<Animator>();
+            if (animator != null)
+                playerModel = animator.transform;
+        }
 
-        if (TryGetComponent(out PlayerStamina stamina))
-            this.stamina = stamina;
-        interaction = GetComponentInChildren<PlayerInteraction>();
-        scanSkill = GetComponentInChildren<ScannerSkill>();
-
-        charController.center = new(charController.center.x, currentColliderY, charController.center.z);
-        charController.height = currentColliderHeight;
-
-        Cursor.lockState = CursorLockMode.Locked;
+        camController.Initialize(transform);
+        ApplyStance();
     }
 
     void OnEnable()
     {
         inputHandler.OnMoveInput += HandleMoveInput;
         inputHandler.OnRunInput += HandleRunInput;
-        inputHandler.OnCrouchInput += HandleCrouchInput;
-        inputHandler.OnInteractFInput += HandleInteractFInput;
-        inputHandler.OnInteractSpacebarInput += HandleInteractSpacebarInput;
+        inputHandler.OnCrouchPressed += HandleCrouchPressed;
 
-        inputHandler.OnDemonEyeSkillInput += HandleDemonEyeSkillUsage; // <-- Move to SkillManager later
+        if (health != null)
+            health.Died += HandleDied;
     }
 
     void OnDisable()
     {
         inputHandler.OnMoveInput -= HandleMoveInput;
         inputHandler.OnRunInput -= HandleRunInput;
-        inputHandler.OnCrouchInput -= HandleCrouchInput;
-        inputHandler.OnInteractFInput -= HandleInteractFInput;
-        inputHandler.OnInteractSpacebarInput -= HandleInteractSpacebarInput;
+        inputHandler.OnCrouchPressed -= HandleCrouchPressed;
 
-        inputHandler.OnDemonEyeSkillInput -= HandleDemonEyeSkillUsage; // <-- Move to SkillManager later
+        if (health != null)
+            health.Died -= HandleDied;
+
+        // Releases arrive while we're unsubscribed, so don't keep walking on stale input.
+        moveInput = Vector2.zero;
+        isRunHeld = false;
     }
 
     void Update()
     {
-        HandleMovement();
-        HandleRotation();
-        UpdatePlayerState();
-        UpdateColliderSize();
+        UpdateMovement();
+        UpdateModelRotation();
+        UpdateState();
 
-        camController.Update();
-        camController.isTired = stamina.isExhausted;
+        bool isTired = stamina != null && stamina.IsExhausted;
+        camController.Tick(new CameraViewState(IsRunning, IsCrouching, isUsingSkill, isTired));
     }
 
-    private void UpdatePlayerState()
-    {
-        if (IsCrouching)
-            ChangeState(PlayerState.Crouching);
-
-        else if (stamina.IsRunning)
-            ChangeState(PlayerState.Running);
-
-        else if (isUsingSkill)
-            ChangeState(PlayerState.UsingSkill);
-
-        else if (isHiding)
-            ChangeState(PlayerState.Hiding);
-
-        else
-            ChangeState(PlayerState.Normal);
-    }
+    #region Input
 
     private void HandleMoveInput(Vector2 input) => moveInput = input;
 
-    private void HandleRunInput(bool isInput)
-    {
-        if (CurrentState == PlayerState.Crouching || CurrentState == PlayerState.UsingSkill)
-            return;
-            
-        if (stamina != null)
-        {
-            stamina.isInputtingRun = isInput;
-        }
-    }
+    private void HandleRunInput(bool isHeld) => isRunHeld = isHeld;
 
-    private void HandleCrouchInput(bool input)
+    private void HandleCrouchPressed()
     {
-        if (CurrentState == PlayerState.Running)
+        if (CurrentState == PlayerState.Running || IsHiding)
             return;
 
-        IsCrouching = input;
-
+        IsCrouching = !IsCrouching;
         anim.SetCrouch(IsCrouching);
-        camController.ChangeCamHeight(IsCrouching);
-        camController.isCrouching = IsCrouching;
+        ApplyStance();
     }
 
-    private void HandleInteractFInput()
+    private void HandleDied() => SetCanMove(false);
+
+    #endregion
+
+    #region Movement
+
+    private void UpdateMovement()
     {
-        if (CurrentState == PlayerState.Hiding)
-        {
-            curHidingPlace.ToggleHide(gameObject);
-            return;
-        }
+        camController.GetPlanarBasis(out Vector3 forward, out Vector3 right);
+        moveDir = forward * moveInput.y + right * moveInput.x;
 
-        List<IInteractable> validDetected = interaction.detector.GetAllDetected()
-            .Where(d => d.InteractButton == InteractButton.F)
-            .ToList();
-
-        canInteract = validDetected.Count > 0;
-        if (!canInteract)
-            return;
-
-        interaction.handler.PerformFInteract();
-        anim.SetInteract();
-    }
-
-    private void HandleInteractSpacebarInput()
-    {
-        if (CurrentState == PlayerState.Hiding)
-        {
-            curHidingPlace.ToggleHide(gameObject);
-            return;
-        }
-
-        List<IInteractable> validDetected = interaction.detector.GetAllDetected()
-            .Where(d => d.InteractButton == InteractButton.Spacebar)
-            .ToList();
-
-        canInteract = validDetected.Count > 0;
-        if (!canInteract)
-            return;
-
-        interaction.handler.PerformSpacebarInteract();
-        anim.SetInteract();
-    }
-    
-    private void HandleDemonEyeSkillUsage(bool flag) // <-- Move to SkillManager later
-    {
-        if (CurrentState == PlayerState.Running)
-            return;
-        if (flag && scanSkill.isCooldown)
-            return;
-
-        scanSkill.Scan(flag);
-        camController.isDemonEyeActive = flag;
-        isUsingSkill = flag;
-    }
-
-    private void HandleMovement()
-    {
-        camController.camForward = camController.cam.transform.forward;
-        camController.camRight = camController.cam.transform.right;
-
-        camController.camForward.y = 0;
-        camController.camRight.y = 0;
-        camController.camForward.Normalize();
-        camController.camRight.Normalize();
-
-        moveDir = camController.camForward * moveInput.y + camController.camRight * moveInput.x;
-
-        if(!canMove)
-        {
-            isMoving = false;
-
-            if (stamina != null)
-                stamina.isMoving = false;
-
-            return;
-        }
-
-        if (charController.isGrounded && verticalVelocity < 0)
-        {
-            verticalVelocity = -2f;
-        }
-        else
-        {
-            verticalVelocity += gravity * Time.deltaTime;
-        }
-
-        if (canMove)
-        {
-            isMoving = moveInput.sqrMagnitude > 0.1f;
-            stamina.isMoving = isMoving;
-
-            float currentSpeed;
-
-            if (!IsCrouching)
-            {
-                currentSpeed = stamina.IsRunning ? runSpeed : moveSpeed;
-            }
-            else
-            {
-                currentSpeed = crouchSpeed;
-            }
-
-            Vector3 finalVelocity = (moveDir * currentSpeed) + (Vector3.up * verticalVelocity);
-            if(charController.enabled)
-                charController.Move(finalVelocity * Time.deltaTime);
-
-            UpdateMovementAnim();
-        }
-    }
-    
-    private void UpdateMovementAnim()
-    {
-        int animMovementValue = 0;
-
-        
-        if (isMoving)
-        {
-            if (IsCrouching)
-            {
-                animMovementValue = 1;
-            }
-            else
-            {
-                animMovementValue = stamina.IsRunning ? 2 : 1;
-            }
-        }
-
-        anim.SetMove(animMovementValue);
-    }
-
-    private void HandleRotation()
-    {
         if (!canMove)
+        {
+            UpdateStamina(isMoving: false);
+            return;
+        }
+
+        bool isMoving = moveInput.sqrMagnitude > MoveInputDeadZoneSqr;
+        UpdateStamina(isMoving);
+
+        motor.Move(moveDir * GetCurrentSpeed(), gravity, Time.deltaTime);
+        anim.SetMove(GetMoveAnimValue(isMoving));
+    }
+
+    private void UpdateStamina(bool isMoving)
+    {
+        if (stamina == null)
             return;
 
-        if (moveDir != Vector3.zero && playerModel != null)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-
-            playerModel.rotation = Quaternion.Slerp(
-                playerModel.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
+        stamina.SetMoving(isMoving);
+        stamina.SetRunIntent(isRunHeld && !IsCrouching && !isUsingSkill);
     }
 
-    private void UpdateColliderSize()
+    private float GetCurrentSpeed()
     {
-        if (CurrentState == PlayerState.Crouching)
-        {
-            currentColliderY = crouchColliderY;
-            currentColliderHeight = crouchColliderHeight;
-        }
-        else
-        {
-            currentColliderY = standColliderY;
-            currentColliderHeight = standColliderHeight;
-        }
+        if (IsCrouching)
+            return crouchSpeed;
 
-        charController.center = new(charController.center.x, currentColliderY, charController.center.z);
-        charController.height = currentColliderHeight;
+        return IsRunning ? runSpeed : moveSpeed;
     }
+
+    private int GetMoveAnimValue(bool isMoving)
+    {
+        if (!isMoving)
+            return 0;
+
+        return !IsCrouching && IsRunning ? 2 : 1;
+    }
+
+    private void UpdateModelRotation()
+    {
+        if (!canMove || playerModel == null || moveDir == Vector3.zero)
+            return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+        playerModel.rotation = Quaternion.Slerp(playerModel.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    private void ApplyStance()
+    {
+        if (IsCrouching)
+            motor.SetStance(crouchColliderY, crouchColliderHeight);
+        else
+            motor.SetStance(standColliderY, standColliderHeight);
+    }
+
+    /// <summary>Highest priority first: hiding beats everything, crouching is the weakest.</summary>
+    private void UpdateState()
+    {
+        if (IsHiding)
+            CurrentState = PlayerState.Hiding;
+        else if (isUsingSkill)
+            CurrentState = PlayerState.UsingSkill;
+        else if (IsRunning)
+            CurrentState = PlayerState.Running;
+        else if (IsCrouching)
+            CurrentState = PlayerState.Crouching;
+        else
+            CurrentState = PlayerState.Normal;
+    }
+
+    #endregion
+
+    #region Public API
+
+    public void SetUsingSkill(bool isActive) => isUsingSkill = isActive;
+
+    public void PlayInteractAnimation() => anim.SetInteract();
+
+    public Vector3 GetForward() => playerModel != null ? playerModel.forward : transform.forward;
+
+    #endregion
+
+    #region ISkillUser
+
+    public Vector3 Position => transform.position;
+    public Vector3 Forward => GetForward();
+
+    /// <summary>Script-driven movement without gravity (e.g. the tackle dash).</summary>
+    public void Dash(Vector3 delta) => motor.Displace(delta);
+
+    #endregion
+
+    #region IInteractorBody
 
     public void SetCanMove(bool flag)
     {
         canMove = flag;
-        
-        if (!canMove)
-        {
-            isMoving = false;
-            if (stamina != null)
-                stamina.isMoving = false;
+        if (canMove)
+            return;
 
-            anim.SetMove(0);
-        }
+        if (stamina != null)
+            stamina.SetMoving(false);
+
+        anim.SetMove(0);
     }
 
-    public void SetHiding(bool flag, Hidable place, Vector3 targetPos)
+    public void Teleport(Vector3 position, Quaternion? facing = null)
     {
-        isHiding = flag;
-        curHidingPlace = place;
+        motor.Teleport(position);
 
-        charController.enabled = false;
-        transform.position = targetPos;
-
-        charController.enabled = !flag;
-        playerModel.gameObject.SetActive(!flag);
+        if (facing.HasValue && playerModel != null)
+            playerModel.rotation = facing.Value;
     }
 
-    public void SetModelRotation(Transform target)
-        => playerModel.rotation = target.rotation;
+    public void SetPhysicsEnabled(bool enabled) => motor.SetEnabled(enabled);
 
-    public void ChangeState(PlayerState newState)
-        => CurrentState = newState;
+    #endregion
 
-    public Vector3 GetForward() => playerModel.transform.forward;
-    
-    // public void ToggleShake(bool isOn) => camController.ToggleShake(isOn);
+    #region IHidingAgent
+
+    public void EnterHiding(Hidable spot, Vector3 position)
+    {
+        CurrentHidingPlace = spot;
+        motor.Teleport(position);
+        motor.SetEnabled(false);
+        SetModelVisible(false);
+    }
+
+    public void ExitHiding(Vector3 position)
+    {
+        CurrentHidingPlace = null;
+        motor.SetEnabled(false);
+        motor.Teleport(position);
+        motor.SetEnabled(true);
+        SetModelVisible(true);
+    }
+
+    private void SetModelVisible(bool isVisible)
+    {
+        if (playerModel != null)
+            playerModel.gameObject.SetActive(isVisible);
+    }
+
+    #endregion
+
+    #region IItemHolder
+
+    public bool HasItem(ItemData item) => Inventory.HasItem(item);
+    public bool AddItem(ItemData item, int amount = 1) => Inventory.AddItem(item, amount);
+
+    #endregion
 }

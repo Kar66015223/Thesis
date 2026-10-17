@@ -1,24 +1,16 @@
-using UnityEngine;
-
-public class CatchingState : IEnemyState
+/// <summary>
+/// Holds the player. The struggle loop itself runs on the player (PlayerStruggle), which calls
+/// back through <see cref="IPlayerCatcher.ReleasePlayer"/> when it ends.
+/// </summary>
+public class CatchingState : EnemyStateBase
 {
-    private EnemyController ctrl;
-    private PlayerStruggle player;
+    private readonly PlayerStruggle player;
 
-    public CatchingState(EnemyController ctrl, PlayerStruggle player)
+    public CatchingState(EnemyController ctrl, PlayerStruggle player) : base(ctrl) => this.player = player;
+
+    public override void Enter()
     {
-        this.ctrl = ctrl;
-        this.player = player;
+        if (!player.TryBeginStruggle(ctrl))
+            ctrl.ReturnToDefaultState();
     }
-
-    public void Enter() => player.EnterStruggle(ctrl);
-
-    public void Update()
-    {
-        player.UpdateStruggle(ctrl.catchDamage, ctrl.damageCooldown);
-    }
-    
-    public void Exit() {}
-    public void OnHearSound(SoundSignal sound) { }
-    public void OnSeenTarget(Transform target) { }
 }

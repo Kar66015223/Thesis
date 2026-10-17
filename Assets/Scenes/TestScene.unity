@@ -2145,10 +2145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d837f97416a84734b9e7c2e0ac381af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveManager
-  AllObjtive:
-  - {fileID: 2132274329}
-  - {fileID: 523102009}
-  - {fileID: 1871986100}
+  AllObjtive: []
   curObjtiveIndex: 0
   next: 0
 --- !u!4 &846463191
@@ -2772,7 +2769,7 @@ PrefabInstance:
       objectReference: {fileID: 184039339}
     - target: {fileID: 2611583037318952553, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
       propertyPath: m_VersionIndex
-      value: 6666
+      value: 6669
       objectReference: {fileID: 0}
     - target: {fileID: 5709245980062750489, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
       propertyPath: m_Mesh
@@ -3014,7 +3011,7 @@ PrefabInstance:
       objectReference: {fileID: 599654615}
     - target: {fileID: 2611583037318952553, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
       propertyPath: m_VersionIndex
-      value: 6669
+      value: 6672
       objectReference: {fileID: 0}
     - target: {fileID: 4069221809959497045, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
       propertyPath: m_IsActive

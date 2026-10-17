@@ -1,7 +1,11 @@
-
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.Rendering;
+using Unity.VisualScripting;
+using NUnit.Framework;
+using System.Data;
+using System.Data.SqlTypes;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -17,7 +21,7 @@ public class DialogueManager : MonoBehaviour
     [Header("Player Control")]
     [SerializeField] private Behaviour playerMovement;
 
-    private DialogueData currentDialogue;
+    private const string DefaultPlayerName = "Player";
 
     private enum DialogueStage
     {
@@ -27,32 +31,29 @@ public class DialogueManager : MonoBehaviour
         SequenceLine
     }
 
+    private DialogueView view;
+    private DialogueData currentDialogue;
     private DialogueStage dialogueStage;
 
-    //  ∂“π–°ËÕπ‡√‘Ë¡ π∑π“
-    private bool previousMovementEnabled;
-    private bool previousCursorVisible;
-    private CursorLockMode previousCursorLockMode;
-    private bool hasSavedMovementState;
-
-    //  ∂“π–À≈—ß‡≈◊Õ°§”µÕ∫
-    private bool waitingForCloseClick;
-    private int choiceSelectedFrame = -1;
-
-    // ªÈÕß°—π°“√°¥ªÿË¡‡√‘Ë¡ π∑π“·≈È«¢È“¡ª√–‚¬§·√°∑—π∑’
-    private bool waitForInputRelease;
-
-    // ªÈÕß°—π°“√√—∫Õ‘πæÿµ„π‡ø√¡∑’Ë‡√‘Ë¡ π∑π“
-    private int dialogueOpenedFrame = -1;
-
-    // √–∫∫∫∑ π∑π“µËÕ‡π◊ËÕß
+    // ‡∏£‡∏∞‡∏ö‡∏ö‡∏ö‡∏ó‡∏™‡∏ô‡∏ó‡∏ô‡∏≤‡∏ï‡πà‡∏≠‡πÄ‡∏ô‡∏∑‡πà‡∏≠‡∏á (sequential conversation)
     private bool isSequenceDialogue;
     private int currentLineIndex;
 
-    public bool IsDialogueOpen =>
-        dialoguePanel != null && dialoguePanel.activeSelf;
+    // ‡∏™‡∏ñ‡∏≤‡∏ô‡∏∞‡∏Å‡πà‡∏≠‡∏ô‡πÄ‡∏£‡∏¥‡πà‡∏°‡∏™‡∏ô‡∏ó‡∏ô‡∏≤ (state saved before the conversation)
+    private bool previousMovementEnabled;
+    private bool hasSavedMovementState;
 
-    private void Awake()
+    // ‡∏™‡∏ñ‡∏≤‡∏ô‡∏∞‡∏´‡∏•‡∏±‡∏á‡πÄ‡∏•‡∏∑‡∏≠‡∏Å‡∏Ñ‡∏≥‡∏ï‡∏≠‡∏ö (after picking a choice with no follow-up: click to close)
+    private bool waitingForCloseClick;
+    private int choiceSelectedFrame = -1;
+
+    // ‡∏õ‡πâ‡∏≠‡∏á‡∏Å‡∏±‡∏ô‡∏Å‡∏≤‡∏£‡∏Å‡∏î‡∏õ‡∏∏‡πà‡∏°‡πÄ‡∏£‡∏¥‡πà‡∏°‡∏™‡∏ô‡∏ó‡∏ô‡∏≤‡πÅ‡∏•‡πâ‡∏ß‡∏Ç‡πâ‡∏≤‡∏°‡∏õ‡∏£‡∏∞‡πÇ‡∏¢‡∏Ñ‡πÅ‡∏£‡∏Å‡∏ó‡∏±‡∏ô‡∏ó‡∏µ (don't skip the first line with the key that opened it)
+    private bool waitForInputRelease;
+    private int dialogueOpenedFrame = -1;
+
+    public bool IsDialogueOpen => view != null && view.IsVisible;
+
+    void Awake()
     {
         if (Instance != null && Instance != this)
         {
@@ -61,351 +62,207 @@ public class DialogueManager : MonoBehaviour
         }
 
         Instance = this;
-
-        if (dialoguePanel != null)
-            dialoguePanel.SetActive(false);
+        view = new(dialoguePanel, npcNameText, dialogueText, choicesParent, choiceButtonPrefab);
+        view.SetVisible(false);
     }
 
-    private void Update()
+    void OnEnable() => UIEvents.DialogueRequested += StartDialogue;
+
+    void OnDisable()
+    {
+        UIEvents.DialogueRequested -= StartDialogue;
+        InputModeService.RequestUI(this, false);
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
+    void Update()
     {
         if (!IsDialogueOpen)
             return;
 
-        // √Õ„ÀÈª≈ËÕ¬ªÿË¡∑’Ë„™È‡ª‘¥ Dialogue °ËÕπ
+        // ‡∏£‡∏≠‡πÉ‡∏´‡πâ‡∏õ‡∏•‡πà‡∏≠‡∏¢‡∏õ‡∏∏‡πà‡∏°‡∏ó‡∏µ‡πà‡πÉ‡∏ä‡πâ‡πÄ‡∏õ‡∏¥‡∏î Dialogue ‡∏Å‡πà‡∏≠‡∏ô (wait until the opening key is released)
         if (waitForInputRelease)
         {
-            bool inputHeld =
-                Input.GetMouseButton(0) ||
-                Input.GetKey(KeyCode.Space) ||
-                Input.GetKey(KeyCode.Return) ||
-                Input.GetKey(KeyCode.KeypadEnter);
-
-            if (!inputHeld)
+            if (!DialogueInput.AnyHeld)
                 waitForInputRelease = false;
 
             return;
         }
 
-        // À≈—ß‡≈◊Õ°§”µÕ∫∑’Ë‰¡Ë¡’∫∑ π∑π“∂—¥‰ª
-        // §≈‘°‡¡“ ÏÕ’°§√—Èß‡æ◊ËÕª‘¥ Panel
+        // ‡∏´‡∏•‡∏±‡∏á‡πÄ‡∏•‡∏∑‡∏≠‡∏Å‡∏Ñ‡∏≥‡∏ï‡∏≠‡∏ö‡∏ó‡∏µ‡πà‡πÑ‡∏°‡πà‡∏°‡∏µ‡∏ö‡∏ó‡∏™‡∏ô‡∏ó‡∏ô‡∏≤‡∏ñ‡∏±‡∏î‡πÑ‡∏õ ‡∏Ñ‡∏•‡∏¥‡∏Å‡πÄ‡∏°‡∏≤‡∏™‡πå‡∏≠‡∏µ‡∏Å‡∏Ñ‡∏£‡∏±‡πâ‡∏á‡πÄ‡∏û‡∏∑‡πà‡∏≠‡∏õ‡∏¥‡∏î Panel
         if (waitingForCloseClick)
         {
-            if (Time.frameCount > choiceSelectedFrame &&
-                Input.GetMouseButtonDown(0))
-            {
+            if (Time.frameCount > choiceSelectedFrame && DialogueInput.ClickPressed)
                 EndDialogue();
-            }
 
             return;
         }
 
-        // ªÈÕß°—π°“√√—∫§≈‘°„π‡ø√¡∑’Ë‡√‘Ë¡∫∑ π∑π“
-        bool clicked =
-            Time.frameCount > dialogueOpenedFrame &&
-            Input.GetMouseButtonDown(0);
+        // ‡∏õ‡πâ‡∏≠‡∏á‡∏Å‡∏±‡∏ô‡∏Å‡∏≤‡∏£‡∏£‡∏±‡∏ö‡∏Ñ‡∏•‡∏¥‡∏Å‡πÉ‡∏ô‡πÄ‡∏ü‡∏£‡∏°‡∏ó‡∏µ‡πà‡πÄ‡∏£‡∏¥‡πà‡∏°‡∏ö‡∏ó‡∏™‡∏ô‡∏ó‡∏ô‡∏≤ (ignore the click from the opening frame)
+        bool clicked = Time.frameCount > dialogueOpenedFrame && DialogueInput.ClickPressed;
+        if (!clicked && !DialogueInput.ContinuePressed)
+            return;
 
-        bool pressedContinue =
-            Input.GetKeyDown(KeyCode.Space) ||
-            Input.GetKeyDown(KeyCode.Return) ||
-            Input.GetKeyDown(KeyCode.KeypadEnter);
-
-        // ∫∑ π∑π“µËÕ‡π◊ËÕß·∫∫‰¡Ë¡’µ—«‡≈◊Õ°
         if (isSequenceDialogue)
-        {
-            if (clicked || pressedContinue)
-                AdvanceSequenceDialogue();
-
-            return;
-        }
-
-        // √–∫∫∫∑ π∑π“‡¥‘¡
-        if (clicked || pressedContinue)
+            AdvanceSequenceDialogue();
+        else
             AdvanceDialogue();
-    }
-
-    private void LateUpdate()
-    {
-        // · ¥ß‡¡“ Ïµ≈Õ¥‡«≈“∑’Ë‡ª‘¥ Dialogue
-        if (IsDialogueOpen)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
     }
 
     public void StartDialogue(DialogueData data)
     {
-        if (data == null || dialoguePanel == null)
+        // ‡∏õ‡πâ‡∏≠‡∏á‡∏Å‡∏±‡∏ô‡∏Å‡∏≤‡∏£‡πÄ‡∏õ‡∏¥‡∏î Dialogue ‡∏ã‡πâ‡∏≠‡∏ô (no nested dialogues)
+        if (data == null || view == null || !view.IsValid || IsDialogueOpen)
             return;
 
-        // ªÈÕß°—π°“√‡ª‘¥ Dialogue ´ÈÕπ
-        if (dialoguePanel.activeSelf)
-            return;
-
-        // ∫—π∑÷° ∂“π–‡¡“ Ï‡¥‘¡
-        previousCursorVisible = Cursor.visible;
-        previousCursorLockMode = Cursor.lockState;
-
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        // À¬ÿ¥°“√‡§≈◊ËÕπ∑’Ë¢Õß Player
-        hasSavedMovementState = false;
-
-        if (playerMovement != null)
+        // ‡∏´‡∏¢‡∏∏‡∏î‡∏Å‡∏≤‡∏£‡πÄ‡∏Ñ‡∏•‡∏∑‡πà‡∏≠‡∏ô‡∏ó‡∏µ‡πà‡∏Ç‡∏≠‡∏á Player (freeze the player)
+        hasSavedMovementState = playerMovement != null;
+        if (hasSavedMovementState)
         {
             previousMovementEnabled = playerMovement.enabled;
-            hasSavedMovementState = true;
             playerMovement.enabled = false;
         }
 
-        // ªÈÕß°—πÕ‘πæÿµ∑’Ë„™È‡ª‘¥∫∑ π∑π“∂Ÿ°ÕË“π´È”
-        waitForInputRelease = true;
-        dialogueOpenedFrame = Time.frameCount;
+        InputModeService.RequestUI(this, true);
 
+        waitForInputRelease = true;
+        view.SetVisible(true);
+        LoadDialogue(data);
+    }
+
+    public void EndDialogue()
+    {
+        view.SetVisible(false);
+        view.ClearChoices();
+
+        currentDialogue = null;
+        isSequenceDialogue = false;
+        currentLineIndex = 0;
         waitingForCloseClick = false;
         choiceSelectedFrame = -1;
+        dialogueOpenedFrame = -1;
+        waitForInputRelease = false;
 
-        dialoguePanel.SetActive(true);
+        // ‡∏Ñ‡∏∑‡∏ô‡∏™‡∏ñ‡∏≤‡∏ô‡∏∞‡∏Å‡∏≤‡∏£‡πÄ‡∏î‡∏¥‡∏ô‡πÄ‡∏î‡∏¥‡∏° (restore player movement)
+        if (playerMovement != null && hasSavedMovementState)
+            playerMovement.enabled = previousMovementEnabled;
+        hasSavedMovementState = false;
 
-        LoadDialogue(data);
+        InputModeService.RequestUI(this, false);
     }
 
     private void LoadDialogue(DialogueData data)
     {
-        if (data == null)
-            return;
-
         currentDialogue = data;
-
+        currentLineIndex = 0;
         waitingForCloseClick = false;
         choiceSelectedFrame = -1;
         dialogueOpenedFrame = Time.frameCount;
 
-        currentLineIndex = 0;
+        view.ClearChoices();
 
-        ClearChoices();
-
-        // ∂È“¡’ Conversation Lines „ÀÈ„™È√–∫∫µËÕ‡π◊ËÕß
-        isSequenceDialogue =
-            currentDialogue.conversationLines != null &&
-            currentDialogue.conversationLines.Length > 0;
+        isSequenceDialogue = data.conversationLines != null && data.conversationLines.Length > 0;
 
         if (isSequenceDialogue)
-        {
             ShowSequenceLine();
-        }
         else
-        {
-            // ∂È“‰¡Ë¡’ Conversation Lines „ÀÈ„™È√–∫∫‡¥‘¡
             ShowPlayerDialogue();
-        }
     }
 
-    // =========================================
-    // √–∫∫∫∑ π∑π“µËÕ‡π◊ËÕß·∫∫‰¡Ë¡’µ—«‡≈◊Õ°
-    // =========================================
+    #region Sequential conversation (no choices)
 
     private void ShowSequenceLine()
     {
-        if (currentDialogue == null ||
-            currentDialogue.conversationLines == null)
-        {
-            EndDialogue();
-            return;
-        }
+        DialogueLine[] lines = currentDialogue.conversationLines;
 
-        // ¢È“¡∫√√∑—¥∑’Ë‰¡Ë‰¥È°”Àπ¥¢ÈÕ¡Ÿ≈
-        while (currentLineIndex <
-               currentDialogue.conversationLines.Length &&
-               currentDialogue.conversationLines[currentLineIndex] == null)
-        {
+        // ‡∏Ç‡πâ‡∏≤‡∏°‡∏ö‡∏£‡∏£‡∏ó‡∏±‡∏î‡∏ó‡∏µ‡πà‡πÑ‡∏°‡πà‡πÑ‡∏î‡πâ‡∏Å‡∏≥‡∏´‡∏ô‡∏î‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏• (skip empty entries)
+        while (currentLineIndex < lines.Length && lines[currentLineIndex] == null)
             currentLineIndex++;
-        }
 
-        if (currentLineIndex >=
-            currentDialogue.conversationLines.Length)
+        if (currentLineIndex >= lines.Length)
         {
             EndDialogue();
             return;
         }
 
-        DialogueLine line =
-            currentDialogue.conversationLines[currentLineIndex];
-
+        DialogueLine line = lines[currentLineIndex];
         dialogueStage = DialogueStage.SequenceLine;
+        view.ShowLine(GetSequenceSpeaker(line), line.dialogueText);
+    }
 
-        if (npcNameText != null)
-        {
-            string speaker;
+    private string GetSequenceSpeaker(DialogueLine line)
+    {
+        // ‡∏ö‡∏£‡∏£‡∏ó‡∏±‡∏î‡πÅ‡∏£‡∏Å‡πÉ‡∏ä‡πâ‡∏ä‡∏∑‡πà‡∏≠‡∏à‡∏≤‡∏Å Player Name, ‡∏ö‡∏£‡∏£‡∏ó‡∏±‡∏î‡∏ñ‡∏±‡∏î‡πÑ‡∏õ‡πÉ‡∏ä‡πâ Speaker Name, ‡∏ñ‡πâ‡∏≤‡πÑ‡∏°‡πà‡∏°‡∏µ‡∏ä‡∏∑‡πà‡∏≠‡πÉ‡∏´‡πâ‡πÉ‡∏ä‡πâ‡∏ä‡∏∑‡πà‡∏≠ NPC
+        string speaker = currentLineIndex == 0 ? currentDialogue.playerName : line.speakerName;
 
-            // ∫√√∑—¥·√°„™È™◊ËÕ®“° Player Name
-            if (currentLineIndex == 0)
-            {
-                speaker = currentDialogue.playerName;
+        if (currentLineIndex == 0 && string.IsNullOrWhiteSpace(speaker))
+            speaker = line.speakerName;
 
-                // ∂È“ Player Name «Ë“ß „ÀÈ„™È Speaker Name
-                if (string.IsNullOrWhiteSpace(speaker))
-                    speaker = line.speakerName;
-            }
-            else
-            {
-                // ∫√√∑—¥∂—¥‰ª„™È Speaker Name
-                speaker = line.speakerName;
-            }
-
-            // ∂È“‰¡Ë¡’™◊ËÕ „ÀÈ„™È™◊ËÕ NPC
-            if (string.IsNullOrWhiteSpace(speaker))
-                speaker = currentDialogue.npcName;
-
-            npcNameText.text = speaker;
-        }
-
-        if (dialogueText != null)
-            dialogueText.text = line.dialogueText;
+        return string.IsNullOrWhiteSpace(speaker) ? currentDialogue.npcName : speaker;
     }
 
     private void AdvanceSequenceDialogue()
     {
-        if (currentDialogue == null ||
-            currentDialogue.conversationLines == null)
-        {
-            EndDialogue();
-            return;
-        }
-
         currentLineIndex++;
 
-        if (currentLineIndex <
-            currentDialogue.conversationLines.Length)
-        {
+        // ‡∏≠‡πà‡∏≤‡∏ô‡∏Ñ‡∏£‡∏ö‡∏ó‡∏∏‡∏Å‡∏ö‡∏£‡∏£‡∏ó‡∏±‡∏î‡πÅ‡∏•‡πâ‡∏ß‡∏õ‡∏¥‡∏î Panel
+        if (currentLineIndex < currentDialogue.conversationLines.Length)
             ShowSequenceLine();
-        }
         else
-        {
-            // ÕË“π§√∫∑ÿ°∫√√∑—¥·≈È«ª‘¥ Panel
             EndDialogue();
-        }
     }
 
-    // =========================================
-    // √–∫∫∫∑ π∑π“‡¥‘¡
-    // =========================================
+    #endregion
+
+    #region Player line -> NPC line -> choices
 
     private void ShowPlayerDialogue()
     {
-        if (currentDialogue == null)
-            return;
-
         waitingForCloseClick = false;
         dialogueStage = DialogueStage.PlayerLine;
+        view.ClearChoices();
 
-        ClearChoices();
-
-        if (npcNameText != null)
-        {
-            npcNameText.text =
-                string.IsNullOrWhiteSpace(currentDialogue.playerName)
-                ? "Player"
-                : currentDialogue.playerName;
-        }
-
-        if (dialogueText != null)
-            dialogueText.text = currentDialogue.playerDialogueText;
-
-        // ∂È“‰¡Ë¡’¢ÈÕ§«“¡ Player „ÀÈ‡√‘Ë¡∑’Ë NPC
-        if (string.IsNullOrWhiteSpace(
-            currentDialogue.playerDialogueText))
+        if (string.IsNullOrWhiteSpace(currentDialogue.playerDialogueText))
         {
             ShowNpcDialogue();
+            return;
         }
+
+        string playerName = string.IsNullOrWhiteSpace(currentDialogue.playerName)
+            ? DefaultPlayerName
+            : currentDialogue.playerName;
+
+        view.ShowLine(playerName, currentDialogue.playerDialogueText);
     }
 
     private void ShowNpcDialogue()
     {
-        if (currentDialogue == null)
-            return;
-
         dialogueStage = DialogueStage.NpcLine;
-
-        if (npcNameText != null)
-            npcNameText.text = currentDialogue.npcName;
-
-        if (dialogueText != null)
-            dialogueText.text = currentDialogue.dialogueText;
-
-        ShowChoices();
+        view.ShowLine(currentDialogue.npcName, currentDialogue.dialogueText);
+        view.ShowChoices(currentDialogue.choices, SelectChoice);
     }
-
+    
     private void AdvanceDialogue()
     {
-        if (currentDialogue == null)
-            return;
-
-        switch (dialogueStage)
+        switch(dialogueStage)
         {
             case DialogueStage.PlayerLine:
-
-                // · ¥ß∫∑æŸ¥ NPC À≈—ß®“° Player æŸ¥
+                // ‡πÅ‡∏™‡∏î‡∏á‡∏ö‡∏ó‡∏û‡∏π‡∏î NPC ‡∏´‡∏•‡∏±‡∏á‡∏à‡∏≤‡∏Å Player ‡∏û‡∏π‡∏î
                 ShowNpcDialogue();
                 break;
 
             case DialogueStage.NpcLine:
-
-                // ∂È“‰¡Ë¡’µ—«‡≈◊Õ° §≈‘°Õ’°§√—Èß‡æ◊ËÕª‘¥
-                if (currentDialogue.choices == null ||
-                    currentDialogue.choices.Length == 0)
-                {
+                // ‡∏ñ‡πâ‡∏≤‡πÑ‡∏°‡πà‡∏°‡∏µ‡∏ï‡∏±‡∏ß‡πÄ‡∏•‡∏∑‡∏≠‡∏Å ‡∏Ñ‡∏•‡∏¥‡∏Å‡∏≠‡∏µ‡∏Å‡∏Ñ‡∏£‡∏±‡πâ‡∏á‡πÄ‡∏û‡∏∑‡πà‡∏≠‡∏õ‡∏¥‡∏î
+                if (currentDialogue.choices == null || currentDialogue.choices.Length == 0)
                     EndDialogue();
-                }
-
                 break;
 
-            case DialogueStage.ChoiceResponse:
-
-                // °“√§≈‘°ª‘¥∂Ÿ°®—¥°“√„π Update()
-                break;
-        }
-    }
-
-    // =========================================
-    // √–∫∫µ—«‡≈◊Õ°
-    // =========================================
-
-    private void ShowChoices()
-    {
-        ClearChoices();
-
-        if (currentDialogue == null ||
-            choicesParent == null ||
-            choiceButtonPrefab == null ||
-            currentDialogue.choices == null)
-        {
-            return;
-        }
-
-        foreach (DialogueChoice choice in currentDialogue.choices)
-        {
-            if (choice == null)
-                continue;
-
-            DialogueChoice selectedChoice = choice;
-
-            Button button = Instantiate(
-                choiceButtonPrefab,
-                choicesParent
-            );
-
-            TMP_Text buttonText =
-                button.GetComponentInChildren<TMP_Text>();
-
-            if (buttonText != null)
-                buttonText.text = selectedChoice.choiceText;
-
-            button.onClick.AddListener(() =>
-            {
-                SelectChoice(selectedChoice);
-            });
+            // ChoiceResponse: closing is handled in Update().
         }
     }
 
@@ -414,84 +271,28 @@ public class DialogueManager : MonoBehaviour
         if (choice == null || currentDialogue == null)
             return;
 
-        // ªÈÕß°—π°“√°¥µ—«‡≈◊Õ°´È”
-        ClearChoices();
+        // ‡∏õ‡πâ‡∏≠‡∏á‡∏Å‡∏±‡∏ô‡∏Å‡∏≤‡∏£‡∏Å‡∏î‡∏ï‡∏±‡∏ß‡πÄ‡∏•‡∏∑‡∏≠‡∏Å‡∏ã‡πâ‡∏≥
+        view.ClearChoices();
 
-        // ∂È“µ‘Í° End Dialogue „ÀÈª‘¥∑—π∑’
         if (choice.endDialogue)
         {
             EndDialogue();
             return;
         }
 
-        // ∂È“¡’∫∑ π∑π“∂—¥‰ª „ÀÈ‡ª≈’Ë¬π∑—π∑’
+        // ‡∏ñ‡πâ‡∏≤‡∏°‡∏µ‡∏ö‡∏ó‡∏™‡∏ô‡∏ó‡∏ô‡∏≤‡∏ñ‡∏±‡∏î‡πÑ‡∏õ ‡πÉ‡∏´‡πâ‡πÄ‡∏õ‡∏•‡∏µ‡πà‡∏¢‡∏ô‡∏ó‡∏±‡∏ô‡∏ó‡∏µ
         if (choice.nextDialogue != null)
         {
             LoadDialogue(choice.nextDialogue);
             return;
         }
 
-        // ‰¡Ë¡’∫∑ π∑π“∂—¥‰ª:
-        // · ¥ß§”µÕ∫·≈–√Õ§≈‘°‡¡“ Ï‡æ◊ËÕª‘¥
+        // ‡πÑ‡∏°‡πà‡∏°‡∏µ‡∏ö‡∏ó‡∏™‡∏ô‡∏ó‡∏ô‡∏≤‡∏ñ‡∏±‡∏î‡πÑ‡∏õ: ‡πÅ‡∏™‡∏î‡∏á‡∏Ñ‡∏≥‡∏ï‡∏≠‡∏ö‡πÅ‡∏•‡∏∞‡∏£‡∏≠‡∏Ñ‡∏•‡∏¥‡∏Å‡πÄ‡∏°‡∏≤‡∏™‡πå‡πÄ‡∏û‡∏∑‡πà‡∏≠‡∏õ‡∏¥‡∏î
         waitingForCloseClick = true;
         choiceSelectedFrame = Time.frameCount;
-
         dialogueStage = DialogueStage.ChoiceResponse;
-
-        if (npcNameText != null)
-            npcNameText.text = currentDialogue.npcName;
-
-        if (dialogueText != null)
-            dialogueText.text = choice.responseText;
+        view.ShowLine(currentDialogue.npcName, choice.responseText);
     }
-
-    private void ClearChoices()
-    {
-        if (choicesParent == null)
-            return;
-
-        foreach (Transform child in choicesParent)
-        {
-            Button button = child.GetComponent<Button>();
-
-            if (button != null)
-                button.interactable = false;
-
-            Destroy(child.gameObject);
-        }
-    }
-
-    // =========================================
-    // ®∫∫∑ π∑π“
-    // =========================================
-
-    public void EndDialogue()
-    {
-        if (dialoguePanel != null)
-            dialoguePanel.SetActive(false);
-
-        ClearChoices();
-
-        currentDialogue = null;
-
-        isSequenceDialogue = false;
-        currentLineIndex = 0;
-
-        waitingForCloseClick = false;
-        choiceSelectedFrame = -1;
-        dialogueOpenedFrame = -1;
-        waitForInputRelease = false;
-
-        // §◊π ∂“π–°“√‡¥‘π‡¥‘¡
-        if (playerMovement != null && hasSavedMovementState)
-        {
-            playerMovement.enabled = previousMovementEnabled;
-        }
-
-        hasSavedMovementState = false;
-
-        // §◊π ∂“π–‡¡“ Ï‡¥‘¡
-        Cursor.lockState = previousCursorLockMode;
-        Cursor.visible = previousCursorVisible;
-    }
+    
+    #endregion
 }

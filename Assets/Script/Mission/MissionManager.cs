@@ -1,36 +1,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>Keeps the mission list and the active mission alive across scenes.</summary>
 public class MissionManager : MonoBehaviour
 {
-    public static MissionManager instance;
+    public static MissionManager Instance { get; private set; }
 
-    private List<Mission> availableMission = new();
-    private Mission onProgressMission;
+    private readonly List<Mission> availableMissions = new();
+
+    public IReadOnlyList<Mission> AvailableMissions => availableMissions;
+    public Mission ActiveMission { get; private set; }
 
     void Awake()
     {
-        if (instance == null)
+        if (Instance != null && Instance != this)
         {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
             Destroy(gameObject);
-
-        availableMission.Add(new Mission1());
-    }
-
-    void Update()
-    {
-        if(onProgressMission != null)
-        {
-            onProgressMission.CheckCompletion();
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        availableMissions.Add(new Mission1());
     }
 
-    public List<Mission> GetAvailableMissions() => availableMission;
+    void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
 
-    public Mission GetOnProgressMission() => onProgressMission;
-    public void SetOnProgressMission(Mission mission) => onProgressMission = mission;
+    public void Accept(Mission mission)
+    {
+        if (mission == null || mission.Status != MissionStatus.Pending)
+            return;
+
+        ActiveMission = mission;
+        mission.Accept();
+    }
 }

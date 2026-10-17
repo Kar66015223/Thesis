@@ -1,65 +1,65 @@
 using UnityEngine;
+using System;
 
+/// <summary>
+/// Stamina rules only. Other components tell it what the player is doing (SetMoving / SetRunIntent)
+/// and listen to <see cref="Exhausted"/> instead of stamina calling sound or camera code itself.
+/// </summary>
 public class PlayerStamina : MonoBehaviour
 {
     [SerializeField] private float maxStamina = 100.0f;
     [SerializeField] private float _curStamina;
-    public float CurStamina
-    {
-        get => _curStamina;
-        set => _curStamina = Mathf.Clamp(value, 0, maxStamina);
-    }
-
     [SerializeField] private float runDrainRate = 20f;
-
     [SerializeField] private float regenRate = 15f;
     [Range(0, 1)][SerializeField] private float recoveryThreshold = 0.25f;
 
-    public bool isMoving;
-    public bool isInputtingRun;
+    private bool isMoving;
+    private bool wantsToRun;
+
+    public float CurStamina
+    {
+        get => _curStamina;
+        private set => _curStamina = Mathf.Clamp(value, 0, maxStamina);
+    }
+
+    public float Normalized => maxStamina > 0f ? CurStamina / maxStamina : 0f;
     public bool IsRunning { get; private set; }
-    public bool isExhausted;
+    public bool IsExhausted { get; private set; }
 
-    private PlayerController controller;
-    private PlayerSound sound;
+    public event Action Exhausted;
+    public event Action Recovered;
 
-    void Awake()
+    void Start() => CurStamina = maxStamina;
+
+    void Update() => Tick(Time.deltaTime);
+
+    public void SetMoving(bool moving) => isMoving = moving;
+    public void SetRunIntent(bool wantsRun) => wantsToRun = wantsRun;
+
+    private void Tick(float deltaTime)
     {
-        controller = GetComponent<PlayerController>();
-        sound = GetComponent<PlayerSound>();
-    }
-
-    void Start()
-    {
-        CurStamina = maxStamina;
-    }
-
-    void Update()
-    {
-        CalculateStamina();
-    }
-
-    private void CalculateStamina()
-    {
-        IsRunning = isMoving && isInputtingRun && !isExhausted && CurStamina > 0;
+        IsRunning = isMoving && wantsToRun && !IsExhausted && CurStamina > 0f;
 
         if (IsRunning)
         {
-            CurStamina -= runDrainRate * Time.deltaTime;
+            CurStamina -= runDrainRate * deltaTime;
 
-            if (CurStamina == 0)
+            if (CurStamina <= 0f)
             {
                 IsRunning = false;
-                isExhausted = true;
-                sound.PlayTiredSound();
+                IsExhausted = true;
+                Exhausted?.Invoke();
             }
         }
         else
         {
-            CurStamina += regenRate * Time.deltaTime;
+            CurStamina += regenRate * deltaTime;
 
-            if (isExhausted && CurStamina >= (maxStamina * recoveryThreshold))
-                isExhausted = false;
+            if (IsExhausted && CurStamina >= maxStamina * recoveryThreshold)
+            {
+                IsExhausted = false;
+                Recovered?.Invoke();
+            }
         }
     }
 }

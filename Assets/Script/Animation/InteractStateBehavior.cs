@@ -2,21 +2,19 @@ using UnityEngine;
 
 public class InteractStateBehavior : StateMachineBehaviour
 {
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        PlayerController controller = animator.GetComponentInParent<PlayerController>();
-        if (controller != null)
-        {
-            controller.SetCanMove(false);
-        }
-    }
+    private IInteractorBody body;
 
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        => GetBody(animator)?.SetCanMove(false);
+
+    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        => GetBody(animator)?.SetCanMove(true);
+
+    private IInteractorBody GetBody(Animator anim)
     {
-        PlayerController controller = animator.GetComponentInParent<PlayerController>();
-        if (controller != null)
-        {
-            controller.SetCanMove(true);
-        }
+        if (body == null)
+            body = anim.GetComponentInParent<IInteractorBody>();
+
+        return body;
     }
 }

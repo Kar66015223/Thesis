@@ -1,54 +1,43 @@
-
 using UnityEngine;
 
-public class ConfirmingState : IEnemyState
+/// <summary>"Was that the player?" - stops, stares, and either confirms (Chase) or gives up.</summary>
+public class ConfirmingState : EnemyStateBase
 {
-    private EnemyController ctrl;
-    private Transform target;
-    private float stopTimer;
+    private readonly Transform target;
+    private float giveUpTimer;
 
-    public ConfirmingState(EnemyController ctrl, Transform target)
+    public ConfirmingState(EnemyController ctrl, Transform target) : base(ctrl) => this.target = target;
+
+    public override EnemyState Indicator => EnemyState.Confirming;
+
+    public override void Enter()
     {
-        this.ctrl = ctrl;
-        this.target = target;
-    }
+        ctrl.Tracking.InterruptCurrentStep();
 
-    public void Enter()
-    {
-        ctrl.tracking.InterruptCurrentStep();
-
-        ctrl.Movement.SetBaseSpeed(ctrl.walkSpeed);
+        ctrl.Movement.SetBaseSpeed(ctrl.WalkSpeed);
         ctrl.Agent.isStopped = true;
         ctrl.Agent.updateRotation = false;
-
-        GameEvent.OnShowEnemyState?.Invoke(ctrl.stateUIPoint, EnemyState.Confirming);
     }
 
-    public void Update()
+    public override void Update()
     {
         if (target == null)
             return;
 
-        Vector3 direction = target.position - ctrl.transform.position;
-        direction.y = 0;
-        if (direction != Vector3.zero)
-            ctrl.transform.rotation = Quaternion.LookRotation(direction);
+        FaceInstantly(target.position);
 
-        stopTimer += Time.deltaTime;
-        if (stopTimer >= ctrl.confirmGiveUpTime)
+        giveUpTimer += Time.deltaTime;
+        if (giveUpTimer >= ctrl.ConfirmGiveUpTime)
             ctrl.ReturnToDefaultState();
     }
 
-    public void Exit()
+    public override void Exit()
     {
         ctrl.Agent.updateRotation = true;
         ctrl.Agent.isStopped = false;
 
-        ctrl.tracking.ResumeInterruptedStep();
+        ctrl.Tracking.ResumeInterruptedStep();
     }
 
-    public void OnHearSound(SoundSignal sound) {}
-
-    public void OnSeenTarget(Transform target)
-        => ctrl.ChangeState(new ChaseState(ctrl, target));
+    public override void OnSeenTarget(Transform seenTarget) => ctrl.ChangeState(new ChaseState(ctrl, seenTarget));
 }

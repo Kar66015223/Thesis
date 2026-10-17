@@ -1,26 +1,18 @@
 
 using UnityEngine;
 
+/// <summary>
+/// ‡πÄ‡∏õ‡∏¥‡∏î‡∏ö‡∏ó‡∏™‡∏ô‡∏ó‡∏ô‡∏≤‡∏Ç‡∏≠‡∏á NPC ‡∏ï‡∏±‡∏ß‡∏ô‡∏µ‡πâ (Starts this NPC's conversation).
+/// It only raises a request event, so it no longer needs the DialogueManager singleton.
+/// </summary>
 public class NPCDialogueInteract : Interactable
 {
     [Header("NPC Dialogue")]
     [SerializeField] private DialogueData dialogueData;
 
-    public override void Interact(GameObject interactor)
+    protected override void OnInteract(GameObject interactor)
     {
-        if (!CanInteract(interactor))
-            return;
-
-        // ‡√’¬°°“√∑”ß“π‡¥‘¡¢Õß Interactable
-        base.Interact(interactor);
-
-        // ‡ª‘¥∫∑ π∑π“¢Õß NPC µ—«π’È
-        if (DialogueManager.Instance != null &&
-            dialogueData != null)
-        {
-            DialogueManager.Instance.StartDialogue(
-                dialogueData
-            );
-        }
+        if (dialogueData != null)
+            UIEvents.RequestDialogue(dialogueData);
     }
 }

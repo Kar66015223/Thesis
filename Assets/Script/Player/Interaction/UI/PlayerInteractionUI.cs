@@ -1,116 +1,121 @@
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Pure view: draws the pick-up list and the "[F]" prompt from what the handler decided.
+/// It never changes the selection itself (it used to, which caused the item-selection bug).
+/// </summary>
 [System.Serializable]
 public class PlayerInteractionUI
 {
     [SerializeField] private GameObject listPanel;
-
     [SerializeField] private GameObject itemButtonPrefab;
     [SerializeField] private Transform itemButtonParent;
-
-    private Dictionary<Item, GameObject> allItemButtonsPair = new();
-    [SerializeField] private List<GameObject> allItemButtons = new();
-
-    private List<Interactable> currentActiveInteractables = new();
     [SerializeField] private TMP_Text interactPrompt;
+    [SerializeField] private SelectionHandler selection = new();
 
-    public SelectionHandler selection = new();
-    private GameObject player;
-    private PlayerInteractionDetector detector;
-    private PlayerInteractionHandler handler;
+    private readonly Dictionary<Item, InteractItemUI> itemButtons = new();
+    private readonly List<Item> staleItems = new();
+    private Camera cam;
 
-    public void Initialize(
-        GameObject player, PlayerInteractionDetector detector, PlayerInteractionHandler handler)
+    public void Initialize()
     {
-        this.player = player;
-        this.detector = detector;
-        this.handler = handler;
-        selection.Initialize(allItemButtonsPair);
+        cam = Camera.main;
+        HidePrompt();
+
+        if (listPanel != null)
+            listPanel.SetActive(false);
     }
 
-    public void UpdateDisplay()
+    public void Render(PlayerInteractionHandler handler)
     {
-        UpdateItemDisplay();
-        UpdateInteractableDisplay();
+        RenderItemList(handler.Items);
+        selection.Render(itemButtons, handler.Items, handler.SelectedItemIndex);
+        RenderPrompt(handler);
     }
 
-    private void UpdateItemDisplay()
+    private void RenderItemList(IReadOnlyList<Item> items)
     {
-        List<Item> allItems = new();
-        foreach (IInteractable interactable in detector.GetAllDetected())
+        if (listPanel != null)
+            listPanel.SetActive(items.Count > 0);
+
+        staleItems.Clear();
+        foreach (var pair in itemButtons)
         {
-            if (interactable is Item item)
-                allItems.Add(item);
+            if (!Contains(items, pair.Key))
+                staleItems.Add(pair.Key);
         }
 
-        List<Item> itemsToRemove = new();
-        List<GameObject> buttonsToRemove = new();
-
-        listPanel.SetActive(allItems.Count > 0);
-
-        foreach (var kvp in allItemButtonsPair)
+        foreach (Item stale in staleItems)
         {
-            if (!allItems.Contains(kvp.Key))
-            {
-                Object.Destroy(kvp.Value);
-                itemsToRemove.Add(kvp.Key);
-            }
+            if (itemButtons[stale] != null)
+                Object.Destroy(itemButtons[stale].gameObject);
+
+            itemButtons.Remove(stale);
         }
 
-        foreach (var item in itemsToRemove)
+        foreach (Item item in items)
         {
-            allItemButtonsPair.Remove(item);
+            if (!itemButtons.ContainsKey(item))
+                itemButtons.Add(item, CreateItemButton(item));
         }
-
-        if (allItemButtons.Count > 0)
-            allItemButtons.RemoveAll(obj => obj == null);
-
-        foreach (Item item in allItems)
-        {
-            if (!allItemButtonsPair.ContainsKey(item))
-            {
-                GameObject itemButton = Object.Instantiate(itemButtonPrefab, itemButtonParent);
-                allItemButtonsPair.Add(item, itemButton);
-                allItemButtons.Add(itemButton);
-
-                TMP_Text nameText = itemButton.GetComponentInChildren<TMP_Text>();
-                nameText.text = item.Data.itemName;
-            }
-        }
-
-        selection.UpdateSelection(allItems);
-        handler.SetSelected(selection.GetSelectedItem());
-    }
-    
-    private void UpdateInteractableDisplay()
-    {
-        List<Interactable> allInteractable = detector.GetAllDetected()
-        .OfType<Interactable>()
-        .ToList();
-
-        foreach (Interactable interact in currentActiveInteractables)
-        {
-            if (!allInteractable.Contains(interact) && interact != null)
-                interact.TogglePrompt(interactPrompt, false, player);
-        }
-
-        foreach (Interactable interact in allInteractable)
-        {
-            bool canInteract = interact.CanInteract(player);
-            interact.TogglePrompt(interactPrompt, canInteract, player);
-        }
-
-        currentActiveInteractables = allInteractable;
-
-        if (allInteractable.Count > 0)
-            handler.SetSelected(allInteractable[0]);
-        else
-            handler.SetSelected(null);
     }
 
-    public Dictionary<Item, GameObject> GetAllItemButtonsPair() => allItemButtonsPair;
-    public List<GameObject> GetAllItemButtons() => allItemButtons;
+    private InteractItemUI CreateItemButton(Item item)
+    {
+        GameObject button = Object.Instantiate(itemButtonPrefab, itemButtonParent);
+
+        if (!button.TryGetComponent(out InteractItemUI itemUI))
+            itemUI = button.AddComponent<InteractItemUI>();
+
+        itemUI.SetLabel(item.Data != null ? item.Data.itemName : item.name);
+        return itemUI;
+    }
+
+    private void RenderPrompt(PlayerInteractionHandler handler)
+    {
+        // Show the prompt for whatever F would use; if F goes to the item list, show Space's target instead.
+        if (!TryShowPrompt(handler.GetTarget(InteractButton.F)) &&
+            !TryShowPrompt(handler.GetTarget(InteractButton.Spacebar)))
+        {
+            HidePrompt();
+        }
+    }
+
+    private bool TryShowPrompt(IInteractable target)
+    {
+        if (interactPrompt == null || !(target is IPromptTarget promptTarget) || promptTarget.PromptAnchor == null)
+            return false;
+
+        if (cam == null)
+            cam = Camera.main;
+        if (cam == null)
+            return false;
+
+        Vector3 screenPos = cam.WorldToScreenPoint(promptTarget.PromptAnchor.position);
+        if (screenPos.z < 0f)
+            return false;
+
+        interactPrompt.text = $"[{target.InteractButton}]";
+        interactPrompt.transform.position = screenPos;
+        return true;
+    }
+
+    private void HidePrompt()
+    {
+        if (interactPrompt != null)
+            interactPrompt.text = "";
+    }
+
+    private static bool Contains(IReadOnlyList<Item> items, Item item)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i] == item)
+                return true;
+        }
+
+        return false;
+    }
 }

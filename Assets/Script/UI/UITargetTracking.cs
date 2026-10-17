@@ -1,5 +1,6 @@
 using UnityEngine;
 
+/// <summary>Keeps a UI image over a world target, clamped to the screen edge when the target is off-screen.</summary>
 public class UITargetTracking : MonoBehaviour
 {
     [SerializeField] private Transform target;
@@ -8,68 +9,51 @@ public class UITargetTracking : MonoBehaviour
 
     private Camera cam;
 
-    void Start()
-    {
-        cam = Camera.main;
-    }
+    void Start() => cam = Camera.main;
 
-    void Update()
+    void LateUpdate()
     {
-        if (target == null)
+        if (target == null || imageUI == null)
             return;
 
-        // Vector3 screenPos = cam.WorldToScreenPoint(target.position);
-
-        // bool isOffScreen =
-        //     screenPos.z < 0 ||
-        //     screenPos.x <= margin ||
-        //     screenPos.x >= Screen.width - margin ||
-        //     screenPos.y <= margin ||
-        //     screenPos.y >= Screen.height - margin;
-
-        Vector3 screenPos = cam.WorldToScreenPoint(target.position);
-        PositionImage(screenPos);
-
-        imageUI.gameObject.SetActive(true);
-    }
-
-    private void PositionImage(Vector3 screenPos)
-    {
-        // flip position if behind
-        bool isBehind = screenPos.z < 0;
-        if (isBehind)
-            screenPos *= -1;
-
-        Vector3 screenCenter = new Vector3(Screen.width, Screen.height, 0) / 2;
-        screenPos -= screenCenter;
-
-        // Rotate to point the top of image to the position
-        // float angle = Mathf.Atan2(screenPos.y, screenPos.x) * Mathf.Rad2Deg;
-        // arrowUI.rotation = Quaternion.Euler(0, 0, angle - 90);
-
-        float screenX = Screen.width / 2 - margin;
-        float screenY = Screen.height / 2 - margin;
-
-        if (isBehind || Mathf.Abs(screenPos.x) > screenX || Mathf.Abs(screenPos.y) > screenY)
+        if (cam == null)
         {
-            float m = screenPos.y / screenPos.x;
-
-            if (Mathf.Abs(screenPos.x) > Mathf.Abs(screenPos.y / (screenY / screenX)))
-            {
-                // Clamp right & left
-                screenPos = new Vector3(
-                    screenPos.x > 0 ? screenX : -screenX, (screenPos.x > 0 ? screenX : -screenX) * m, 0);
-            }
-            else
-            {
-                // Clamp top & bottom
-                screenPos = new Vector3(
-                    (screenPos.y > 0 ? screenY : -screenY) / m, screenPos.y > 0 ? screenY : -screenY, 0);
-            }
+            cam = Camera.main;
+            if (cam == null)
+                return;
         }
 
-        imageUI.localPosition = new(screenPos.x, screenPos.y, 0);
+        imageUI.localPosition = ToClampedScreenOffset(cam.WorldToScreenPoint(target.position));
+
+        // Shown only after the first positioning, so it never flashes at the screen centre.
+        if (!imageUI.gameObject.activeSelf)
+            imageUI.gameObject.SetActive(true);
     }
 
-    public void SetTarget(Transform target) => this.target = target;
+    public void SetTarget(Transform newTarget) => target = newTarget;
+
+    /// <summary>Offset from screen centre; targets behind the camera are mirrored and pushed to the edge.</summary>
+    private Vector3 ToClampedScreenOffset(Vector3 screenPos)
+    {
+        bool isBehind = screenPos.z < 0f;
+        if (isBehind)
+            screenPos *= -1f;
+
+        Vector3 offset = screenPos - new Vector3(Screen.width, Screen.height, 0f) / 2f;
+        offset.z = 0f;
+
+        float halfWidth = Screen.width / 2f - margin;
+        float halfHeight = Screen.height / 2f - margin;
+
+        bool isOffScreen = isBehind || Mathf.Abs(offset.x) > halfWidth || Mathf.Abs(offset.y) > halfHeight;
+        if (!isOffScreen)
+            return offset;
+
+        // Scale the direction so it touches the nearest screen edge.
+        float scaleX = offset.x != 0f ? halfWidth / Mathf.Abs(offset.x) : float.PositiveInfinity;
+        float scaleY = offset.y != 0f ? halfHeight / Mathf.Abs(offset.y) : float.PositiveInfinity;
+        float scale = Mathf.Min(scaleX, scaleY);
+
+        return float.IsInfinity(scale) ? Vector3.zero : offset * scale;
+    }
 }

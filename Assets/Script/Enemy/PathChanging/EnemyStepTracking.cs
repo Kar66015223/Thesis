@@ -1,88 +1,60 @@
-using UnityEngine;
+using System;
+using Unity.VisualScripting;
+using UnityEngine.Assertions.Must;
 
+/// <summary>
+/// Tracks the enemy's current route step (from EnemyManager): applies its points and speed,
+/// pauses it while the enemy is busy (chasing, stunned...) and resumes it afterwards.
+/// When a timed wait at an idle point finishes it raises <see cref="StepWaitCompleted"/>.
+/// </summary>
 public class EnemyStepTracking
 {
+    private const string SpeedModifierKey = "Step";
+
     private EnemyController ctrl;
-    
-    private EnemyMovementPointPair activePair;
-    private int activeStepIndex = -1;
     private EnemyMovementStep activeStep;
-    private bool stepInterrupted = false;
+    private bool stepInterrupted;
 
-    private bool isWaiting = false;
-    private float waitingTimer = 0f;
-    private float waitingDuration = 0f;
-    public bool IsWaiting => isWaiting;
+    private float waitTimer;
+    private float waitDuration;
 
-    private string speedModName = "Step";
+    public bool IsWaiting { get; private set; }
+    public float ActiveStepWaitTime => activeStep != null ? activeStep.toNextStepWaitTime : 0f;
+
+    public event Action<EnemyController> StepWaitCompleted;
 
     public void Initialize(EnemyController ctrl) => this.ctrl = ctrl;
 
-    public void StartStep(EnemyMovementPointPair pair, int stepIndex)
+    public void StartStep(EnemyMovementStep step)
     {
-        activePair = pair;
-        activeStepIndex = stepIndex;
-        activeStep = pair.movementSequence[stepIndex];
+        activeStep = step;
         stepInterrupted = false;
-
-        ctrl.Movement.SetSpeedModifier(speedModName, activeStep.speedMultiplier);
-
-        if (activeStep.movementType == EnemyMovementType.Idle)
-            ctrl.ApplyIdlePoint(activeStep.idlePoint);
-        else
-            ctrl.ApplyPatrolPoints(activeStep.patrolPath.wayPoints);
-
-        if(ctrl.CurrentState is IdleState || ctrl.CurrentState is PatrolState)
-        {
-            if (activeStep.movementType == EnemyMovementType.Idle)
-                ctrl.ChangeState(new IdleState(ctrl));
-            else
-                ctrl.ChangeState(new PatrolState(ctrl));
-        }
+        ApplyActiveStep();
     }
 
     public void InterruptCurrentStep()
     {
-        if (isWaiting)
+        if (IsWaiting || activeStep == null)
             return;
 
-        if (activeStepIndex < 0 || activeStep == null)
-            return;
-
-        ctrl.Movement.RemoveSpeedModifier(speedModName);
+        ctrl.Movement.RemoveSpeedModifier(SpeedModifierKey);
         stepInterrupted = true;
     }
 
     public void ResumeInterruptedStep()
     {
-        if (!stepInterrupted || activeStepIndex < 0 || activeStep == null)
+        if (!stepInterrupted || activeStep == null)
             return;
 
-        ctrl.Movement.SetSpeedModifier(speedModName, activeStep.speedMultiplier);
-
-        if (activeStep.movementType == EnemyMovementType.Idle)
-            ctrl.ApplyIdlePoint(activeStep.idlePoint);
-        else
-            ctrl.ApplyPatrolPoints(activeStep.patrolPath.wayPoints);
-
-        if (ctrl.CurrentState is IdleState || ctrl.CurrentState is PatrolState)
-        {
-            if (activeStep.movementType == EnemyMovementType.Idle)
-                ctrl.ChangeState(new IdleState(ctrl));
-            else
-                ctrl.ChangeState(new PatrolState(ctrl));
-        }
-
+        ApplyActiveStep();
         stepInterrupted = false;
     }
 
     public void ClearActiveStep()
     {
-        activePair = null;
-        activeStepIndex = -1;
         activeStep = null;
         stepInterrupted = false;
-        ctrl.Movement.RemoveSpeedModifier(speedModName);
+        ctrl.Movement.RemoveSpeedModifier(SpeedModifierKey);
     }
 
     public void StartIdleWait(float duration)
@@ -90,41 +62,41 @@ public class EnemyStepTracking
         if (duration <= 0f)
             return;
 
-        isWaiting = true;
-        waitingDuration = duration;
-        waitingTimer = 0f;
+        IsWaiting = false;
+        waitDuration = duration;
+        waitTimer = 0f;
     }
 
     public void UpdateWaiting()
     {
-        if (!isWaiting)
+        if (!IsWaiting)
             return;
 
-        waitingTimer += Time.deltaTime;
-        if (waitingTimer >= waitingDuration)
-        {
-            isWaiting = false;
-            waitingTimer = 0f;
-            waitingDuration = 0f;
+        waitTimer += UnityEngine.Time.deltaTime;
+        if (waitTimer < waitDuration)
+            return;
 
-            ctrl.Movement.RemoveSpeedModifier(speedModName);
-            GameEvent.OnChangeEnemyPath?.Invoke(ctrl);
-            Debug.Log($"{ctrl.name} fired OnChangeEnemyPath");
-        }
+        CancelWaiting();
+        ctrl.Movement.RemoveSpeedModifier(SpeedModifierKey);
+        StepWaitCompleted?.Invoke(ctrl);
     }
-
+    
     public void CancelWaiting()
     {
-        isWaiting = false;
-        waitingTimer = 0f;
-        waitingDuration = 0f;
+        IsWaiting = false;
+        waitTimer = 0f;
+        waitDuration = 0f;
     }
 
-    public float GetActiveStepWaitTime()
+    private void ApplyActiveStep()
     {
-        if (activeStepIndex < 0 || activeStep == null)
-            return 0f;
+        ctrl.Movement.SetSpeedModifier(SpeedModifierKey, activeStep.speedMultiplier);
 
-        return activeStep.toNextStepWaitTime;
+        if (activeStep.movementType == EnemyMovementType.Idle)
+            ctrl.ApplyPatrolPoints(activeStep.patrolPath.wayPoints);
+
+        // Only re-enter the routine state if the enemy is currently doing its routine.
+        if (ctrl.IsInDefaultState)
+            ctrl.ReturnToDefaultState();
     }
 }

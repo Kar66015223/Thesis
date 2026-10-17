@@ -1,17 +1,18 @@
 using UnityEngine;
 
+/// <summary>Leaves the hideout for the scene of the mission in progress.</summary>
 public class HideoutMainDoor : Interactable
 {
-    public override void Interact(GameObject interactor)
+    protected override void OnInteract(GameObject interactor)
     {
-        base.Interact(interactor);
-
-        if (MissionManager.instance == null)
+        MissionManager missions = MissionManager.Instance;
+        if (missions == null)
             return;
 
-        if (MissionManager.instance.GetOnProgressMission() != null)
-            SceneLoader.LoadScene("Mission1");
+        Mission mission = missions.ActiveMission;
+        if (mission != null)
+            SceneLoader.LoadScene(mission.SceneName);
         else
-            GameEvent.OnShowTips?.Invoke("Accept mission first");
+            UIEvents.ShowTip("Accept mission first");
     }
 }

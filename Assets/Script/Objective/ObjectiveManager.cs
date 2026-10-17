@@ -1,56 +1,47 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
+/// <summary>Walks through the level's objectives in order.</summary>
 public class ObjectiveManager : MonoBehaviour
 {
-    [SerializeField] public List<ObjectiveHighlight> AllObjtive = new();
-    private ObjectiveHighlight curObjtive;
-    public int curObjtiveIndex;
+    [FormerlySerializedAs("AllObjtive")]
+    [SerializeField] private List<ObjectiveHighlight> allObjectives = new();
 
-    public bool next = false;
+    [FormerlySerializedAs("curObjtiveIndex")]
+    [SerializeField] private int currentIndex;
 
-    void OnEnable()
+    public ObjectiveHighlight CurrentObjective =>
+        currentIndex >= 0 && currentIndex < allObjectives.Count ? allObjectives[currentIndex] : null;
+
+    void OnEnable() => WorldEvents.ObjectiveCompleted += HandleObjectiveCompleted;
+    void OnDisable() => WorldEvents.ObjectiveCompleted -= HandleObjectiveCompleted;
+
+    void Start() => SetCurrent(0);
+
+    [ContextMenu("Debug/Next Objective")]
+    public void NextObjective()
     {
-        GameEvent.OnChangeObjective += NextObjtive;
-    }
-
-    void OnDisable()
-    {
-        GameEvent.OnChangeObjective -= NextObjtive;
-    }
-
-    void Start()
-    {
-        SetHighlight(0);
-    }
-
-    void Update()
-    {
-        if (next)
-            NextObjtive();
-    }
-
-    public void NextObjtive()
-    {
-        next = false;
-
-        if (curObjtiveIndex >= AllObjtive.Count - 1)
+        if (currentIndex >= allObjectives.Count - 1)
             return;
 
-        curObjtiveIndex++;
-        SetHighlight(curObjtiveIndex);
+        SetCurrent(currentIndex + 1);
     }
 
-    private void SetHighlight(int index)
+    private void HandleObjectiveCompleted(ObjectiveHighlight completed)
     {
-        foreach (var objtive in AllObjtive)
-            objtive.canHighlight = false;
+        if (completed == CurrentObjective)
+            NextObjective();
+    }
 
-        if(index < AllObjtive.Count)
+    private void SetCurrent(int index)
+    {
+        currentIndex = index;
+
+        for (int i = 0; i < allObjectives.Count; i++)
         {
-            curObjtive = AllObjtive[index];
-            curObjtive.canHighlight = true;
-            GameEvent.OnObjectiveReset?.Invoke(curObjtive);
+            if (allObjectives[i] != null)
+                allObjectives[i].SetCurrent(i == index);
         }
     }
 }

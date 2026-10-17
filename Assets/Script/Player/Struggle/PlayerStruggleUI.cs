@@ -8,14 +8,14 @@ public class PlayerStruggleUI : MonoBehaviour
 
     void OnEnable()
     {
-        GameEvent.OnToggleStruggleUI += ToggleUI;
-        GameEvent.OnStruggleProgressChanged += UpdateStruggleBar;
+        PlayerEvents.StruggleToggled += ToggleUI;
+        PlayerEvents.StruggleProgressChanged += UpdateStruggleBar;
     }
 
     void OnDisable()
     {
-        GameEvent.OnToggleStruggleUI -= ToggleUI;
-        GameEvent.OnStruggleProgressChanged -= UpdateStruggleBar;
+        PlayerEvents.StruggleToggled -= ToggleUI;
+        PlayerEvents.StruggleProgressChanged -= UpdateStruggleBar;
     }
 
     private void ToggleUI(bool isOn)

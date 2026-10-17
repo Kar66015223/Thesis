@@ -1,28 +1,32 @@
 using UnityEngine;
 
+/// <summary>A spot the interactor can hide in. Works with anything that implements <see cref="IHidingAgent"/>.</summary>
 public abstract class Hidable : Interactable
 {
-    [SerializeField] private bool isHiding = false;
     [SerializeField] private Transform enterPos;
     [SerializeField] private Transform exitPos;
 
-    public override void Interact(GameObject interactor)
-    {
-        if (!CanInteract(interactor))
-            return;
+    private IHidingAgent occupant;
 
-        base.Interact(interactor);
-        ToggleHide(interactor);
-    }
+    public bool IsOccupied => occupant != null;
+
+    public override bool CanInteract(GameObject interactor) => base.CanInteract(interactor) && !IsOccupied;
+    protected override void OnInteract(GameObject interactor) => ToggleHide(interactor);
     
     public void ToggleHide(GameObject interactor)
     {
-        if (interactor.TryGetComponent(out PlayerController controller))
-        {
-            isHiding = !isHiding;
+        if (!interactor.TryGetComponent(out IHidingAgent agent))
+            return;
 
-            Vector3 targetPos = isHiding ? enterPos.position : exitPos.position;
-            controller.SetHiding(isHiding, this, targetPos);
+        if (occupant == null)
+        {
+            occupant = agent;
+            agent.EnterHiding(this, enterPos.position);
+        }
+        else if(occupant == agent)
+        {
+            occupant = null;
+            agent.ExitHiding(exitPos.position);
         }
     }
 }

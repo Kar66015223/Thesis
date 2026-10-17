@@ -1,38 +1,38 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>One row in the pick-up list. Visuals only change when the selection actually changes.</summary>
 public class InteractItemUI : MonoBehaviour
 {
     [SerializeField] private GameObject selectedBG;
     [SerializeField] private TMP_Text texts;
+    [SerializeField] private Color selectedTextColor = Color.black;
+    [SerializeField] private Color normalTextColor = Color.white;
 
-    public bool isSelected = false;
+    private bool? isSelected;
 
-    void Update()
+    public void SetLabel(string label)
     {
-        if (isSelected)
-            ChangeVisualToSelected();
-        else
-            ChangeVisualToNotSelected();
+        TMP_Text nameText = GetComponentInChildren<TMP_Text>();
+        if (nameText != null)
+            nameText.text = label;
     }
 
-    private void ChangeVisualToSelected()
+    public void SetSelected(bool selected)
     {
-        selectedBG.SetActive(true);
-        TMP_Text[] allTexts = texts.GetComponentsInChildren<TMP_Text>();
-        foreach (TMP_Text text in allTexts)
-        {
-            text.color = Color.black;
-        }
-    }
-    
-    private void ChangeVisualToNotSelected()
-    {
-        selectedBG.SetActive(false);
-        TMP_Text[] allTexts = texts.GetComponentsInChildren<TMP_Text>();
-        foreach (TMP_Text text in allTexts)
-        {
-            text.color = Color.white;
-        }
+        if (isSelected == selected)
+            return;
+
+        isSelected = selected;
+
+        if (selectedBG != null)
+            selectedBG.SetActive(selected);
+
+        if (texts == null)
+            return;
+
+        Color color = selected ? selectedTextColor : normalTextColor;
+        foreach (TMP_Text text in texts.GetComponentsInChildren<TMP_Text>())
+            text.color = color;
     }
 }

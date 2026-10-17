@@ -1,91 +1,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+/// <summary>
+/// Tracks which interactables physically overlap the player's interaction trigger. Nothing else:
+/// whether they can be used and which one is selected is decided by <see cref="PlayerInteractionHandler"/>.
+/// </summary>
 public class PlayerInteractionDetector
 {
-    private List<IInteractable> allDetected = new();
-    [SerializeField] private List<GameObject> allDetectedObj = new();
+    private static readonly List<Collider> colliderBuffer = new();
 
-    private GameObject player;
-    private PlayerInteractionUI ui;
+    private readonly List<IInteractable> detected = new();
     private Collider detectionCol;
 
-    public void Initialize(GameObject player, PlayerInteractionUI ui, Collider col)
+    public IReadOnlyList<IInteractable> Detected => detected;
+
+    public void Initialize(Collider col) => detectionCol = col;
+
+    public void Add(Collider other)
     {
-        this.player = player;
-        this.ui = ui;
-        detectionCol = col;
+        if (other.TryGetComponent(out IInteractable interactable) && !detected.Contains(interactable))
+            detected.Add(interactable);
     }
 
-    public void AddDetected(Collider other)
-    {
-        if (other.TryGetComponent(out IInteractable interactable))
-        {
-            if (!interactable.CanInteract(player))
-            {
-                RemoveDetected(other);
-                return;
-            }
-
-            if (!allDetected.Contains(interactable))
-            {
-                allDetected.Add(interactable);
-                allDetectedObj.Add(interactable.Owner);
-
-                ui.UpdateDisplay();
-            }
-        }
-    }
-
-    public void RemoveDetected(Collider other)
+    public void Remove(Collider other)
     {
         if (other.TryGetComponent(out IInteractable interactable))
-        {
-            if (allDetected.Contains(interactable))
-            {
-                allDetected.Remove(interactable);
-                allDetectedObj.Remove(interactable.Owner);
-
-                ui.UpdateDisplay();
-            }
-        }
+            detected.Remove(interactable);
     }
 
+    /// <summary>
+    /// OnTriggerExit is not called when a collider is disabled or destroyed, so prune those manually.
+    /// </summary>
     public void RemoveInvalids()
     {
-        for (int i = allDetected.Count - 1; i >= 0; i--)
+        for (int i = detected.Count - 1; i >= 0; i--)
         {
-            IInteractable interactable = allDetected[i];
+            IInteractable interactable = detected[i];
+            bool isDestroyed = interactable == null || (interactable is Object unityObj && unityObj == null);
 
-            bool invalid =
-                interactable == null || (interactable is Object unityObj && unityObj == null);
-
-            GameObject owner = null;
-
-            if (!invalid)
-            {
-                owner = interactable.Owner;
-
-                invalid =
-                    owner == null || !interactable.CanInteract(player) || !IsOverlapping(owner);
-            }
-
-            if (!invalid)
-                continue;
-
-            string objName =
-                owner != null ? owner.name : "<destroyed interactable>";
-
-            allDetected.RemoveAt(i);
-
-            if (i < allDetectedObj.Count)
-                allDetectedObj.RemoveAt(i);
-
-            // Debug.Log($"Removed invalid: {objName}");
+            if (isDestroyed || interactable.Owner == null || !IsOverlapping(interactable.Owner))
+                detected.RemoveAt(i);
         }
-
-        ui.UpdateDisplay();
     }
     
     private bool IsOverlapping(GameObject owner)
@@ -93,30 +48,19 @@ public class PlayerInteractionDetector
         if (detectionCol == null || !detectionCol.enabled || !detectionCol.gameObject.activeInHierarchy)
             return false;
 
-        Collider[] targetCol = owner.GetComponentsInChildren<Collider>();
-        foreach (Collider target in targetCol)
+        owner.GetComponentsInChildren(false, colliderBuffer);
+        foreach (Collider target in colliderBuffer)
         {
-            if (target == null ||
-                target == detectionCol ||
-                !target.enabled ||
-                !target.gameObject.activeInHierarchy)
-            {
+            if (target == detectionCol || !target.enabled)
                 continue;
-            }
 
             if (!detectionCol.bounds.Intersects(target.bounds))
                 continue;
 
             bool overlapping = Physics.ComputePenetration(
-                detectionCol,
-                detectionCol.transform.position,
-                detectionCol.transform.rotation,
-                target,
-                target.transform.position,
-                target.transform.rotation,
-                out _,
-                out _
-            );
+                detectionCol, detectionCol.transform.position, detectionCol.transform.rotation,
+                target, target.transform.position, target.transform.rotation,
+                out _, out _);
 
             if (overlapping)
                 return true;
@@ -124,32 +68,4 @@ public class PlayerInteractionDetector
 
         return false;
     }
-
-    public List<IInteractable> GetAllDetected() => allDetected;
-
-    public List<Item> GetAllDetectedItems()
-    {
-        List<Item> allItems = new();
-        foreach (var detected in allDetected)
-        {
-            if (detected is Item item)
-                allItems.Add(item);
-        }
-
-        return allItems;
-    }
-
-    public List<Interactable> GetAllDetectedInteractables()
-    {
-        List<Interactable> allInteractable = new();
-        foreach (var detected in allDetected)
-        {
-            if (detected is Interactable interact)
-                allInteractable.Add(interact);
-        }
-
-        return allInteractable;
-    }
-    
-    public List<GameObject> GetAllDetectedObj() => allDetectedObj;
 }
