@@ -1457,6 +1457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53e3881a0911ff94ca11468d32f92da4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TipsTrigger
+  message: '[Right Click] to see enemies'
 --- !u!65 &25889626
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27058,7 +27059,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!43 &520852212
 Mesh:
   m_ObjectHideFlags: 0
@@ -30367,7 +30367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d837f97416a84734b9e7c2e0ac381af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveManager
-  AllObjtive:
+  allObjectives:
   - {fileID: 1574070544}
   - {fileID: 1498891716}
   - {fileID: 1841983759}
@@ -30375,8 +30375,7 @@ MonoBehaviour:
   - {fileID: 1574070544}
   - {fileID: 1474389118}
   - {fileID: 1250125993}
-  curObjtiveIndex: 0
-  next: 0
+  currentIndex: 0
 --- !u!4 &580391321
 Transform:
   m_ObjectHideFlags: 0
@@ -54174,11 +54173,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7127331952683291352, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
   m_PrefabInstance: {fileID: 968805924}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &968805926 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5403875554217774767, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
-  m_PrefabInstance: {fileID: 968805924}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &968805927 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5163524851704296894, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
@@ -54207,10 +54201,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255c3b802c292e444a1f3daa38f73d4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElectricLock
-  <InteractPromptPos>k__BackingField: {fileID: 968805926}
-  interactPromptText: '[Space]'
-  highlight: {fileID: 0}
-  hasInteracted: 0
   stateUIText: {fileID: 968805927}
   canUnlock: 0
   unlockableSide: {fileID: 968805925}
@@ -74312,10 +74302,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff0de7faeff0d284b9c8b32498783d3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mission1LeavePoint
-  <InteractPromptPos>k__BackingField: {fileID: 202803030}
-  interactPromptText: '[Space]'
   highlight: {fileID: 1250125993}
-  hasInteracted: 0
+  <InteractPromptPos>k__BackingField: {fileID: 202803030}
+  requiredItem: {fileID: 0}
 --- !u!114 &1250125993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74328,7 +74317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!43 &1253226962
 Mesh:
   m_ObjectHideFlags: 0
@@ -77318,7 +77306,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8649723213959183877, guid: 82d9cdca5b25e2546a23fbd93a21c5b0, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8649723213959183877, guid: 82d9cdca5b25e2546a23fbd93a21c5b0, type: 3}
       propertyPath: m_IsActive
@@ -88238,7 +88226,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!1001 &1474919943
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -89788,7 +89775,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!43 &1503125147
 Mesh:
   m_ObjectHideFlags: 0
@@ -93549,7 +93535,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!1 &1580641098
 GameObject:
   m_ObjectHideFlags: 0
@@ -108086,7 +108071,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16e589775a657d438efa7f62cb6422a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveHighlight
-  canHighlight: 0
 --- !u!43 &1846701692
 Mesh:
   m_ObjectHideFlags: 0

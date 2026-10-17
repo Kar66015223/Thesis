@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 8598886566586778322}
   - component: {fileID: 605987399963757269}
   - component: {fileID: 6438899143919878195}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: EnemyTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +252,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecc2dc0af32ca954db5aa5941f044d74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  stateUIText: {fileID: 0}
   stateUIPoint: {fileID: 47987511047667095}
   walkSpeed: 3
   runSpeed: 5
@@ -281,7 +280,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScannableEnemy
   highlightLayerName: RenderOnTop
-  highlightDuration: 3
 --- !u!114 &929758801589411030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,15 +297,13 @@ MonoBehaviour:
   viewHeight: 0.5
   defaultViewRadius: 10
   viewRadiusChasing: 30
+  scanInterval: 0.1
   targetMask:
     serializedVersion: 2
     m_Bits: 8
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
-  confirmTimer: 0
-  <VisibleTargets>k__BackingField: []
-  <ConfirmedTargets>k__BackingField: []
 --- !u!114 &8598886566586778322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,7 +316,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38e7564f9048be94aa553da7e62b7e2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  ctrl: {fileID: 2130764711534732854}
 --- !u!114 &605987399963757269
 MonoBehaviour:
   m_ObjectHideFlags: 0
