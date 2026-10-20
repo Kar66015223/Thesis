@@ -46,8 +46,8 @@ public class SkillManager : MonoBehaviour
 
     void Start()
     {
-        if (tackleData != null)
-            AddPhysicalSkill(new Tackle(tackleData, context));
+        // if (tackleData != null)
+            // AddPhysicalSkill(new Tackle(tackleData, context));
     }
 
     void Update() => EquippedPhysSkill?.Tick(Time.deltaTime);

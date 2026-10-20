@@ -5,6 +5,7 @@ public class MorseCode : Item
 {
     protected override void OnPickedUp(GameObject interactor)
     {
+        // base.OnPickedUp(interactor);
         WorldEvents.SetLightsOut(false);
         EnemyEvents.RequestAdvanceAllRoutes();
     }

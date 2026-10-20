@@ -142,14 +142,14 @@ public class Inventory : MonoBehaviour
         OnFinishMiniCanvas();
     }
 
-    public void OpenMiniCanvas(int slotIndex, Vector2 screenPosition)
-    {
-        if (miniCanvas == null) return;
+    // public void OpenMiniCanvas(int slotIndex, Vector2 screenPosition)
+    // {
+    //     if (miniCanvas == null) return;
 
-        contextSlotIndex = slotIndex;
-        miniCanvas.position = screenPosition;
-        miniCanvas.gameObject.SetActive(true);
-    }
+    //     contextSlotIndex = slotIndex;
+    //     miniCanvas.position = screenPosition;
+    //     miniCanvas.gameObject.SetActive(true);
+    // }
 
     public void OnFinishMiniCanvas()
     {

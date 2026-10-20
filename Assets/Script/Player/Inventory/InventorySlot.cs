@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>View for one inventory slot. Displays data and forwards drag/drop and clicks.</summary>
-public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler
+public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDragHandler, IEndDragHandler/* , IPointerClickHandler */
 {
     [Header("UI")]
     [SerializeField] private Color emptyColor = Color.white;
@@ -102,9 +102,9 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
         inventory.MoveItem(source.Index, Index);
     }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (eventData.button != PointerEventData.InputButton.Right || inventory == null || isEmpty) return;
-        inventory.OpenMiniCanvas(Index, eventData.position);
-    }
+    // public void OnPointerClick(PointerEventData eventData)
+    // {
+    //     if (eventData.button != PointerEventData.InputButton.Right || inventory == null || isEmpty) return;
+    //     inventory.OpenMiniCanvas(Index, eventData.position);
+    // }
 }

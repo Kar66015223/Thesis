@@ -5,7 +5,7 @@ public class KeyForBasement : Item
 {
     protected override void OnPickedUp(GameObject interactor)
     {
-        base.OnPickedUp(interactor);
+        // base.OnPickedUp(interactor);
         UIEvents.ShowTip("Player has key, can unlock basement door now");
     }
 }
