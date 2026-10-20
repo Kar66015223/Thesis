@@ -23,4 +23,8 @@ public static class UIEvents
 
     public static event Action<DialogueData> DialogueRequested;
     public static void RequestDialogue(DialogueData data) => DialogueRequested?.Invoke(data);
+
+    public static event Action<bool, TutorialData> TutorialToggled;
+    public static void ToggleTutorialPanel(bool isOpen, TutorialData data = null) 
+        => TutorialToggled?.Invoke(isOpen, data);
 }

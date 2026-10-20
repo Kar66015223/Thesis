@@ -35,6 +35,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Button restartButton;
 
+    [Header("Tutorial")]
+    [SerializeField] private GameObject tutorialPanel;
+    [SerializeField] private TMP_Text tutorialHeader;
+    [SerializeField] private TMP_Text tutorialBody;
+    [SerializeField] private Image tutorialImg;
+
+    [SerializeField] private Button nextButton;
+
     private IUIPresenter[] presenters;
 
     void Awake()
@@ -54,6 +62,7 @@ public class UIManager : MonoBehaviour
                 Stunned = stunnedSprite,
             }),
             new GameOverPresenter(gameOverPanel, restartButton),
+            new TutorialPresenter(tutorialPanel, tutorialHeader, tutorialBody, nextButton, tutorialImg)
         };
     }
 
