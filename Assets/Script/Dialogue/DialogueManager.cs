@@ -115,7 +115,6 @@ public class DialogueManager : MonoBehaviour
             return;
 
         // หยุดการเคลื่อนที่ของ Player (freeze the player): the UI action map turns the Player map off.
-        // Don't disable PlayerInput itself - it can't switch maps while disabled.
         InputModeService.RequestUI(this, true);
 
         waitForInputRelease = true;
@@ -257,6 +256,14 @@ public class DialogueManager : MonoBehaviour
 
         // ป้องกันการกดตัวเลือกซ้ำ
         view.ClearChoices();
+
+        // ----------------------------------------------------
+        // สั่งเปิด Mission Board ผ่าน Helper Method ของ UIEvents
+        if (choice.openQuestUI)
+        {
+            UIEvents.ToggleMissionBoard(true);
+        }
+        // ----------------------------------------------------
 
         if (choice.endDialogue)
         {
