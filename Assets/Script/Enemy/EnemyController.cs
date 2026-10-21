@@ -79,6 +79,9 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
         Tracking.Initialize(this);
     }
 
+    void OnEnable() => PlayerEvents.Respawned += HandlePlayerRespawned;
+    void OnDisable() => PlayerEvents.Respawned -= HandlePlayerRespawned;
+
     void Start()
     {
         DetachFromSelf(idlePointsParent);
@@ -155,6 +158,13 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
         if (playerEscaped)
             Stun();
         else
+            ReturnToDefaultState();
+    }
+
+    // Chasing, searching or being stunned was about the player before they died, so drop it.
+    private void HandlePlayerRespawned()
+    {
+        if (!IsInDefaultState)
             ReturnToDefaultState();
     }
 

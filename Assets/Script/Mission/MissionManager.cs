@@ -39,4 +39,13 @@ public class MissionManager : MonoBehaviour
         ActiveMission = mission;
         mission.Accept();
     }
+
+    /// <summary>Rolls missions back to the statuses saved at a checkpoint.</summary>
+    public void Restore(IReadOnlyDictionary<Mission, MissionStatus> statuses, Mission activeMission)
+    {
+        foreach (KeyValuePair<Mission, MissionStatus> saved in statuses)
+            saved.Key.RestoreStatus(saved.Value);
+
+        ActiveMission = activeMission;
+    }
 }

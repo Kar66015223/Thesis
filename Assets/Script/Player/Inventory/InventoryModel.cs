@@ -183,6 +183,23 @@ public class InventoryModel : IItemHolder
 
         Changed?.Invoke();
     }
-    
+
+    /// <summary>Copy of every slot's contents, index-aligned with <see cref="Slots"/>.</summary>
+    public (ItemData item, int stack)[] Snapshot() => slots.Select(s => (s.Item, s.Stack)).ToArray();
+
+    /// <summary>Puts back a <see cref="Snapshot"/>. Doesn't raise <see cref="ItemAdded"/>, since nothing was picked up.</summary>
+    public void Restore(IReadOnlyList<(ItemData item, int stack)> contents)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (contents != null && i < contents.Count)
+                slots[i].Set(contents[i].item, contents[i].stack);
+            else
+                slots[i].Set(null, 0);
+        }
+
+        Changed?.Invoke();
+    }
+
     private bool IsValid(int index) => index >= 0 && index < slots.Length;
 }

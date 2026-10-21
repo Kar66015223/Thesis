@@ -27,6 +27,7 @@ public class ScannerSkill : MonoBehaviour
 
     public bool IsActive { get; private set; }
     public bool CanActivate => !IsActive && cooldown.IsReady;
+    public float CooldownRemaining => cooldown.Remaining;
 
     void Update() => cooldown.Tick(Time.deltaTime);
 
@@ -57,6 +58,15 @@ public class ScannerSkill : MonoBehaviour
 
         SetVFXActive(false);
         StopScanAudio();
+    }
+
+    /// <summary>Turns the scan off without starting a fresh cooldown and sets the time left, e.g. from a checkpoint.</summary>
+    public void Restore(float cooldownRemaining)
+    {
+        IsActive = false;
+        SetVFXActive(false);
+        StopScanAudio();
+        cooldown.Start(cooldownRemaining);
     }
 
     private void SetVFXActive(bool active)

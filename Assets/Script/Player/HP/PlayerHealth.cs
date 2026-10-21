@@ -30,6 +30,7 @@ public class PlayerHealth : MonoBehaviour
     /// <summary>(current, max)</summary>
     public event Action<float, float> HealthChanged;
     public event Action Died;
+    public event Action Revived;
 
     void Awake()
     {
@@ -74,6 +75,17 @@ public class PlayerHealth : MonoBehaviour
             return;
 
         SetHealth(curHP + amount);
+    }
+
+    /// <summary>Back to full health after dying, e.g. when respawning at a checkpoint.</summary>
+    public void Revive()
+    {
+        if (!IsDead)
+            return;
+
+        IsDead = false;
+        SetHealth(maxHP);
+        Revived?.Invoke();
     }
 
     private void SetHealth(float value)

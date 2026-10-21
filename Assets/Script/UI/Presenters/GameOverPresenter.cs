@@ -33,7 +33,11 @@ public class GameOverPresenter : IUIPresenter
     private void Restart()
     {
         SetVisible(false);
-        SceneLoader.RestartScene();
+
+        // Respawn at the last checkpoint; with no checkpoint reached yet, start the scene over.
+        CheckpointManager checkpoints = CheckpointManager.Instance;
+        if (checkpoints == null || !checkpoints.Load())
+            SceneLoader.RestartScene();
     }
 
     private void SetVisible(bool isVisible)

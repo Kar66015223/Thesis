@@ -17,8 +17,9 @@ public class Item : InteractableBase
         OnPickedUp(interactor);
     }
     
+    // Hidden rather than destroyed so a checkpoint respawn can put it back.
     protected virtual void OnPickedUp(GameObject interactor)
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

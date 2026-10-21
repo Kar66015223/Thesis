@@ -11,6 +11,7 @@ public class ObjectiveManager : MonoBehaviour
     [FormerlySerializedAs("curObjtiveIndex")]
     [SerializeField] private int currentIndex;
 
+    public int CurrentIndex => currentIndex;
     public ObjectiveHighlight CurrentObjective =>
         currentIndex >= 0 && currentIndex < allObjectives.Count ? allObjectives[currentIndex] : null;
 
@@ -27,6 +28,9 @@ public class ObjectiveManager : MonoBehaviour
 
         SetCurrent(currentIndex + 1);
     }
+
+    /// <summary>Goes back to the objective that was current at a checkpoint.</summary>
+    public void RestoreObjective(int index) => SetCurrent(index);
 
     private void HandleObjectiveCompleted(ObjectiveHighlight completed)
     {

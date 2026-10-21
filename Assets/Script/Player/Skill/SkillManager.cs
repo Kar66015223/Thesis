@@ -21,6 +21,7 @@ public class SkillManager : MonoBehaviour
 
     public IReadOnlyList<Skill> AllPhysSkills => physicalSkills;
     public Skill EquippedPhysSkill { get; private set; }
+    public float ScannerCooldownRemaining => scanner != null ? scanner.CooldownRemaining : 0f;
 
     public event Action SkillsChanged;
 
@@ -60,6 +61,17 @@ public class SkillManager : MonoBehaviour
             EquippedPhysSkill = skill;
 
         SkillsChanged?.Invoke();
+    }
+
+    /// <summary>Respawn: switches the Demon Eye off and puts back the cooldown saved at the checkpoint.</summary>
+    public void RestoreScannerCooldown(float remaining)
+    {
+        if (scanner == null)
+            return;
+
+        scanner.Restore(remaining);
+        if (controller != null)
+            controller.SetUsingSkill(false);
     }
 
     private void HandlePhysicalSkillInput(bool isPressed)

@@ -51,9 +51,23 @@ public abstract class Mission
         OnCompleted();
     }
 
+    /// <summary>
+    /// Puts the mission back to a status saved at a checkpoint. Unlike Accept/Complete/Submit it may go backwards,
+    /// and it doesn't replay their side effects (tips); subclasses re-sync their event subscriptions in <see cref="OnStatusRestored"/>.
+    /// </summary>
+    public void RestoreStatus(MissionStatus status)
+    {
+        if (status == Status)
+            return;
+
+        SetStatus(status);
+        OnStatusRestored();
+    }
+
     protected virtual void OnAccepted() {}
     protected virtual void OnCompleted() {}
     protected virtual void OnSubmitted() {}
+    protected virtual void OnStatusRestored() {}
     private void SetStatus(MissionStatus status)
     {
         Status = status;

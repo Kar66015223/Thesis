@@ -47,6 +47,23 @@ public class EnemyManager : MonoBehaviour
             ApplyCurrentStep(enemy);
     }
 
+    /// <summary>Each enemy's current route step, for checkpoints.</summary>
+    public Dictionary<EnemyController, int> SnapshotRouteSteps() => new(stepIndex);
+
+    /// <summary>Puts enemies whose route moved on since the checkpoint back on the step saved there.</summary>
+    public void RestoreRouteSteps(IReadOnlyDictionary<EnemyController, int> saved)
+    {
+        foreach (KeyValuePair<EnemyController, int> step in saved)
+        {
+            EnemyController enemy = step.Key;
+            if (enemy == null || !routes.ContainsKey(enemy) || stepIndex[enemy] == step.Value)
+                continue;
+
+            stepIndex[enemy] = step.Value;
+            ApplyCurrentStep(enemy);
+        }
+    }
+
     private void Advance(EnemyController enemy)
     {
         if (!routes.ContainsKey(enemy))

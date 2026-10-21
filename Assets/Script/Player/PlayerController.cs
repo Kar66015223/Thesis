@@ -88,7 +88,10 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         inputHandler.OnCrouchPressed += HandleCrouchPressed;
 
         if (health != null)
+        {
             health.Died += HandleDied;
+            health.Revived += HandleRevived;
+        }
     }
 
     void OnDisable()
@@ -98,7 +101,10 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         inputHandler.OnCrouchPressed -= HandleCrouchPressed;
 
         if (health != null)
+        {
             health.Died -= HandleDied;
+            health.Revived -= HandleRevived;
+        }
 
         // Releases arrive while we're unsubscribed, so don't keep walking on stale input.
         moveInput = Vector2.zero;
@@ -132,6 +138,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     }
 
     private void HandleDied() => SetCanMove(false);
+    private void HandleRevived() => SetCanMove(true);
 
     #endregion
 
