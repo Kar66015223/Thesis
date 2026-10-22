@@ -51,7 +51,7 @@ public class PlayerInteraction : MonoBehaviour
     void OnTriggerExit(Collider other) => detector.Remove(other);
 
     private void HandleInteractF() => TryInteract(InteractButton.F);
-    private void HandleInteractSpacebar() => TryInteract(InteractButton.Spacebar);
+    private void HandleInteractSpacebar() => TryInteract(InteractButton.Space);
 
     private void TryInteract(InteractButton button)
     {

@@ -1,5 +1,5 @@
 public enum InteractButton
 {
     F,
-    Spacebar
+    Space
 }

@@ -3,6 +3,8 @@ using UnityEngine;
 /// <summary>A spot the interactor can hide in. Works with anything that implements <see cref="IHidingAgent"/>.</summary>
 public abstract class Hidable : Interactable
 {
+    public override string Prompt => "Hide";
+
     [SerializeField] private Transform enterPos;
     [SerializeField] private Transform exitPos;
 

@@ -12,7 +12,7 @@ public class Vaultable : Interactable
 
     private bool isVaulting;
 
-    public override InteractButton InteractButton => InteractButton.Spacebar;
+    public override InteractButton InteractButton => InteractButton.Space;
     public override bool CanInteract(GameObject interactor) => base.CanInteract(interactor) && !isVaulting;
     protected override void OnInteract(GameObject interactor) => StartCoroutine(VaultRoutine(interactor));
 

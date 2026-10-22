@@ -7,6 +7,8 @@ public abstract class InteractableBase : MonoBehaviour, IInteractable
     public GameObject Owner => gameObject;
     public virtual InteractButton InteractButton => InteractButton.F;
 
+    public virtual string Prompt => "";
+
     public virtual bool CanInteract(GameObject interactor) => isActiveAndEnabled;
 
     public void Interact(GameObject interactor)

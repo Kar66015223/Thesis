@@ -77,7 +77,7 @@ public class PlayerInteractionUI
     {
         // Show the prompt for whatever F would use; if F goes to the item list, show Space's target instead.
         if (!TryShowPrompt(handler.GetTarget(InteractButton.F)) &&
-            !TryShowPrompt(handler.GetTarget(InteractButton.Spacebar)))
+            !TryShowPrompt(handler.GetTarget(InteractButton.Space)))
         {
             HidePrompt();
         }
@@ -97,7 +97,7 @@ public class PlayerInteractionUI
         if (screenPos.z < 0f)
             return false;
 
-        interactPrompt.text = $"[{target.InteractButton}]";
+        interactPrompt.text = $"[{target.InteractButton}] {target.Prompt}";
         interactPrompt.transform.position = screenPos;
         return true;
     }
