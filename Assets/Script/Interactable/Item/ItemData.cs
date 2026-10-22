@@ -6,4 +6,7 @@ public class ItemData : ScriptableObject
     public string itemName;
     public Sprite icon;
     [Min(1)] public int maxStack = 1;
+
+    [Header("Economy")]
+    [Min(0)] public int sellPrice = 10; // ราคาขายให้ NPC
 }

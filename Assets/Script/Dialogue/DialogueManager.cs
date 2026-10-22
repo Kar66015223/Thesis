@@ -263,6 +263,12 @@ public class DialogueManager : MonoBehaviour
         {
             UIEvents.ToggleMissionBoard(true);
         }
+
+        // 🟢 สั่งเปิดหน้าร้านค้าผ่าน Helper Method ของ UIEvents
+        if (choice.openShopUI)
+        {
+            UIEvents.ToggleShopBoard(true);
+        }
         // ----------------------------------------------------
 
         if (choice.endDialogue)

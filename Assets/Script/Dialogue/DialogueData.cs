@@ -51,4 +51,7 @@ public class DialogueChoice
 
     [Header("Quest System")]
     public bool openQuestUI;
+
+    [Header("Shop System")]
+    public bool openShopUI;
 }

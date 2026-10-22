@@ -23,4 +23,7 @@ public static class UIEvents
 
     public static event Action<DialogueData> DialogueRequested;
     public static void RequestDialogue(DialogueData data) => DialogueRequested?.Invoke(data);
+
+    public static event Action<bool> ShopBoardToggled;
+    public static void ToggleShopBoard(bool isOpen) => ShopBoardToggled?.Invoke(isOpen);
 }
