@@ -12,7 +12,7 @@ GameObject:
   m_Layer: 0
   m_Name: InteractPromptPos
   m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -191,10 +191,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b159473c043c8c42a7beb910996ac84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Locker
-  <InteractPromptPos>k__BackingField: {fileID: 2069509784432449699}
   highlight: {fileID: 0}
-  hasInteracted: 0
-  isHiding: 0
+  <InteractPromptPos>k__BackingField: {fileID: 2069509784432449699}
   enterPos: {fileID: 426079054738290860}
   exitPos: {fileID: 3856791376847185627}
 --- !u!1 &8067080415856450823
@@ -209,7 +207,7 @@ GameObject:
   m_Layer: 0
   m_Name: ExitPos
   m_TagString: Untagged
-  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -240,7 +238,7 @@ GameObject:
   m_Layer: 0
   m_Name: EnterPos
   m_TagString: Untagged
-  m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
