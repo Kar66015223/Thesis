@@ -21,20 +21,20 @@ public class NormalLock : Lock
             if (!needKey)
                 return Unlock();
 
-            UIEvents.ShowTip("Locked from the other side.");
+            // UIEvents.ShowTip("Locked from the other side.");
             return false;
         }
 
         if (!needKey)
         {
-            UIEvents.ShowTip("Can't open from this side.");
+            // UIEvents.ShowTip("Can't open from this side.");
             return false;
         }
 
         if (HasKey(interactor))
             return Unlock();
 
-        UIEvents.ShowTip("Door locked, need key.");
+        // UIEvents.ShowTip("Door locked, need key.");
         return false;
     }
 

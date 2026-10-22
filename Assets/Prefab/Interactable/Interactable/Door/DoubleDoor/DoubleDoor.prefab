@@ -131,6 +131,8 @@ GameObject:
   - component: {fileID: 8346904053011679586}
   - component: {fileID: 4639906781686002313}
   - component: {fileID: 1787466712197232600}
+  - component: {fileID: 3781661532783359062}
+  - component: {fileID: 8913139373807837870}
   m_Layer: 0
   m_Name: DoubleDoor
   m_TagString: Untagged
@@ -214,13 +216,124 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8820cebd142a34348a3a8463282fe96e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  <InteractPromptPos>k__BackingField: {fileID: 191378000508691229}
   highlight: {fileID: 0}
-  hasInteracted: 0
+  <InteractPromptPos>k__BackingField: {fileID: 191378000508691229}
   playerPointFront: {fileID: 1346038653098015085}
   playerPointBack: {fileID: 7039976697667774030}
   colDisableWaitTime: 0
   link: {fileID: 2343546193392955267}
+--- !u!82 &3781661532783359062
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7281960809387436986}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &8913139373807837870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7281960809387436986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b86a9feae6f5c45aed7f23cf90f42b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorSound
+  openClip: {fileID: 8300000, guid: 32f346d11701b734da6f8d4dcee16db0, type: 3}
+  closeClip: {fileID: 8300000, guid: 6c6982b864afda3408139c71049640e5, type: 3}
+  lockedClip: {fileID: 8300000, guid: 6adc8b27ba81e6642a10e53617790d29, type: 3}
 --- !u!1 &7789627878453412319
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,6 +428,8 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 5654628924407752547, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
     - {fileID: 8173267293436603738, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
+    - {fileID: 4480373102083868191, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
+    - {fileID: 8134907151596694039, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8355957685578504703, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
     - {fileID: 198424277513261511, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
@@ -387,6 +502,8 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 5654628924407752547, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
     - {fileID: 8173267293436603738, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
+    - {fileID: 4480373102083868191, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
+    - {fileID: 8134907151596694039, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
     m_RemovedGameObjects:
     - {fileID: 906526054027363077, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}
     - {fileID: 8355957685578504703, guid: d5495dc953a7516498a259f48fe3d36a, type: 3}

@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEngine.AI;
 using UnityEngine;
 using Unity.AI.Navigation;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 /// A door the player walks through and enemies can open. Locking rules are delegated to an optional
 /// <see cref="Lock"/> child (Strategy pattern), so new lock types never require changing this class.
 /// </summary>
+[RequireComponent(typeof(DoorSound))]
 public class Door : Interactable
 {
     private static readonly int IsOpenHash = Animator.StringToHash("IsOpen");
@@ -43,12 +43,15 @@ public class Door : Interactable
     /// </summary>
     public Door Root { get; private set; }
 
+    private DoorSound sound;
+
     void Awake()
     {
         anim = GetComponentInChildren<Animator>();
         col = GetComponent<Collider>();
         currentLock = GetComponentInChildren<Lock>();
         Root = FindRootDoor();
+        sound = GetComponent<DoorSound>();
 
         // Closed doors block enemy paths until an enemy opens one (see EnemyDoorNavigation).
         if (link != null)
@@ -76,7 +79,11 @@ public class Door : Interactable
     protected override void OnInteract(GameObject interactor)
     {
         if (currentLock != null && currentLock.IsLocked && !currentLock.TryUnlock(interactor))
+        {
+            sound.PlayLockedSound();
+            anim.SetTrigger("Locked");
             return;
+        }
 
         PassThrough(interactor);
     }
@@ -154,6 +161,11 @@ public class Door : Interactable
         if (colliderRoutine != null)
             StopCoroutine(colliderRoutine);
         colliderRoutine = StartCoroutine(DisableColliderFor(colDisableWaitTime));
+
+        if (open)
+            sound.PlayOpenSound();
+        else
+            sound.PlayCloseSound();
     }
     
     private IEnumerator DisableColliderFor(float seconds)

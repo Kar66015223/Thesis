@@ -172,6 +172,8 @@ GameObject:
   - component: {fileID: 5654628924407752547}
   - component: {fileID: 8173267293436603738}
   - component: {fileID: 1095267070982880275}
+  - component: {fileID: 8134907151596694039}
+  - component: {fileID: 4480373102083868191}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -548,9 +550,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8820cebd142a34348a3a8463282fe96e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  <InteractPromptPos>k__BackingField: {fileID: 3040639045008216916}
   highlight: {fileID: 0}
-  hasInteracted: 0
+  <InteractPromptPos>k__BackingField: {fileID: 3040639045008216916}
   playerPointFront: {fileID: 154731593054687011}
   playerPointBack: {fileID: 2639513790578623354}
   colDisableWaitTime: 0.5
@@ -571,6 +572,118 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: -0.042000003, y: 1, z: 0.5}
   m_TimeToStationary: 0.5
+--- !u!82 &8134907151596694039
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648596974916241537}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &4480373102083868191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7648596974916241537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b86a9feae6f5c45aed7f23cf90f42b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorSound
+  openClip: {fileID: 8300000, guid: 32f346d11701b734da6f8d4dcee16db0, type: 3}
+  closeClip: {fileID: 8300000, guid: 6c6982b864afda3408139c71049640e5, type: 3}
+  lockedClip: {fileID: 8300000, guid: 6adc8b27ba81e6642a10e53617790d29, type: 3}
 --- !u!1 &8355957685578504703
 GameObject:
   m_ObjectHideFlags: 0
