@@ -9,7 +9,11 @@ using UnityEngine;
 [RequireComponent(typeof(SoundEmitter))]
 public class PlayerSound : MonoBehaviour
 {
+    // Checked a little above the feet so an area whose bottom sits exactly on the floor still counts.
+    private const float FootstepProbeHeight = 0.2f;
+
     [Header("Footstep Audio")]
+    [Tooltip("Normal footsteps. A LouderFootstepArea the player stands in replaces these with its own clips.")]
     [SerializeField] private AudioClip[] footstepClips;
     [SerializeField] private AudioClip tiredClip;
 
@@ -69,10 +73,17 @@ public class PlayerSound : MonoBehaviour
 
     private void PlayFootstep(float baseVolume, float noiseRadius)
     {
-        if (footstepClips == null || footstepClips.Length == 0)
+        LouderFootstepArea area = FindFootstepArea();
+
+        // An area without clips of its own still makes the step louder for enemies.
+        AudioClip[] clips = area != null && area.FootstepClips != null && area.FootstepClips.Length > 0
+            ? area.FootstepClips
+            : footstepClips;
+
+        if (clips == null || clips.Length == 0)
             return;
 
-        AudioClip clip = footstepClips[GetRandomClipIndex()];
+        AudioClip clip = clips[GetRandomClipIndex(clips.Length)];
         if (clip == null)
             return;
 
@@ -83,19 +94,33 @@ public class PlayerSound : MonoBehaviour
         source.PlayOneShot(clip, volume);
 
         // Let the AI know the player made a noise.
-        emitter.MakeSound(noiseRadius, footstepReaction);
+        float radius = area != null ? noiseRadius * area.SoundMultiplier : noiseRadius;
+        emitter.MakeSound(radius, footstepReaction);
+    }
+
+    private LouderFootstepArea FindFootstepArea()
+    {
+        Vector3 probe = transform.position + Vector3.up * FootstepProbeHeight;
+        foreach (LouderFootstepArea area in LouderFootstepArea.ActiveAreas)
+        {
+            if (area.Contains(probe))
+                return area;
+        }
+
+        return null;
     }
 
     /// <summary>Random clip that never repeats the previous one (no retry loop needed).</summary>
-    private int GetRandomClipIndex()
+    private int GetRandomClipIndex(int clipCount)
     {
-        if (footstepClips.Length == 1)
+        if (clipCount == 1)
             return lastClipIndex = 0;
 
-        if (lastClipIndex < 0 || lastClipIndex >= footstepClips.Length)
-            return lastClipIndex = Random.Range(0, footstepClips.Length);
+        // Also covers switching to a shorter clip list when entering or leaving an area.
+        if (lastClipIndex < 0 || lastClipIndex >= clipCount)
+            return lastClipIndex = Random.Range(0, clipCount);
 
-        int index = Random.Range(0, footstepClips.Length - 1);
+        int index = Random.Range(0, clipCount - 1);
         if (index >= lastClipIndex)
             index++;
 
