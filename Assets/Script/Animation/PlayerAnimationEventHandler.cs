@@ -8,4 +8,5 @@ public class PlayerAnimationEventHandler : MonoBehaviour
 
     public void PlayWalkSound() => sound.PlayWalkSound();
     public void PlayRunSound() => sound.PlayRunSound();
+    public void PlayCrouchWalkSound() => sound.PlayCrouchWalkSound();
 }

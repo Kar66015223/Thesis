@@ -2886,7 +2886,7 @@ GameObject:
   - component: {fileID: 1407464779}
   - component: {fileID: 1407464778}
   - component: {fileID: 1407464777}
-  - component: {fileID: 1407464776}
+  - component: {fileID: 1407464781}
   m_Layer: 0
   m_Name: Cube (6)
   m_TagString: Untagged
@@ -2894,19 +2894,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1407464776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1407464775}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18223affb5d34e54780d3577365cbf18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TutorialTrigger
-  data: {fileID: 11400000, guid: 108e017a4a8e5fd429fc119dfe883c70, type: 2}
 --- !u!65 &1407464777
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2994,12 +2981,28 @@ Transform:
   m_GameObject: {fileID: 1407464775}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.08, y: 0, z: 2.22}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.08, y: 0, z: 1.7629}
+  m_LocalScale: {x: 4.8256, y: 1, z: 1.9142}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1407464781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1407464775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af8ba3d1fe3b44d4cadb08c0e1d4b228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LouderFootstepArea
+  footstepClips:
+  - {fileID: 8300000, guid: 2bad97c684de32242819764b35ff63e7, type: 3}
+  - {fileID: 8300000, guid: 8c8b528324929474587e80e384a55d95, type: 3}
+  soundMultiplier: 1.5
 --- !u!114 &1408857139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4098,7 +4101,6 @@ MonoBehaviour:
       idlePoint: {fileID: 371599498}
       patrolPath:
         points: []
-        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
     - movementType: 1
@@ -4109,7 +4111,6 @@ MonoBehaviour:
           waitAtThisPoint: 1
         - wayPoint: {fileID: 446712129}
           waitAtThisPoint: 1
-        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
     - movementType: 0
@@ -4120,7 +4121,6 @@ MonoBehaviour:
           waitAtThisPoint: 1
         - wayPoint: {fileID: 446712129}
           waitAtThisPoint: 1
-        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
   - ctrl: {fileID: 466201007}
@@ -4133,14 +4133,12 @@ MonoBehaviour:
           waitAtThisPoint: 1
         - wayPoint: {fileID: 2041549106}
           waitAtThisPoint: 1
-        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
     - movementType: 0
       idlePoint: {fileID: 527940894}
       patrolPath:
         points: []
-        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
     - movementType: 1
@@ -4151,7 +4149,6 @@ MonoBehaviour:
           waitAtThisPoint: 1
         - wayPoint: {fileID: 2041549106}
           waitAtThisPoint: 1
-        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
 --- !u!4 &1983876400

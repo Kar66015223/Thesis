@@ -4,6 +4,10 @@ using UnityEngine;
 /// <summary>Player state changes that other systems (mostly UI) observe.</summary>
 public static class PlayerEvents
 {
+    /// <summary>Slow crouch started (true) or ended (false): crouching while the slow crouch key is held.</summary>
+    public static event Action<bool> SlowCrouch;
+    public static void RaiseSlowCrouch(bool isSlowCrouching) => SlowCrouch?.Invoke(isSlowCrouching);
+
     public static event Action Died;
     public static void RaiseDied() => Died?.Invoke();
 

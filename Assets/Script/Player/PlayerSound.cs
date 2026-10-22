@@ -36,6 +36,8 @@ public class PlayerSound : MonoBehaviour
     private PlayerStamina stamina;
     private int lastClipIndex = -1;
 
+    private bool isSlowCrouching;
+
     void Awake()
     {
         source = GetComponent<AudioSource>();
@@ -51,16 +53,29 @@ public class PlayerSound : MonoBehaviour
     {
         if (stamina != null)
             stamina.Exhausted += PlayTiredSound;
+
+        PlayerEvents.SlowCrouch += HandleSlowCrouchChanged;
     }
 
     void OnDisable()
     {
         if (stamina != null)
             stamina.Exhausted -= PlayTiredSound;
+
+        PlayerEvents.SlowCrouch -= HandleSlowCrouchChanged;
     }
 
     public void PlayWalkSound() => PlayFootstep(walkVolume, walkSoundRadius);
     public void PlayRunSound() => PlayFootstep(runVolume, runSoundRadius);
+
+    /// <summary>Crouch steps are silent, except on a loud floor, where only slow crouching keeps them quiet.</summary>
+    public void PlayCrouchWalkSound()
+    {
+        if (isSlowCrouching || FindFootstepArea() == null)
+            return;
+
+        PlayFootstep(walkVolume, walkSoundRadius);
+    }
 
     public void PlayTiredSound()
     {
@@ -126,4 +141,6 @@ public class PlayerSound : MonoBehaviour
 
         return lastClipIndex = index;
     }
+
+    private void HandleSlowCrouchChanged(bool isSlow) => isSlowCrouching = isSlow;
 }

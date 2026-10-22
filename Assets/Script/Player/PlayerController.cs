@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float runSpeed = 15f;
     [SerializeField] private float crouchSpeed = 2f;
+    [Tooltip("Crouch speed while holding the slow crouch key. The crouch walk animation slows by the same ratio.")]
+    [SerializeField] private float slowCrouchSpeed = 1f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float rotationSpeed = 10f;
 
@@ -44,10 +46,13 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     private Vector2 moveInput;
     private Vector3 moveDir;
     private bool isRunHeld;
+    private bool isSlowCrouchHeld;
     private bool canMove = true;
     private bool isUsingSkill;
 
     public bool IsCrouching { get; private set; }
+    /// <summary>Crouching while the slow crouch key is held, whichever of the two happened first.</summary>
+    public bool IsSlowCrouching { get; private set; }
     public bool IsRunning => stamina != null && stamina.IsRunning;
     public bool IsHiding => CurrentHidingPlace != null;
     public Hidable CurrentHidingPlace { get; private set; }
@@ -86,6 +91,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         inputHandler.OnMoveInput += HandleMoveInput;
         inputHandler.OnRunInput += HandleRunInput;
         inputHandler.OnCrouchPressed += HandleCrouchPressed;
+        inputHandler.OnSlowCrouchInput += HandleSlowCrouch;
 
         if (health != null)
         {
@@ -99,6 +105,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         inputHandler.OnMoveInput -= HandleMoveInput;
         inputHandler.OnRunInput -= HandleRunInput;
         inputHandler.OnCrouchPressed -= HandleCrouchPressed;
+        inputHandler.OnSlowCrouchInput -= HandleSlowCrouch;
 
         if (health != null)
         {
@@ -109,6 +116,8 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         // Releases arrive while we're unsubscribed, so don't keep walking on stale input.
         moveInput = Vector2.zero;
         isRunHeld = false;
+        isSlowCrouchHeld = false;
+        RefreshSlowCrouch();
     }
 
     void Update()
@@ -135,6 +144,30 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         IsCrouching = !IsCrouching;
         anim.SetCrouch(IsCrouching);
         ApplyStance();
+        RefreshSlowCrouch();
+    }
+
+    // Always store the key, even while standing: dropping presses/releases outside the crouch could leave
+    // slow crouch stuck on (stand up while holding it, then let go) or never start (hold it, then crouch).
+    private void HandleSlowCrouch(bool isHeld)
+    {
+        isSlowCrouchHeld = isHeld;
+        RefreshSlowCrouch();
+    }
+
+    private void RefreshSlowCrouch()
+    {
+        bool isSlow = IsCrouching && isSlowCrouchHeld;
+        if (isSlow == IsSlowCrouching)
+            return;
+
+        IsSlowCrouching = isSlow;
+
+        // Same ratio as the movement, so the feet keep matching the ground.
+        float animSpeed = isSlow && crouchSpeed > 0f ? slowCrouchSpeed / crouchSpeed : 1f;
+        anim.SetCrouchWalkSpeed(animSpeed);
+
+        PlayerEvents.RaiseSlowCrouch(isSlow);
     }
 
     private void HandleDied() => SetCanMove(false);
@@ -174,7 +207,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     private float GetCurrentSpeed()
     {
         if (IsCrouching)
-            return crouchSpeed;
+            return IsSlowCrouching ? slowCrouchSpeed : crouchSpeed;
 
         return IsRunning ? runSpeed : moveSpeed;
     }

@@ -7,6 +7,7 @@ public class PlayerAnimation
     private static readonly int MoveHash = Animator.StringToHash("Move");
     private static readonly int CrouchHash = Animator.StringToHash("Crouch");
     private static readonly int InteractHash = Animator.StringToHash("Interact");
+    private static readonly int CrouchWalkSpeedHash = Animator.StringToHash("CrouchWalkSpeed");
 
     [SerializeField] private Animator anim;
 
@@ -26,5 +27,15 @@ public class PlayerAnimation
     {
         if (anim != null)
             anim.SetBool(CrouchHash, value);
+    }
+
+    /// <summary>
+    /// Playback speed of the crouch walk state only (its Speed Multiplier parameter),
+    /// unlike Animator.speed, which would also slow every other animation.
+    /// </summary>
+    public void SetCrouchWalkSpeed(float value)
+    {
+        if (anim != null)
+            anim.SetFloat(CrouchWalkSpeedHash, value);
     }
 }

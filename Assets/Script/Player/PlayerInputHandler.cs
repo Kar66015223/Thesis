@@ -20,6 +20,7 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action<Vector2> OnLookInput;
     public event Action<bool> OnRunInput;
     public event Action OnCrouchPressed;
+    public event Action<bool> OnSlowCrouchInput;
 
     public event Action OnInteractFInput;
     public event Action OnInteractSpacebarInput;
@@ -83,6 +84,8 @@ public class PlayerInputHandler : MonoBehaviour
         if (context.performed)
             OnCrouchPressed?.Invoke();
     }
+
+    public void OnSlowCrouch(InputAction.CallbackContext context) => RaiseHold(context, OnSlowCrouchInput);
 
     public void OnInteractF(InputAction.CallbackContext context)
     {
