@@ -4,10 +4,13 @@ using UnityEngine;
 public class PatrolState : EnemyStateBase
 {
     private const float ArrivalTolerance = 0.1f;
+    // Points the enemy walks through switch to the next one a little early, before the agent brakes to a stop.
+    private const float PassThroughTolerance = 0.5f;
 
     private int curTargetIndex;
     private float nextMoveTime;
     private bool destinationSet;
+    private Transform waitPoint;   // faced for as long as the enemy waits there
 
     public PatrolState(EnemyController ctrl) : base(ctrl) { }
 
@@ -15,35 +18,63 @@ public class PatrolState : EnemyStateBase
     {
         ctrl.Movement.SetBaseSpeed(ctrl.WalkSpeed);
         ctrl.Agent.stoppingDistance = 0f;
+        ctrl.Agent.updateRotation = true;
         destinationSet = false;
     }
 
     public override void Update()
     {
-        IReadOnlyList<Transform> points = ctrl.PatrolPoints;
-        if (points == null || points.Count == 0 || Time.time < nextMoveTime)
+        IReadOnlyList<Waypoint> points = ctrl.PatrolPoints;
+        if (points == null || points.Count == 0)
             return;
 
+        if (Time.time < nextMoveTime)
+        {
+            // RotateTowards only turns a step per call, so keep calling it for the whole wait.
+            if (waitPoint != null)
+                RotateTowards(waitPoint.rotation);
+
+            return;
+        }
+
         curTargetIndex %= points.Count;
+        Waypoint target = points[curTargetIndex];
 
         if (!destinationSet)
         {
-            if (points[curTargetIndex] != null)
-                ctrl.SetDestination(points[curTargetIndex].position);
+            // Moving again: hand rotation back to the agent so it faces along its path.
+            ctrl.Agent.updateRotation = true;
+            waitPoint = null;
+
+            if (target != null && target.wayPoint != null)
+                ctrl.SetDestination(target.wayPoint.position);
 
             destinationSet = true;
             return;
         }
 
-        if (HasReachedDestination(ArrivalTolerance))
+        bool waitHere = target == null || target.waitAtThisPoint;
+        if (HasReachedDestination(waitHere ? ArrivalTolerance : PassThroughTolerance))
         {
-            nextMoveTime = Time.time + ctrl.PatrolWaitTime;
+            if (waitHere)
+            {
+                nextMoveTime = Time.time + ctrl.PatrolWaitTime;
+
+                // Otherwise the agent keeps overriding the rotation while it settles on the point.
+                ctrl.Agent.updateRotation = false;
+                waitPoint = target != null ? target.wayPoint : null;
+            }
+
             curTargetIndex = (curTargetIndex + 1) % points.Count;
             destinationSet = false;
         }
     }
 
-    public override void Exit() => ctrl.Agent.stoppingDistance = ApproachStoppingDistance;
+    public override void Exit()
+    {
+        ctrl.Agent.stoppingDistance = ApproachStoppingDistance;
+        ctrl.Agent.updateRotation = true;
+    }
 
     public override void OnHearSound(SoundSignal sound) => ctrl.ChangeState(new DistractedState(ctrl, sound));
     public override void OnSeenTarget(Transform target) => ctrl.ChangeState(new ConfirmingState(ctrl, target));

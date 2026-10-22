@@ -95,7 +95,7 @@ public class EnemyStepTracking
         if (activeStep.movementType == EnemyMovementType.Idle)
             ctrl.ApplyIdlePoint(activeStep.idlePoint);
         else
-            ctrl.ApplyPatrolPoints(activeStep.patrolPath.wayPoints);
+            ctrl.ApplyPatrolPoints(activeStep.patrolPath.points);
 
         // Only re-enter the routine state if the enemy is currently doing its routine.
         if (ctrl.IsInDefaultState)

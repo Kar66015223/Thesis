@@ -33,6 +33,7 @@ public class Door : Interactable
     public static float LastRouteChangeTime { get; private set; } = float.NegativeInfinity;
 
     public bool IsOpen { get; private set; }
+    public bool IsLocked => currentLock != null && currentLock.IsLocked;
     public Transform PlayerPointFront => playerPointFront;
     public Transform PlayerPointBack => playerPointBack;
 
@@ -52,6 +53,12 @@ public class Door : Interactable
         // Closed doors block enemy paths until an enemy opens one (see EnemyDoorNavigation).
         if (link != null)
             link.enabled = IsOpen;
+    }
+
+    void Start()
+    {
+        if (CheckpointManager.Instance != null)
+            CheckpointManager.Instance.RegisterDoor(this);
     }
 
     void OnEnable()
@@ -106,6 +113,17 @@ public class Door : Interactable
 
         SetDoorOpen(true);
         return true;
+    }
+
+    /// <summary>Puts the door back to how it was at a checkpoint.</summary>
+    public void RestoreState(bool open, bool locked)
+    {
+        if (currentLock != null && currentLock.IsLocked != locked)
+            currentLock.RestoreLocked(locked);
+
+        // Only when it changed: SetDoorOpen also turns the enemy NavMeshLink on for good.
+        if (IsOpen != open)
+            SetDoorOpen(open);
     }
 
     private Door FindRootDoor()

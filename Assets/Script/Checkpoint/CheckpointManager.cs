@@ -16,6 +16,8 @@ public class CheckpointManager : MonoBehaviour
     private readonly HashSet<Item> itemsSinceSave = new();
     // Nothing stores the power state, it's only an event, so keep track of it here. Scenes start with the power on.
     private bool isLightsOut;
+    // Every door in the scene; each one adds itself in Door.Start.
+    private readonly List<Door> doors = new();
 
     public static CheckpointManager Instance { get; private set; }
     public Transform CurCheckpoint { get; private set; }
@@ -59,6 +61,12 @@ public class CheckpointManager : MonoBehaviour
         WorldEvents.LightsOutChanged -= TrackLightsOut;
     }
 
+    public void RegisterDoor(Door door)
+    {
+        if (door != null && !doors.Contains(door))
+            doors.Add(door);
+    }
+
     void TrackPickedUpItem(Item item) => itemsSinceSave.Add(item);
     void TrackLightsOut(bool lightsOut) => isLightsOut = lightsOut;
 
@@ -74,7 +82,7 @@ public class CheckpointManager : MonoBehaviour
 
     /// <summary>
     /// Snapshots the player's inventory, mission statuses and skill cooldown, plus the enemies' route steps,
-    /// the power state and objective progress, into <see cref="SavedState"/>.
+    /// the power state, objective progress and every door, into <see cref="SavedState"/>.
     /// </summary>
     public void Save()
     {
@@ -107,6 +115,12 @@ public class CheckpointManager : MonoBehaviour
         if (objectiveManager != null)
             data.ObjectiveIndex = objectiveManager.CurrentIndex;
 
+        foreach (Door door in doors)
+        {
+            if (door != null)
+                data.DoorStates[door] = (door.IsOpen, door.IsLocked);
+        }
+
         SavedState = data;
         itemsSinceSave.Clear();
     }
@@ -138,6 +152,13 @@ public class CheckpointManager : MonoBehaviour
             skills.RestoreScannerCooldown(SavedState.ScannerCooldownRemaining);
 
         WorldEvents.SetLightsOut(SavedState.IsLightsOut);
+
+        // Before the enemies, whose routes are planned around which doors are open.
+        foreach (KeyValuePair<Door, (bool isOpen, bool isLocked)> saved in SavedState.DoorStates)
+        {
+            if (saved.Key != null)
+                saved.Key.RestoreState(saved.Value.isOpen, saved.Value.isLocked);
+        }
 
         if (objectiveManager != null)
             objectiveManager.RestoreObjective(SavedState.ObjectiveIndex);

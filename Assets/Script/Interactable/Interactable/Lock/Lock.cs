@@ -26,6 +26,9 @@ public abstract class Lock : MonoBehaviour
 
     public void ForceUnlock() => SetLocked(false);
 
+    /// <summary>Checkpoint respawn: can lock the door again, unlike the unlock methods.</summary>
+    public void RestoreLocked(bool locked) => SetLocked(locked);
+
     protected void SetLocked(bool locked)
     {
         IsLocked = locked;

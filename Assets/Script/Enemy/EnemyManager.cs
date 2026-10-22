@@ -107,7 +107,7 @@ public class EnemyManager : MonoBehaviour
                 return false;
 
             case EnemyMovementType.Patrol 
-            when step.patrolPath.wayPoints == null || step.patrolPath.wayPoints.Length == 0:
+            when step.patrolPath.points == null || step.patrolPath.points.Length == 0:
                 Debug.LogWarning($"{enemy.name} has a Patrol step with no waypoints", enemy);
                 return false;
 

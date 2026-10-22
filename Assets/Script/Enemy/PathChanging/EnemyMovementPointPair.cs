@@ -10,7 +10,15 @@ public enum EnemyMovementType
 [System.Serializable]
 public struct PatrolPath
 {
-    public Transform[] wayPoints;
+    public Waypoint[] points;
+}
+
+[System.Serializable]
+public class Waypoint
+{
+    public Transform wayPoint;
+    [Tooltip("Wait the enemy's Patrol Wait Time here before moving on. Untick to walk straight through.")]
+    public bool waitAtThisPoint = true;
 }
 
 [System.Serializable]

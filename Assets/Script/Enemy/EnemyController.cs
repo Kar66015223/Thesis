@@ -27,7 +27,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     [SerializeField] private Transform idlePoint;
 
     [SerializeField] private Transform patrolPointsParent;
-    [SerializeField] private Transform[] patrolPoints;
+    [SerializeField] private Waypoint[] patrolPoints;
     [SerializeField] private float patrolWaitTime = 1f;
 
     [SerializeField] private float distractWaitTime = 1f;
@@ -48,7 +48,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
 
     public Transform IdlePoint => idlePoint;
     
-    public IReadOnlyList<Transform> PatrolPoints => patrolPoints;
+    public IReadOnlyList<Waypoint> PatrolPoints => patrolPoints;
     public float PatrolWaitTime => patrolWaitTime;
 
     public float DistractWaitTime => distractWaitTime;
@@ -124,14 +124,14 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public void ApplyIdlePoint(Transform point)
     {
         idlePoint = point;
-        patrolPoints = new Transform[0];
+        patrolPoints = new Waypoint[0];
 
         if (idlePoint != null)
             SetDestination(idlePoint.position);
     }
 
     /// <summary>Route step changed to "patrol these points".</summary>
-    public void ApplyPatrolPoints(Transform[] points)
+    public void ApplyPatrolPoints(Waypoint[] points)
     {
         patrolPoints = points;
         idlePoint = null;

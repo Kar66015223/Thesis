@@ -1587,6 +1587,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00faa6f3db00e104f838ccf38d98ecec, type: 3}
+--- !u!1 &595243094
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 595243095}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &595243095
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595243094}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.53022, y: -0, z: -2.85721}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &599654615
 Mesh:
   m_ObjectHideFlags: 0
@@ -4066,23 +4097,30 @@ MonoBehaviour:
     - movementType: 0
       idlePoint: {fileID: 371599498}
       patrolPath:
+        points: []
         wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
     - movementType: 1
       idlePoint: {fileID: 0}
       patrolPath:
-        wayPoints:
-        - {fileID: 1296113560}
-        - {fileID: 446712129}
+        points:
+        - wayPoint: {fileID: 1296113560}
+          waitAtThisPoint: 1
+        - wayPoint: {fileID: 446712129}
+          waitAtThisPoint: 1
+        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
     - movementType: 0
       idlePoint: {fileID: 371599498}
       patrolPath:
-        wayPoints:
-        - {fileID: 1296113560}
-        - {fileID: 446712129}
+        points:
+        - wayPoint: {fileID: 1296113560}
+          waitAtThisPoint: 1
+        - wayPoint: {fileID: 446712129}
+          waitAtThisPoint: 1
+        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
   - ctrl: {fileID: 466201007}
@@ -4090,23 +4128,30 @@ MonoBehaviour:
     - movementType: 1
       idlePoint: {fileID: 0}
       patrolPath:
-        wayPoints:
-        - {fileID: 1624429279}
-        - {fileID: 2041549106}
+        points:
+        - wayPoint: {fileID: 1624429279}
+          waitAtThisPoint: 1
+        - wayPoint: {fileID: 2041549106}
+          waitAtThisPoint: 1
+        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
     - movementType: 0
       idlePoint: {fileID: 527940894}
       patrolPath:
+        points: []
         wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
     - movementType: 1
       idlePoint: {fileID: 0}
       patrolPath:
-        wayPoints:
-        - {fileID: 1624429279}
-        - {fileID: 2041549106}
+        points:
+        - wayPoint: {fileID: 1624429279}
+          waitAtThisPoint: 1
+        - wayPoint: {fileID: 2041549106}
+          waitAtThisPoint: 1
+        wayPoints: []
       speedMultiplier: 1
       toNextStepWaitTime: 0
 --- !u!4 &1983876400
@@ -4630,3 +4675,4 @@ SceneRoots:
   - {fileID: 1428952186}
   - {fileID: 1864340957}
   - {fileID: 1407464780}
+  - {fileID: 595243095}

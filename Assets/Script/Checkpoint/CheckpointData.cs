@@ -15,4 +15,5 @@ public class CheckpointData
     public Dictionary<EnemyController, int> EnemyRouteSteps { get; set; } = new();
     public bool IsLightsOut { get; set; }
     public int ObjectiveIndex { get; set; }
+    public Dictionary<Door, (bool isOpen, bool isLocked)> DoorStates { get; } = new();
 }
