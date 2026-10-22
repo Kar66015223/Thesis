@@ -4,8 +4,10 @@ using UnityEngine;
 /// <summary>Broadcasts a noise to every <see cref="IHearable"/> in range.</summary>
 public class SoundEmitter : MonoBehaviour
 {
-    private const int MaxColliders = 32;
+    private const int StartBufferSize = 32;
 
+    [Tooltip("Layers that can hear. Set it to just the listeners' layer (Enemy): with Everything, " +
+             "every wall and chair in range is checked too.")]
     [SerializeField] private LayerMask hearableMask = ~0;
 
     [Header("Debug")]
@@ -14,7 +16,7 @@ public class SoundEmitter : MonoBehaviour
     [SerializeField] private EnemyReaction curReaction;
     [SerializeField] private float debugRadius = 10f;
 
-    private readonly Collider[] overlapBuffer = new Collider[MaxColliders];
+    private Collider[] overlapBuffer = new Collider[StartBufferSize];
     private readonly HashSet<IHearable> notified = new();
 
     public void MakeSound(float radius, EnemyReaction reaction)
@@ -23,7 +25,10 @@ public class SoundEmitter : MonoBehaviour
         curReaction = reaction;
 
         SoundSignal signal = new(transform.position, radius, reaction);
-        int count = Physics.OverlapSphereNonAlloc(transform.position, radius, overlapBuffer, hearableMask);
+        // NonAlloc silently drops whatever doesn't fit, so a full buffer means listeners may have been cut: grow and ask again.
+        int count;
+        while ((count = Physics.OverlapSphereNonAlloc(transform.position, radius, overlapBuffer, hearableMask)) == overlapBuffer.Length)
+            overlapBuffer = new Collider[overlapBuffer.Length * 2];
 
         // A listener with several colliders should still only hear the sound once.
         notified.Clear();

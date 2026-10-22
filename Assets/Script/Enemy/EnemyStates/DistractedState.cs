@@ -30,6 +30,8 @@ public class DistractedState : EnemyStateBase
         {
             ctrl.SetDestination(sound.Position);
         }
+
+        // Debug.Log($"{ctrl.gameObject.name} is in distracted by sound at {sound.Position}");
     }
 
     public override void Update()
@@ -74,6 +76,13 @@ public class DistractedState : EnemyStateBase
 
         if (sound.Reaction == EnemyReaction.RunTo)
             ctrl.Movement.SetBaseSpeed(ctrl.WalkSpeed);
+
+        // A sound closer than the stopping distance counts as arrived straight away, before the enemy has
+        // moved or turned at all, so it has to turn to the sound here or it never looks at it.
+        ctrl.Agent.updateRotation = false;
+        Vector3 direction = FlatDirectionTo(sound.Position);
+        if (direction != Vector3.zero)
+            RotateTowards(Quaternion.LookRotation(direction));
 
         timer += Time.deltaTime;
         if (timer >= ctrl.DistractWaitTime)

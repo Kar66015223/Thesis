@@ -44,6 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd1c50c144395634fa5adf130582e20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundEmitter
+  hearableMask:
+    serializedVersion: 2
+    m_Bits: 256
   curRadius: 0
   curReaction: 0
-  makeSound: 0
+  debugRadius: 10

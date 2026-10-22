@@ -327,6 +327,18 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
     #endregion
 
+    #region Collisions
+
+    // Only fires while this CharacterController moves into something, i.e. the player walked into it.
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        IBumpable bumpable = hit.collider.GetComponentInParent<IBumpable>();
+        if (bumpable != null)
+            bumpable.OnBumped(transform);
+    }
+
+    #endregion
+
     #region IItemHolder
 
     public bool HasItem(ItemData item) => Inventory.HasItem(item);

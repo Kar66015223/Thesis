@@ -7,7 +7,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(EnemyVision))]
 [RequireComponent(typeof(EnemyMovement))]
 [RequireComponent(typeof(EnemyDoorNavigation))]
-public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunnable
+public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunnable, IBumpable
 {
     public NavMeshAgent Agent { get; private set; }
     public EnemyVision Vision { get; private set; }
@@ -63,6 +63,10 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     // IPlayerCatcher
 
     public float StunTime => stunTime;
+
+    // The player hits the enemy every frame they keep pushing; contact with gaps shorter than this is one bump.
+    private const float BumpContactGap = 0.25f;
+    private float lastBumpTime = float.NegativeInfinity;
 
     public bool IsChasing => CurrentState is ChaseState;
     public bool IsInDefaultState => CurrentState is IdleState || CurrentState is PatrolState;
@@ -149,6 +153,18 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
 
     // IStunnable
     public void Stun() => ChangeState(new StunnedState(this));
+
+    // IBumpable: treated as a "look at" noise where the player is, so each state decides like it does for sounds.
+    // Patrol, Idle and Distracted switch to DistractedState; Confirming, Chase, Catching and Stunned ignore it
+    // instead of being cut short.
+    public void OnBumped(Transform bumper)
+    {
+        bool isNewBump = Time.time - lastBumpTime > BumpContactGap;
+        lastBumpTime = Time.time;
+
+        if (isNewBump)
+            CurrentState?.OnHearSound(new SoundSignal(bumper.position, 0f, EnemyReaction.LookAt));
+    }
 
     // IPlayerCatcher
     public void OnCatchDamageDealt() => ShakeScreen();

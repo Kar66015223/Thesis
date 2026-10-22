@@ -5,19 +5,33 @@ using UnityEditor;
 [CustomEditor(typeof(EnemyVision))]
 public class EnemyVisionEditor : Editor
 {
+    private static readonly Color BandColor = new(1f, 1f, 1f, 0.5f);
+
     void OnSceneGUI()
     {
         EnemyVision fov = (EnemyVision)target;
 
         Vector3 origin = fov.EyePosition;
-        Handles.color = Color.white;
-        Handles.DrawWireArc(origin, Vector3.up, Vector3.forward, 360, fov.ViewRadius);
-
+        float radius = fov.ViewRadius;
         Vector3 viewAngleA = fov.DirFromAngle(-fov.ViewAngle / 2, false);
         Vector3 viewAngleB = fov.DirFromAngle(fov.ViewAngle / 2, false);
 
-        Handles.DrawLine(origin, origin + viewAngleA * fov.ViewRadius);
-        Handles.DrawLine(origin, origin + viewAngleB * fov.ViewRadius);
+        Handles.color = Color.white;
+        Handles.DrawWireArc(origin, Vector3.up, Vector3.forward, 360, radius);
+        Handles.DrawLine(origin, origin + viewAngleA * radius);
+        Handles.DrawLine(origin, origin + viewAngleB * radius);
+
+        // Top and bottom of the cone's height band, joined at the eye and at both edges.
+        Vector3 halfHeight = Vector3.up * fov.ViewVerticalSize / 2f;
+        Vector3 bottom = origin - halfHeight;
+        Vector3 top = origin + halfHeight;
+
+        Handles.color = BandColor;
+        DrawSector(bottom, viewAngleA, viewAngleB, fov.ViewAngle, radius);
+        DrawSector(top, viewAngleA, viewAngleB, fov.ViewAngle, radius);
+        Handles.DrawLine(bottom, top);
+        Handles.DrawLine(bottom + viewAngleA * radius, top + viewAngleA * radius);
+        Handles.DrawLine(bottom + viewAngleB * radius, top + viewAngleB * radius);
 
         Handles.color = Color.red;
         foreach (Transform confirmed in fov.ConfirmedTargets)
@@ -34,6 +48,13 @@ public class EnemyVisionEditor : Editor
 
             Handles.DrawLine(origin, targetDrawPos);
         }
+    }
+
+    private static void DrawSector(Vector3 center, Vector3 edgeA, Vector3 edgeB, float angle, float radius)
+    {
+        Handles.DrawWireArc(center, Vector3.up, edgeA, angle, radius);
+        Handles.DrawLine(center, center + edgeA * radius);
+        Handles.DrawLine(center, center + edgeB * radius);
     }
 }
 #endif
