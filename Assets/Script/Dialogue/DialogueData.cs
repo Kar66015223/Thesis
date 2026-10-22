@@ -49,4 +49,8 @@ public class DialogueChoice
     public bool endDialogue;
 
     public DialogueData nextDialogue;
+
+    [Header("Shop System")]
+    [Tooltip("Ends the conversation and opens the sell shop.")]
+    public bool openShopUI;
 }

@@ -11,6 +11,7 @@ public class CheckpointData
     public Dictionary<Mission, MissionStatus> MissionStatuses { get; } = new();
     public Mission ActiveMission { get; set; }
     public float ScannerCooldownRemaining { get; set; }
+    public int Money { get; set; }
 
     public Dictionary<EnemyController, int> EnemyRouteSteps { get; set; } = new();
     public bool IsLightsOut { get; set; }

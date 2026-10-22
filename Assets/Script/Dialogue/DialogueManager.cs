@@ -258,6 +258,14 @@ public class DialogueManager : MonoBehaviour
         // ป้องกันการกดตัวเลือกซ้ำ
         view.ClearChoices();
 
+        // The shop replaces the conversation, so the two panels never sit on top of each other.
+        if (choice.openShopUI)
+        {
+            EndDialogue();
+            UIEvents.ToggleShopBoard(true);
+            return;
+        }
+
         if (choice.endDialogue)
         {
             EndDialogue();

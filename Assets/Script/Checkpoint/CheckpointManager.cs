@@ -110,6 +110,9 @@ public class CheckpointManager : MonoBehaviour
 
         if (skills != null)
             data.ScannerCooldownRemaining = skills.ScannerCooldownRemaining;
+        // Saved with the inventory so selling an item and then respawning can't give back both the item and its money.
+        if (EconomyManager.Instance != null)
+            data.Money = EconomyManager.Instance.CurrentMoney;
         if (enemyManager != null)
             data.EnemyRouteSteps = enemyManager.SnapshotRouteSteps();
         if (objectiveManager != null)
@@ -150,6 +153,9 @@ public class CheckpointManager : MonoBehaviour
 
         if (skills != null)
             skills.RestoreScannerCooldown(SavedState.ScannerCooldownRemaining);
+
+        if (EconomyManager.Instance != null)
+            EconomyManager.Instance.RestoreMoney(SavedState.Money);
 
         WorldEvents.SetLightsOut(SavedState.IsLightsOut);
 
