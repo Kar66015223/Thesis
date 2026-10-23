@@ -51,16 +51,16 @@ public class Inventory : MonoBehaviour
 
     void OnEnable()
     {
-        if (inputHandler != null)
-            inputHandler.OnInventoryPressed += Toggle;
+        // if (inputHandler != null)
+        //     inputHandler.OnInventoryPressed += Toggle;
 
         PlayerEvents.StruggleToggled += HandleStruggleToggled;
     }
 
     void OnDisable()
     {
-        if (inputHandler != null)
-            inputHandler.OnInventoryPressed -= Toggle;
+        // if (inputHandler != null)
+        //     inputHandler.OnInventoryPressed -= Toggle;
 
         PlayerEvents.StruggleToggled -= HandleStruggleToggled;
         InputModeService.RequestUI(this, false);

@@ -14,10 +14,10 @@ public class ElectricLock : Lock
         if (IsOnSide(interactor, unlockableSide) || canUnlock)
         {
             SetLocked(false);
-            return false;
+            return true;
         }
         
-        UIEvents.ShowTip("Can't open, need to cut the power first");
+        UIEvents.ShowTip("The morse code must be here, I need to find a way to get inside.");
         return false;
     }
 

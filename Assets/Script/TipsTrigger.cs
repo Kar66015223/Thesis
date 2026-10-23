@@ -4,6 +4,9 @@ using UnityEngine;
 public class TipsTrigger : MonoBehaviour
 {
     [SerializeField, TextArea] private string message = "[Right Click] to see enemies";
+    private Collider col;
+
+    void Awake() => col = GetComponent<Collider>();
 
     void OnTriggerEnter(Collider other)
     {
@@ -11,6 +14,7 @@ public class TipsTrigger : MonoBehaviour
             return;
 
         UIEvents.ShowTip(message);
-        Destroy(gameObject);
+        if (col.enabled)
+            col.enabled = false;
     }
 }

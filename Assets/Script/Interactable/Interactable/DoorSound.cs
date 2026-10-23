@@ -10,7 +10,7 @@ public class DoorSound : MonoBehaviour
 
     void Awake() => source = GetComponent<AudioSource>();
 
-    public void PlayOpenSound() => source.PlayOneShot(openClip);
-    public void PlayCloseSound() => source.PlayOneShot(closeClip);
-    public void PlayLockedSound() => source.PlayOneShot(lockedClip);
+    public void PlayOpenSound() => AudioSource.PlayClipAtPoint(openClip, transform.position);
+    public void PlayCloseSound() => AudioSource.PlayClipAtPoint(closeClip, transform.position);
+    public void PlayLockedSound() => AudioSource.PlayClipAtPoint(lockedClip, transform.position);
 }

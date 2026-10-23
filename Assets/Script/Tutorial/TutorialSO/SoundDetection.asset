@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aefc5e7ac4c7f4f4cbfa435ced4dc26b, type: 3}
   m_Name: SoundDetection
   m_EditorClassIdentifier: Assembly-CSharp::TutorialData
-  headerText: 'Sound '
-  bodyText: 
-  sprite: {fileID: 0}
+  headerText: Sound Detection
+  bodyText: Walking or running makes sound which enemies can hear. You can crouch
+    walk to hide the sound of your footsteps. Press [C] to crouch
+  sprite: {fileID: 21300000, guid: 1ddfe8cf37b839145be35e3c88ca95fd, type: 3}

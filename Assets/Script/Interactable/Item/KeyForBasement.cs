@@ -6,6 +6,6 @@ public class KeyForBasement : Item
     protected override void OnPickedUp(GameObject interactor)
     {
         base.OnPickedUp(interactor);
-        UIEvents.ShowTip("Player has key, can unlock basement door now");
+        UIEvents.ShowTip("This key is for power room, there's might be something useful there.");
     }
 }

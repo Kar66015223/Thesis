@@ -4,6 +4,6 @@ using UnityEngine;
 public class TutorialData : ScriptableObject
 {
     public string headerText;
-    public string bodyText;
+    [TextArea] public string bodyText;
     public Sprite sprite;
 }

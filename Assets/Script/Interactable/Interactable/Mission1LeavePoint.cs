@@ -15,7 +15,7 @@ public class Mission1LeavePoint : Interactable
         if (hasItem)
             SceneLoader.LoadScene(SceneConstants.HIDEOUT_NAME);
         else
-            UIEvents.ShowTip("Don't have morse code, can't return yet.");
+            UIEvents.ShowTip("I need to find the morse code first.");
     }
     
     // Keeps the existing scene working until requiredItem is assigned in the Inspector.

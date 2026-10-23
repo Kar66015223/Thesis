@@ -54,8 +54,9 @@ public class TutorialPresenter : IUIPresenter
             bodyText.text = "";
             img.sprite = null;
         }
-        
+
         InputModeService.RequestUI(this, isOpen);
+        Time.timeScale = isOpen ? 0f : 1f;
     }
 
     private void Hide() => UIEvents.ToggleTutorialPanel(false);
