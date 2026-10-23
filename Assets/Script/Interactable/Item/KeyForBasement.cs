@@ -7,5 +7,6 @@ public class KeyForBasement : Item
     {
         base.OnPickedUp(interactor);
         UIEvents.ShowTip("This key is for power room, there's might be something useful there.");
+        WorldEvents.RaiseObjectiveShow(true); // <-- Check true if player has this in inventory instead later.
     }
 }

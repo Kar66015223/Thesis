@@ -16,6 +16,7 @@ public class ObjectiveHighlight : MonoBehaviour, IScannable
     private bool isInScan;
 
     public bool IsCurrent { get; private set; }
+    public bool IsShow { get; private set; }
 
     // Lazy, so it also works when ObjectiveManager reaches an object that is still inactive.
     private LayerHighlighter Highlighter => highlighter ??= new LayerHighlighter(gameObject, layerName);
@@ -25,6 +26,12 @@ public class ObjectiveHighlight : MonoBehaviour, IScannable
     {
         IsCurrent = isCurrent;
         isCompleted = false;
+        RefreshHighlight();
+    }
+
+    public void SetShow(bool isShow)
+    {
+        IsShow = isShow;
         RefreshHighlight();
     }
 
@@ -53,7 +60,7 @@ public class ObjectiveHighlight : MonoBehaviour, IScannable
 
     private void RefreshHighlight()
     {
-        if (IsCurrent && !isCompleted && isInScan)
+        if (IsCurrent && !isCompleted && isInScan && IsShow)
             Highlighter.Apply();
         else
             Highlighter.Remove();

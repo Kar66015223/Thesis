@@ -15,8 +15,17 @@ public class ObjectiveManager : MonoBehaviour
     public ObjectiveHighlight CurrentObjective =>
         currentIndex >= 0 && currentIndex < allObjectives.Count ? allObjectives[currentIndex] : null;
 
-    void OnEnable() => WorldEvents.ObjectiveCompleted += HandleObjectiveCompleted;
-    void OnDisable() => WorldEvents.ObjectiveCompleted -= HandleObjectiveCompleted;
+    void OnEnable()
+    {
+        WorldEvents.ObjectiveShow += ToggleShowCurrent;
+        WorldEvents.ObjectiveCompleted += HandleObjectiveCompleted;
+    }
+    
+    void OnDisable()
+    {
+        WorldEvents.ObjectiveShow -= ToggleShowCurrent;
+        WorldEvents.ObjectiveCompleted -= HandleObjectiveCompleted;
+    } 
 
     void Start() => SetCurrent(0);
 
@@ -48,5 +57,13 @@ public class ObjectiveManager : MonoBehaviour
             if (objective != null)
                 objective.SetCurrent(objective == current);
         }
+    }
+
+    private void ToggleShowCurrent(bool isShow)
+    {
+        if (CurrentObjective == null)
+            return;
+
+        CurrentObjective.SetShow(isShow);
     }
 }
