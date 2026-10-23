@@ -66,6 +66,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
 
     // The player hits the enemy every frame they keep pushing; contact with gaps shorter than this is one bump.
     private const float BumpContactGap = 0.25f;
+    private const float RoutineSnapRadius = 2f;
     private float lastBumpTime = float.NegativeInfinity;
 
     public bool IsChasing => CurrentState is ChaseState;
@@ -178,10 +179,31 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     }
 
     // Chasing, searching or being stunned was about the player before they died, so drop it.
-    private void HandlePlayerRespawned()
+    // Teleport rather than walk back, so the enemies are in place the moment the player gets control again.
+    private void HandlePlayerRespawned() => SnapToRoutine();
+
+    /// <summary>
+    /// Puts the enemy straight onto the spot its routine walks to (the idle point, or the first patrol point,
+    /// facing the same way) and restarts the routine from there.
+    /// </summary>
+    public void SnapToRoutine()
     {
-        if (!IsInDefaultState)
-            ReturnToDefaultState();
+        Transform spot = patrolPoints != null && patrolPoints.Length > 0 && patrolPoints[0] != null
+            ? patrolPoints[0].wayPoint
+            : idlePoint;
+
+        // A half-finished door approach would otherwise keep steering towards the old door after the warp.
+        DoorNavigation.CancelDoorApproach();
+
+        // Points can sit a little above the floor, and Warp needs a spot on the NavMesh.
+        if (spot != null && NavMesh.SamplePosition(spot.position, out NavMeshHit hit, RoutineSnapRadius, Agent.areaMask)
+            && Agent.Warp(hit.position))
+        {
+            transform.rotation = Quaternion.Euler(0f, spot.eulerAngles.y, 0f);
+        }
+
+        // Restart even an enemy that was already patrolling, so it heads on from the new spot instead of an old target.
+        ReturnToDefaultState();
     }
 
     private void DetachFromSelf(Transform child)

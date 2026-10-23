@@ -169,7 +169,7 @@ public class CheckpointManager : MonoBehaviour
         if (objectiveManager != null)
             objectiveManager.RestoreObjective(SavedState.ObjectiveIndex);
 
-        // Before Respawned, so enemies that go back to their routine walk the restored step.
+        // Before Respawned, which teleports every enemy onto its routine spot: the spot of the restored step.
         if (enemyManager != null)
             enemyManager.RestoreRouteSteps(SavedState.EnemyRouteSteps);
 
