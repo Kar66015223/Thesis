@@ -8,6 +8,8 @@ using UnityEngine;
 public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] private GameObject player;
+    [Tooltip("Layers that stop the player from interacting with something behind them (the target and the player never do).")]
+    [SerializeField] private LayerMask blockingMask = Physics.DefaultRaycastLayers;
     [SerializeField] private PlayerInteractionUI ui = new();
 
     private readonly PlayerInteractionDetector detector = new();
@@ -16,13 +18,16 @@ public class PlayerInteraction : MonoBehaviour
     private PlayerController ctrl;
     private PlayerInputHandler inputHandler;
 
+    public Transform rayStart;
+
     void Awake()
     {
         ctrl = GetComponentInParent<PlayerController>();
         inputHandler = GetComponentInParent<PlayerInputHandler>();
         player = ctrl.gameObject;
 
-        detector.Initialize(GetComponent<Collider>());
+        detector.Initialize(
+            GetComponent<Collider>(), ctrl.GetComponent<CharacterController>(), blockingMask, rayStart);
         ui.Initialize();
     }
 
