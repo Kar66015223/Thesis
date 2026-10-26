@@ -258,6 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  highlight: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!1 &187304366
 GameObject:
@@ -384,6 +385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  highlight: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!114 &254283770
 MonoBehaviour:
@@ -524,6 +526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  highlight: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!43 &306503809
 Mesh:
@@ -1228,6 +1231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  highlight: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!1 &664307286
 GameObject:
@@ -1889,6 +1893,10 @@ PrefabInstance:
       propertyPath: scanAudioSource
       value: 
       objectReference: {fileID: 1236639730}
+    - target: {fileID: 2421594854148336972, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5448438016998072887, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
       propertyPath: Mute
       value: 0
@@ -1900,6 +1908,10 @@ PrefabInstance:
     - target: {fileID: 5448438016998072887, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
       propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5555536788073629999, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5937243658499042084, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1934,12 +1946,16 @@ PrefabInstance:
       value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 8105777623543101903, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+      propertyPath: tiredClip
+      value: 
+      objectReference: {fileID: 8300000, guid: e9f2a6bb4d064bb4e804d47eb6bda1fb, type: 3}
+    - target: {fileID: 8105777623543101903, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
       propertyPath: walkVolume
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 8105777623543101903, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
       propertyPath: pitchVariation
-      value: 0.02
+      value: 0.0881
       objectReference: {fileID: 0}
     - target: {fileID: 8105777623543101903, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
       propertyPath: footstepClips.Array.size
@@ -1965,6 +1981,10 @@ PrefabInstance:
       propertyPath: 'footstepClips.Array.data[4]'
       value: 
       objectReference: {fileID: 8300000, guid: 05d15457f8ef4c54a83f41c323a9b7d6, type: 3}
+    - target: {fileID: 8369265353756578797, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0012207031
+      objectReference: {fileID: 0}
     - target: {fileID: 8427080318464210961, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
@@ -2193,9 +2213,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd1c50c144395634fa5adf130582e20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundEmitter
+  hearableMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   curRadius: 0
   curReaction: 0
-  makeSound: 0
+  debugRadius: 10
 --- !u!4 &1290198890
 Transform:
   m_ObjectHideFlags: 0
@@ -2206,6 +2229,77 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 9.74246, y: -0, z: 8.25146}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1395216195
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1395216198}
+  - component: {fileID: 1395216197}
+  - component: {fileID: 1395216196}
+  m_Layer: 0
+  m_Name: Box Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1395216196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395216195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 0
+  priority: 0
+  blendDistance: 1
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 61a5657698b0c8e4496aef8a514db469, type: 2}
+--- !u!65 &1395216197
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395216195}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1395216198
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395216195}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.3972347, y: 2.2609885, z: -1.062}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2624,6 +2718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76f79135d2311246ac82ad1c73889b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  highlight: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!1 &2007989109 stripped
 GameObject:
@@ -2850,3 +2945,4 @@ SceneRoots:
   - {fileID: 826164467}
   - {fileID: 5295264509165004172}
   - {fileID: 1076151633}
+  - {fileID: 1395216198}
