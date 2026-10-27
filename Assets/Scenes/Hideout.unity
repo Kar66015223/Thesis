@@ -2081,7 +2081,6 @@ MonoBehaviour:
   dialogueText: {fileID: 816080769}
   choicesParent: {fileID: 1392922416}
   choiceButtonPrefab: {fileID: 1038674080205216261, guid: 6becce70786edf34592992cf985fec73, type: 3}
-  playerMovement: {fileID: 634249438}
 --- !u!4 &72178601
 Transform:
   m_ObjectHideFlags: 0
@@ -12343,17 +12342,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!114 &634249438 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4278840840141453418, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
-  m_PrefabInstance: {fileID: 844839964}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
 --- !u!43 &642398193
 Mesh:
   m_ObjectHideFlags: 0
@@ -30209,6 +30197,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 8b7b7bbc31d6acc46aa3e804cfddd5f6, type: 3}
   m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
+--- !u!1 &1691177826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1691177828}
+  - component: {fileID: 1691177827}
+  m_Layer: 0
+  m_Name: MapManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1691177827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691177826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd9283f917376b43b58950b3bea53fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapManager
+  defaultActionMapName: 
+--- !u!4 &1691177828
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691177826}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.70236, y: 3.22588, z: -6.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1707262577
 GameObject:
   m_ObjectHideFlags: 0
@@ -38218,6 +38251,7 @@ SceneRoots:
   - {fileID: 1028936630}
   - {fileID: 396084348}
   - {fileID: 72178601}
+  - {fileID: 1691177828}
   - {fileID: 729449355}
   - {fileID: 844839964}
   - {fileID: 330748703}

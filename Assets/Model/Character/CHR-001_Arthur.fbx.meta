@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c7bae3e369e9db64dae827a0c561c561
+guid: 6cd109157820382499991e760a74c654
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
@@ -8,62 +8,32 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: M_CHR_001_Arhur_BodyTop
-    second: {fileID: 2100000, guid: dbc46b28d0f48b34b956d72cab19edea, type: 2}
+    second: {fileID: 2100000, guid: e9497c8b11045304dad5e7ac4468e6a9, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: M_CHR_001_Arhur_BodyUnder
-    second: {fileID: 2100000, guid: fbc6ac001dfca8945989a51dcef47ae2, type: 2}
+    second: {fileID: 2100000, guid: 0edf735710ed68e4ab271bb574098cf8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: M_CHR_001_Arhur_Eyes
-    second: {fileID: 2100000, guid: 1bac53e95840f5c4e862b63ee0f913df, type: 2}
+    second: {fileID: 2100000, guid: b76ffb5a4a657c940ac947597cde839f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: M_CHR_001_Arhur_Face
-    second: {fileID: 2100000, guid: 858c281a74080c14ca0edcd81d34bd49, type: 2}
+    second: {fileID: 2100000, guid: b7aeddf548a3a3147926a2b43228037d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: M_CHR_001_Arhur_Hair
-    second: {fileID: 2100000, guid: 80c8eaa954c671245acbea31e7e38635, type: 2}
+    second: {fileID: 2100000, guid: fcbb5aba7bbe6b846af82b49076ec6d2, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: M_CHR_001_Arthur_whiteEyes
-    second: {fileID: 2100000, guid: 870e8150745049b47ae70b0c9311a384, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Arhur_BodyTop_AlbedoTransparency
-    second: {fileID: 2800000, guid: ff94bdc58e120b442bbbfb80f1789952, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Arhur_BodyUnder_AlbedoTransparency
-    second: {fileID: 2800000, guid: 41e7912f7b219714f9c177bb8682c2e7, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Arhur_DemonEyes_Base_color
-    second: {fileID: 2800000, guid: 58126bbf2c9741840bc6135257f4f738, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Arhur_Face_AlbedoTransparency
-    second: {fileID: 2800000, guid: b1946c16054695e4abc687d37a9caed3, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Arhur_Hair_AlbedoTransparency
-    second: {fileID: 2800000, guid: 288c1ec75bec475459cbb83e3c37e228, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: Arhur_whiteeyesDemon_AlbedoTransparency
-    second: {fileID: 2800000, guid: fcba20c742a7c4744a88db948e55eeef, type: 3}
+    second: {fileID: 2100000, guid: 3ace6d0b94fbf4747974377a3155f6ed, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -83,7 +53,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -155,13 +125,13 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

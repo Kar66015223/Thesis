@@ -1197,9 +1197,89 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: c7664025-ac6e-4e12-bbb0-66d26e27d0da
     m_ActionName: 'UI/Inventory[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 255021439158406942}
+        m_TargetAssemblyTypeName: PlayerInputHandler, Assembly-CSharp
+        m_MethodName: OnMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: d9d95934-cd9a-41d1-ae8f-9e7547d77fca
+    m_ActionName: 'Player_Base/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 255021439158406942}
+        m_TargetAssemblyTypeName: PlayerInputHandler, Assembly-CSharp
+        m_MethodName: OnLook
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5046d9ce-50a4-439a-9ffa-f16f8a0b21d2
+    m_ActionName: 'Player_Base/Look[/Mouse/delta]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 255021439158406942}
+        m_TargetAssemblyTypeName: PlayerInputHandler, Assembly-CSharp
+        m_MethodName: OnInteractF
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 266ae08c-97aa-41de-92a2-3e16bb0c5276
+    m_ActionName: 'Player_Base/InteractF[/Keyboard/f]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 255021439158406942}
+        m_TargetAssemblyTypeName: PlayerInputHandler, Assembly-CSharp
+        m_MethodName: OnInteractSpacebar
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 68dbfae1-1729-4289-a6f4-ff15c4e6e73a
+    m_ActionName: 'Player_Base/InteractSpacebar[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 255021439158406942}
+        m_TargetAssemblyTypeName: PlayerInputHandler, Assembly-CSharp
+        m_MethodName: OnInventory
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: fcaef0e1-7bfd-4885-9871-ce6520297cc1
+    m_ActionName: 'Player_Base/Inventory[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
+  m_DefaultActionMap: Player_Mission
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!143 &8755811207983697812
@@ -1298,6 +1378,8 @@ MonoBehaviour:
     tiredVignetteWeight: 0.4
   anim:
     anim: {fileID: 5103999531494630806}
+    baseAnimCtrl: {fileID: 9100000, guid: 3eeba9cc5e6ed1f4d9608309860a37c8, type: 2}
+    missionAnimCtrl: {fileID: 9100000, guid: 1a6a9b79a7bf9024286fd4fe704df377, type: 2}
 --- !u!114 &255021439158406942
 MonoBehaviour:
   m_ObjectHideFlags: 0

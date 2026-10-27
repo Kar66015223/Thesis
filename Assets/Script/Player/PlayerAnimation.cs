@@ -1,15 +1,34 @@
+using UnityEditor.Animations;
 using UnityEngine;
 
 /// <summary>Thin wrapper so gameplay code never touches Animator parameter strings.</summary>
 [System.Serializable]
 public class PlayerAnimation
 {
+    [SerializeField] private Animator anim;
+    [SerializeField] private AnimatorController baseAnimCtrl;
+    [SerializeField] private AnimatorController missionAnimCtrl;
+
     private static readonly int MoveHash = Animator.StringToHash("Move");
     private static readonly int CrouchHash = Animator.StringToHash("Crouch");
     private static readonly int InteractHash = Animator.StringToHash("Interact");
     private static readonly int CrouchWalkSpeedHash = Animator.StringToHash("CrouchWalkSpeed");
 
-    [SerializeField] private Animator anim;
+    public void Initialize()
+    {
+        if (MapManager.Instance == null || MapManager.Instance.DefaultActionMapName == "")
+            return;
+
+        if (MapManager.Instance.DefaultActionMapName == PlayerConstants.ACTIONMAP_PLAYER_BASE)
+            SetAnimCtrl(baseAnimCtrl);
+        else
+            SetAnimCtrl(missionAnimCtrl);
+    }
+
+    public void SetAnimCtrl(AnimatorController animCtrl)
+    {
+        anim.runtimeAnimatorController = animCtrl;
+    }
 
     public void SetMove(int value)
     {

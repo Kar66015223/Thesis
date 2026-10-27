@@ -120,6 +120,8 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         RefreshSlowCrouch();
     }
 
+    void Start() => anim.Initialize();
+
     void Update()
     {
         UpdateMovement();

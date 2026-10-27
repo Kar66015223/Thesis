@@ -9,7 +9,7 @@ public static class InputModeService
     private static bool isStruggling;
 
     public static event Action<string> ActionMapChanged;
-    public static string CurrentActionMap { get; private set; } = PlayerConstants.ACTIONMAP_PLAYER;
+    public static string CurrentActionMap { get; private set; } = PlayerConstants.ACTIONMAP_PLAYER_MISSION;
 
     public static void RequestUI(object requester, bool active)
     {
@@ -43,7 +43,10 @@ public static class InputModeService
         else if (uiRequests.Count > 0)
             CurrentActionMap = PlayerConstants.ACTIONMAP_UI;
         else
-            CurrentActionMap = PlayerConstants.ACTIONMAP_PLAYER;
+        {
+            CurrentActionMap = MapManager.Instance != null ?
+                MapManager.Instance.DefaultActionMapName : PlayerConstants.ACTIONMAP_PLAYER_MISSION;
+        }
 
         ActionMapChanged?.Invoke(CurrentActionMap);
     }
