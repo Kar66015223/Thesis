@@ -9,7 +9,7 @@ public static class InputModeService
     private static bool isStruggling;
 
     public static event Action<string> ActionMapChanged;
-    public static string CurrentActionMap { get; private set; } = PlayerConstants.ACTIONMAP_PLAYER_MISSION;
+    public static string CurrentActionMap { get; private set; }
 
     public static void RequestUI(object requester, bool active)
     {

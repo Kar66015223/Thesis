@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyVision))]
 [RequireComponent(typeof(EnemyMovement))]
 [RequireComponent(typeof(EnemyDoorNavigation))]
+
+[RequireComponent(typeof(EnemyAnimation))]
 public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunnable, IBumpable
 {
     public NavMeshAgent Agent { get; private set; }
@@ -16,6 +18,12 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public CinemachineImpulseSource ImpulseSource { get; private set; }
     public EnemyStepTracking Tracking { get; } = new();
     public IEnemyState CurrentState { get; private set; }
+
+    public EnemyAnimation Anim { get; private set; }
+
+    /// <summary>Raised by <see cref="FoundStateBehavior"/> when the Found animation ends; ChaseState waits for it.</summary>
+    public event System.Action FoundAnimationFinished;
+    public void NotifyFoundAnimationFinished() => FoundAnimationFinished?.Invoke();
 
     [Header("Shared Settings")]
     [SerializeField] private Transform stateUIPoint;
@@ -79,6 +87,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
         Movement = GetComponent<EnemyMovement>();
         DoorNavigation = GetComponent<EnemyDoorNavigation>();
         ImpulseSource = GetComponent<CinemachineImpulseSource>();
+        Anim = GetComponent<EnemyAnimation>();
 
         DoorNavigation.Initialize(Agent);
         Tracking.Initialize(this);
@@ -98,8 +107,13 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     void Update()
     {
         bool handlingDoor = DoorNavigation.TickBeforeStateUpdate();
-        if(!handlingDoor)
+        if (!handlingDoor)
             CurrentState?.Update();
+
+        if (Agent.velocity.magnitude > 1)
+            Anim.SetMove(Agent.speed > walkSpeed ? 2 : 1);
+        else
+            Anim.SetMove(0);
     }
 
     public void ChangeState(IEnemyState newState)
@@ -173,7 +187,10 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public void ReleasePlayer(bool playerEscaped)
     {
         if (playerEscaped)
+        {
             Stun();
+            Anim.SetCatching(false);
+        }
         else
             ReturnToDefaultState();
     }

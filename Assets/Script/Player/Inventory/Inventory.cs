@@ -95,7 +95,9 @@ public class Inventory : MonoBehaviour
             return;
 
         // Don't open on top of another UI (dialogue, password pad, ...) or while struggling.
-        if (isOpen && InputModeService.CurrentActionMap != PlayerConstants.ACTIONMAP_PLAYER_MISSION)
+        // Checked against those maps, not the mission map, so it still opens in the hideout's Player_Base map.
+        string currentMap = InputModeService.CurrentActionMap;
+        if (isOpen && (currentMap == PlayerConstants.ACTIONMAP_UI || currentMap == PlayerConstants.ACTIONMAP_STRUGGLE))
             return;
 
         if (!isOpen)

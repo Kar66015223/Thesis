@@ -11,6 +11,12 @@ public class CatchingState : EnemyStateBase
     public override void Enter()
     {
         if (!player.TryBeginStruggle(ctrl))
+        {
             ctrl.ReturnToDefaultState();
+            return;
+        }
+
+        ctrl.Anim.SetStartCatch();
+        ctrl.Anim.SetCatching(true);
     }
 }

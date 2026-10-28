@@ -51,6 +51,10 @@ public class PlayerInputHandler : MonoBehaviour
         InputModeService.Refresh();
     }
 
+    // Ask again once the scene has finished waking up: on the first frame OnEnable can run before
+    // MapManager.Awake (no base/mission choice yet) or before PlayerInput turns on its Default Map.
+    void Start() => InputModeService.Refresh();
+
     void OnDisable() => InputModeService.ActionMapChanged -= SwitchActionMap;
    
     void Update()

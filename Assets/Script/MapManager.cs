@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// Runs before other scripts, so anything that asks for DefaultActionMapName in its Awake/OnEnable already gets an answer.
+[DefaultExecutionOrder(-100)]
 public class MapManager : MonoBehaviour
 {
     public static MapManager Instance;

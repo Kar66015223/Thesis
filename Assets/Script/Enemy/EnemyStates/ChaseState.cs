@@ -1,15 +1,23 @@
 using UnityEngine;
 
-/// <summary>Runs after the target until close enough to catch it, or gives up when it can't reach it.</summary>
+/// <summary>
+/// Plays the Found reaction standing still, then runs after the target until close enough to catch it,
+/// or gives up when it can't reach it.
+/// </summary>
 public class ChaseState : EnemyStateBase
 {
     private const float RepathDistance = 0.5f;
     private const float CatchRangePadding = 0.5f;
+    // Safety net in case the Found animation never plays or never ends (missing transition, no Animator).
+    private const float MaxFoundReactionTime = 3f;
 
     private readonly Transform target;
     private PlayerStruggle targetStruggle;
     private float giveUpTimer;
     private Vector3 lastTargetPos;
+
+    private bool isReacting;
+    private float reactionTimer;
 
     public ChaseState(EnemyController ctrl, Transform target) : base(ctrl) => this.target = target;
 
@@ -21,16 +29,19 @@ public class ChaseState : EnemyStateBase
 
         ctrl.Movement.SetBaseSpeed(ctrl.RunSpeed);
         ctrl.Agent.updateRotation = false;
-        ctrl.Agent.isStopped = false;
         ctrl.Agent.stoppingDistance = ApproachStoppingDistance;
         giveUpTimer = 0f;
 
-        if (target == null)
-            return;
+        if (target != null)
+            targetStruggle = target.GetComponentInParent<PlayerStruggle>();
 
-        targetStruggle = target.GetComponentInParent<PlayerStruggle>();
-        lastTargetPos = target.position;
-        ctrl.SetDestination(lastTargetPos);
+        // The chase only starts once the Found animation reports it's done (FoundStateBehavior).
+        // Stopping here, not in the animation, covers the frame before the Animator actually enters Found.
+        isReacting = true;
+        reactionTimer = 0f;
+        ctrl.Agent.isStopped = true;
+        ctrl.FoundAnimationFinished += EndReaction;
+        ctrl.Anim.SetFound();
     }
 
     public override void Update()
@@ -43,6 +54,17 @@ public class ChaseState : EnemyStateBase
         {
             ctrl.ReturnToDefaultState();
             return;
+        }
+
+        if (isReacting)
+        {
+            FaceInstantly(target.position);
+
+            reactionTimer += Time.deltaTime;
+            if (reactionTimer < MaxFoundReactionTime)
+                return;
+
+            EndReaction();
         }
 
         if (Vector3.Distance(target.position, lastTargetPos) > RepathDistance)
@@ -84,7 +106,30 @@ public class ChaseState : EnemyStateBase
 
     public override void Exit()
     {
+        ctrl.FoundAnimationFinished -= EndReaction;
+
+        // Left mid-reaction (stunned, gave up): undo our stop. After a catch the agent stays stopped as before.
+        if (isReacting)
+            ctrl.Agent.isStopped = false;
+
         ctrl.Agent.updateRotation = true;
         ctrl.Tracking.ResumeInterruptedStep();
+    }
+
+    private void EndReaction()
+    {
+        if (!isReacting)
+            return;
+
+        isReacting = false;
+        ctrl.FoundAnimationFinished -= EndReaction;
+
+        // Only now: a destination behind a closed door makes the door navigation start walking straight away.
+        ctrl.Agent.isStopped = false;
+        if (target != null)
+        {
+            lastTargetPos = target.position;
+            ctrl.SetDestination(lastTargetPos);
+        }
     }
 }
