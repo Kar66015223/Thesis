@@ -8,8 +8,13 @@ public class PlayerAnimation
     [SerializeField] private Animator anim;
     [SerializeField] private AnimatorController baseAnimCtrl;
     [SerializeField] private AnimatorController missionAnimCtrl;
+    [Tooltip("Swapped in while an enemy holds the player: starts on GotCaught, loops while 'Caught' is on.")]
+    [SerializeField] private RuntimeAnimatorController caughtAnimCtrl;
+
+    private RuntimeAnimatorController controllerBeforeCaught;
 
     private static readonly int MoveHash = Animator.StringToHash("Move");
+    private static readonly int CaughtHash = Animator.StringToHash("Caught");
     private static readonly int CrouchHash = Animator.StringToHash("Crouch");
     private static readonly int InteractHash = Animator.StringToHash("Interact");
     private static readonly int CrouchWalkSpeedHash = Animator.StringToHash("CrouchWalkSpeed");
@@ -25,9 +30,39 @@ public class PlayerAnimation
             SetAnimCtrl(missionAnimCtrl);
     }
 
-    public void SetAnimCtrl(AnimatorController animCtrl)
+    public void SetAnimCtrl(RuntimeAnimatorController animCtrl)
     {
         anim.runtimeAnimatorController = animCtrl;
+    }
+
+    /// <summary>Humanoid bone of the player model, e.g. the neck an enemy holds. Null if not humanoid.</summary>
+    public Transform GetBone(HumanBodyBones bone) => anim != null && anim.isHuman ? anim.GetBoneTransform(bone) : null;
+
+    /// <summary>Swaps to the caught controller, which starts on GotCaught. Returns false if it can't play.</summary>
+    public bool PlayGotCaught()
+    {
+        if (anim == null || caughtAnimCtrl == null)
+            return false;
+
+        if (anim.runtimeAnimatorController != caughtAnimCtrl)
+            controllerBeforeCaught = anim.runtimeAnimatorController;
+
+        SetAnimCtrl(caughtAnimCtrl);
+        anim.SetBool(CaughtHash, false);
+        return true;
+    }
+
+    public void PlayGotCaughtLoop()
+    {
+        if (anim != null && anim.runtimeAnimatorController == caughtAnimCtrl)
+            anim.SetBool(CaughtHash, true);
+    }
+
+    /// <summary>Back to the controller from before the catch. Swapping resets every parameter, so the caller restores them.</summary>
+    public void StopGotCaught()
+    {
+        if (anim != null && anim.runtimeAnimatorController == caughtAnimCtrl && controllerBeforeCaught != null)
+            SetAnimCtrl(controllerBeforeCaught);
     }
 
     public void SetMove(int value)

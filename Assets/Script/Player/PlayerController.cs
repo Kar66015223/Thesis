@@ -164,12 +164,16 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
             return;
 
         IsSlowCrouching = isSlow;
-
-        // Same ratio as the movement, so the feet keep matching the ground.
-        float animSpeed = isSlow && crouchSpeed > 0f ? slowCrouchSpeed / crouchSpeed : 1f;
-        anim.SetCrouchWalkSpeed(animSpeed);
+        ApplyCrouchWalkSpeed();
 
         PlayerEvents.RaiseSlowCrouch(isSlow);
+    }
+
+    // Same ratio as the movement, so the feet keep matching the ground.
+    private void ApplyCrouchWalkSpeed()
+    {
+        float animSpeed = IsSlowCrouching && crouchSpeed > 0f ? slowCrouchSpeed / crouchSpeed : 1f;
+        anim.SetCrouchWalkSpeed(animSpeed);
     }
 
     private void HandleDied() => SetCanMove(false);
@@ -358,6 +362,43 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
             modelRenderer.enabled = false;
             hiddenRenderers.Add(modelRenderer);
         }
+    }
+
+    #endregion
+
+    #region Caught
+
+    public Transform GetBone(HumanBodyBones bone) => anim.GetBone(bone);
+
+    /// <summary>
+    /// An enemy has the player by the neck: stop moving and colliding (PlayerStruggle keeps the body in the enemy's
+    /// hand, and a CharacterController would fight that), face the enemy and play GotCaught.
+    /// Returns false if there's no GotCaught animation to wait for.
+    /// </summary>
+    public bool BeginCaught(Vector3 catcherPosition)
+    {
+        SetCanMove(false);
+        motor.SetEnabled(false);
+        FaceDirection(catcherPosition - transform.position);
+
+        return anim.PlayGotCaught();
+    }
+
+    public void PlayCaughtLoop() => anim.PlayGotCaughtLoop();
+
+    public void EndCaught()
+    {
+        anim.StopGotCaught();
+
+        // Swapping the controller back reset its parameters: restore the stance the player is still in.
+        anim.SetCrouch(IsCrouching);
+        ApplyCrouchWalkSpeed();
+
+        motor.SetEnabled(true);
+
+        // A player who died in the enemy's hands stays frozen for the game over screen.
+        if (health == null || !health.IsDead)
+            SetCanMove(true);
     }
 
     #endregion

@@ -31,6 +31,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4527956754921892001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3330579071678178650
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3532175410318735122}
+  m_Layer: 0
+  m_Name: HoldPoint.r
+  m_TagString: Untagged
+  m_Icon: {fileID: 2800000, guid: cf632ed80bf1f46c980de6b1b8b903ef, type: 3}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3532175410318735122
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3330579071678178650}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.059, y: 0.044, z: -0.037}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8547237048490285494}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4586452993341741978
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,6 +299,7 @@ MonoBehaviour:
   catchDamage: 20
   damageCooldown: 1
   stunTime: 5
+  rightHand: {fileID: 3532175410318735122}
 --- !u!114 &4111720402464977027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -459,9 +491,17 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: f909bcfafc9c951488a54b00b785b1d1, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1052520655926217830, guid: 4df123b433971f244a135eabb3824120, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3532175410318735122}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4df123b433971f244a135eabb3824120, type: 3}
+--- !u!4 &8547237048490285494 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1052520655926217830, guid: 4df123b433971f244a135eabb3824120, type: 3}
+  m_PrefabInstance: {fileID: 8648792801031230928}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9190745437241438779 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4df123b433971f244a135eabb3824120, type: 3}

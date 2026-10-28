@@ -25,6 +25,10 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public event System.Action FoundAnimationFinished;
     public void NotifyFoundAnimationFinished() => FoundAnimationFinished?.Invoke();
 
+    /// <summary>Raised by <see cref="StartCatchStateBehavior"/> when the grab reaches the player; CatchingState waits for it.</summary>
+    public event System.Action StartCatchAnimationFinished;
+    public void NotifyStartCatchAnimationFinished() => StartCatchAnimationFinished?.Invoke();
+
     [Header("Shared Settings")]
     [SerializeField] private Transform stateUIPoint;
     
@@ -48,6 +52,9 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     [SerializeField] private float damageCooldown = 1f;
 
     [SerializeField] private float stunTime = 5f;
+
+    [Tooltip("Bone the caught player's neck is held at. Found by name (hand.r) in the model when left empty.")]
+    [SerializeField] private Transform rightHand;
 
     public Transform StateUIPoint => stateUIPoint != null ? stateUIPoint : transform;
 
@@ -75,6 +82,9 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     // The player hits the enemy every frame they keep pushing; contact with gaps shorter than this is one bump.
     private const float BumpContactGap = 0.25f;
     private const float RoutineSnapRadius = 2f;
+    private const string RightHandBoneName = "hand.r";
+
+    public Transform RightHand => rightHand;
     private float lastBumpTime = float.NegativeInfinity;
 
     public bool IsChasing => CurrentState is ChaseState;
@@ -88,6 +98,11 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
         DoorNavigation = GetComponent<EnemyDoorNavigation>();
         ImpulseSource = GetComponent<CinemachineImpulseSource>();
         Anim = GetComponent<EnemyAnimation>();
+
+        if (rightHand == null)
+            rightHand = FindDescendant(transform, RightHandBoneName);
+        if (rightHand == null)
+            Debug.LogWarning($"{name}: no '{RightHandBoneName}' bone found, assign Right Hand so caught players are held in it.", this);
 
         DoorNavigation.Initialize(Agent);
         Tracking.Initialize(this);
@@ -184,15 +199,28 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     // IPlayerCatcher
     public void OnCatchDamageDealt() => ShakeScreen();
 
+    // Leaving CatchingState (either way) ends the catch animation, so it isn't repeated here.
     public void ReleasePlayer(bool playerEscaped)
     {
         if (playerEscaped)
-        {
             Stun();
-            Anim.SetCatching(false);
-        }
         else
             ReturnToDefaultState();
+    }
+
+    private static Transform FindDescendant(Transform parent, string childName)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == childName)
+                return child;
+
+            Transform found = FindDescendant(child, childName);
+            if (found != null)
+                return found;
+        }
+
+        return null;
     }
 
     // Chasing, searching or being stunned was about the player before they died, so drop it.

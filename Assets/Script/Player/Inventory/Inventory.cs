@@ -54,7 +54,7 @@ public class Inventory : MonoBehaviour
         if (inputHandler != null)
             inputHandler.OnInventoryPressed += Toggle;
 
-        PlayerEvents.StruggleToggled += HandleStruggleToggled;
+        InputModeService.ActionMapChanged += HandleActionMapChanged;
     }
 
     void OnDisable()
@@ -62,7 +62,7 @@ public class Inventory : MonoBehaviour
         if (inputHandler != null)
             inputHandler.OnInventoryPressed -= Toggle;
 
-        PlayerEvents.StruggleToggled -= HandleStruggleToggled;
+        InputModeService.ActionMapChanged -= HandleActionMapChanged;
         InputModeService.RequestUI(this, false);
     }
 
@@ -108,9 +108,10 @@ public class Inventory : MonoBehaviour
     }
 
     // Getting grabbed switches to the Struggle map, where the inventory key can't close the panel.
-    private void HandleStruggleToggled(bool isStruggling)
+    // Watched on the map, not StruggleToggled: the struggle prompt only appears once the strangle loop starts.
+    private void HandleActionMapChanged(string actionMap)
     {
-        if (isStruggling)
+        if (actionMap == PlayerConstants.ACTIONMAP_STRUGGLE)
             SetOpen(false);
     }
 
