@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>Keeps the mission list and the active mission alive across scenes.</summary>
 public class MissionManager : MonoBehaviour
 {
     public static MissionManager Instance { get; private set; }
@@ -40,7 +39,6 @@ public class MissionManager : MonoBehaviour
         mission.Accept();
     }
 
-    /// <summary>Rolls missions back to the statuses saved at a checkpoint.</summary>
     public void Restore(IReadOnlyDictionary<Mission, MissionStatus> statuses, Mission activeMission)
     {
         foreach (KeyValuePair<Mission, MissionStatus> saved in statuses)

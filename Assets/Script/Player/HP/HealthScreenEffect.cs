@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Drives the blood/vignette full-screen material from a health ratio.
-/// Split out of PlayerHealth so health rules and visuals can change independently.
-/// </summary>
 public class HealthScreenEffect
 {
     private static readonly int VignettePowerId = Shader.PropertyToID("_VignettePower");
@@ -43,7 +39,6 @@ public class HealthScreenEffect
             Set(settings.LowVignettePower, settings.LowBreathFrequency);
     }
 
-    /// <summary>The material is a shared asset, so restore it or the Editor keeps the "hurt" look.</summary>
     public void Restore()
     {
         if (material != null)

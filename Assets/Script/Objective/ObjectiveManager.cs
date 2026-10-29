@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-/// <summary>Walks through the level's objectives in order.</summary>
 public class ObjectiveManager : MonoBehaviour
 {
     [FormerlySerializedAs("AllObjtive")]
@@ -38,7 +37,6 @@ public class ObjectiveManager : MonoBehaviour
         SetCurrent(currentIndex + 1);
     }
 
-    /// <summary>Goes back to the objective that was current at a checkpoint.</summary>
     public void RestoreObjective(int index) => SetCurrent(index);
 
     private void HandleObjectiveCompleted(ObjectiveHighlight completed)

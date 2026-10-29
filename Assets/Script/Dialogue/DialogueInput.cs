@@ -1,9 +1,5 @@
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// The keys that advance dialogue, read through the Input System.
-/// Kept in one place so it can later be swapped for an action in the UI action map.
-/// </summary>
 public static class DialogueInput
 {
     public static bool ClickPressed => Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;

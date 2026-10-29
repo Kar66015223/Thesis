@@ -1,7 +1,6 @@
 using UnityEditor.Animations;
 using UnityEngine;
 
-/// <summary>Thin wrapper so gameplay code never touches Animator parameter strings.</summary>
 [System.Serializable]
 public class PlayerAnimation
 {
@@ -35,10 +34,8 @@ public class PlayerAnimation
         anim.runtimeAnimatorController = animCtrl;
     }
 
-    /// <summary>Humanoid bone of the player model, e.g. the neck an enemy holds. Null if not humanoid.</summary>
     public Transform GetBone(HumanBodyBones bone) => anim != null && anim.isHuman ? anim.GetBoneTransform(bone) : null;
 
-    /// <summary>Swaps to the caught controller, which starts on GotCaught. Returns false if it can't play.</summary>
     public bool PlayGotCaught()
     {
         if (anim == null || caughtAnimCtrl == null)
@@ -58,7 +55,6 @@ public class PlayerAnimation
             anim.SetBool(CaughtHash, true);
     }
 
-    /// <summary>Back to the controller from before the catch. Swapping resets every parameter, so the caller restores them.</summary>
     public void StopGotCaught()
     {
         if (anim != null && anim.runtimeAnimatorController == caughtAnimCtrl && controllerBeforeCaught != null)
@@ -83,10 +79,6 @@ public class PlayerAnimation
             anim.SetBool(CrouchHash, value);
     }
 
-    /// <summary>
-    /// Playback speed of the crouch walk state only (its Speed Multiplier parameter),
-    /// unlike Animator.speed, which would also slow every other animation.
-    /// </summary>
     public void SetCrouchWalkSpeed(float value)
     {
         if (anim != null)

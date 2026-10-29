@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Moves the CharacterController: gravity, horizontal movement, stance (collider size) and teleporting.
-/// Knows nothing about input, stamina or animation.
-/// </summary>
 public class PlayerMotor
 {
     private const float GroundedStickVelocity = -2f;
@@ -24,7 +20,6 @@ public class PlayerMotor
             body.Move((horizontalVelocity + Vector3.up * verticalVelocity) * deltaTime);
     }
 
-    /// <summary>Moves without gravity, e.g. a dash.</summary>
     public void Displace(Vector3 delta)
     {
         if (body.enabled)
@@ -37,7 +32,6 @@ public class PlayerMotor
         body.height = height;
     }
 
-    /// <summary>A CharacterController overrides transform.position while enabled, so disable it around the move.</summary>
     public void Teleport(Vector3 position)
     {
         bool wasEnabled = body.enabled;

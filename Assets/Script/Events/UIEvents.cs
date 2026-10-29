@@ -19,7 +19,6 @@ public static class UIEvents
     public static event Action<bool> ShopBoardToggled;
     public static void ToggleShopBoard(bool isOpen) => ShopBoardToggled?.Invoke(isOpen);
 
-    /// <summary>Only one tracked target at a time; pass null to clear.</summary>
     public static event Action<Transform, Sprite> TrackingTargetChanged;
     public static void SetTrackingTarget(Transform target, Sprite icon)
         => TrackingTargetChanged?.Invoke(target, icon);

@@ -3,10 +3,6 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-/// <summary>
-/// Eyes of the enemy: finds visible targets a few times per second and runs the two-step
-/// "glimpse -> confirmed" timer, reporting both moments to the controller.
-/// </summary>
 [RequireComponent(typeof(EnemyController))]
 public class EnemyVision : MonoBehaviour
 {
@@ -45,7 +41,6 @@ public class EnemyVision : MonoBehaviour
 
     void OnEnable() => EnableVision();
 
-    // Unity stops coroutines on disable; forget the handle so OnEnable can restart scanning.
     void OnDisable() => scanRoutine = null;
 
     void Update()
@@ -64,7 +59,6 @@ public class EnemyVision : MonoBehaviour
             scanRoutine = StartCoroutine(ScanLoop());
     }
 
-    /// <summary>Stops scanning and forgets what it saw (e.g. while stunned).</summary>
     public void DisableVision()
     {
         if (scanRoutine != null)
@@ -87,7 +81,6 @@ public class EnemyVision : MonoBehaviour
 
     private void UpdateConfirmation(Transform target)
     {
-        // First glimpse...
         if (confirmTimer == 0f)
             ctrl.OnSeenTarget(target);
 
@@ -95,7 +88,6 @@ public class EnemyVision : MonoBehaviour
         float progress = ctrl.ConfirmWaitTime > 0f ? Mathf.Clamp01(confirmTimer / ctrl.ConfirmWaitTime) : 1f;
         EnemyEvents.RaiseConfirmProgressChanged(transform, progress);
 
-        // ...then confirmed after looking long enough.
         if (confirmTimer >= ctrl.ConfirmWaitTime && !confirmedTargets.Contains(target))
         {
             confirmedTargets.Add(target);
@@ -141,13 +133,10 @@ public class EnemyVision : MonoBehaviour
             if (bounds.max.y < bandBottom || bounds.min.y > bandTop)
                 continue;
 
-            // Aim at the highest part of the target that's inside the band.
             Vector3 aimPoint = bounds.center;
             aimPoint.y = Mathf.Min(bounds.max.y, bandTop);
             Vector3 toTarget = aimPoint - eye;
 
-            // Only the horizontal angle is checked: the old 3D angle counted looking down as turning away,
-            // so a crouching player right in front of the eye fell outside the cone.
             Vector3 flatToTarget = toTarget;
             flatToTarget.y = 0f;
             if (Vector3.Angle(forward, flatToTarget) >= viewAngle / 2f)

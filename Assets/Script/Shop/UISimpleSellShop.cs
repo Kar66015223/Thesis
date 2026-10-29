@@ -2,11 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Sell shop opened by <see cref="InteractShopNPC"/> or a dialogue choice: lists the player's inventory stacks and
-/// sells a whole stack at <see cref="ItemData.sellPrice"/> each. Items priced 0 (keys, mission items) aren't listed.
-/// Sits on the Player prefab's canvas, like the inventory.
-/// </summary>
 public class UISimpleSellShop : MonoBehaviour
 {
     [Header("Shop UI")]
@@ -19,7 +14,7 @@ public class UISimpleSellShop : MonoBehaviour
     [SerializeField] private SellItemRow sellItemPrefab;
 
     private InventoryModel playerInventory;
-    private EconomyManager economy;   // only set (and listened to) while the shop is open
+    private EconomyManager economy;
 
     void Awake()
     {
@@ -38,7 +33,6 @@ public class UISimpleSellShop : MonoBehaviour
 
     void Start()
     {
-        // Same lookup as Inventory: the PlayerController above this canvas owns the inventory.
         PlayerController player = GetComponentInParent<PlayerController>();
         if (player == null)
             player = FindFirstObjectByType<PlayerController>();
@@ -56,7 +50,6 @@ public class UISimpleSellShop : MonoBehaviour
 
         InputModeService.RequestUI(this, isOpen);
 
-        // EconomyManager can wake up after this component (or come from another scene), so hook it up on open.
         SetEconomy(isOpen ? EconomyManager.Instance : null);
 
         if (isOpen)
@@ -78,7 +71,6 @@ public class UISimpleSellShop : MonoBehaviour
 
     private void RefreshSellList()
     {
-        // Only remove old rows so other UI under the list survives.
         foreach (Transform child in contentParent)
         {
             if (child.TryGetComponent(out SellItemRow _))
@@ -111,7 +103,6 @@ public class UISimpleSellShop : MonoBehaviour
             return;
         }
 
-        // The slot may have changed since the list was built.
         InventoryModel.Slot slot = playerInventory.Slots[slotIndex];
         if (slot.IsEmpty || slot.Item != item || slot.Stack != amount)
         {

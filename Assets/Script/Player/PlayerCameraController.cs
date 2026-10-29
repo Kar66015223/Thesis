@@ -2,7 +2,6 @@ using UnityEngine;
 using Unity.Cinemachine;
 using UnityEngine.Rendering;
 
-/// <summary>Everything the camera needs to know about the player for one frame.</summary>
 public readonly struct CameraViewState
 {
     public readonly bool IsRunning;
@@ -19,11 +18,6 @@ public readonly struct CameraViewState
     }
 }
 
-/// <summary>
-/// Third-person camera rig: follow target height, FOV and screen-space volumes.
-/// It is told the player's state each frame instead of having its public fields poked from outside.
-/// Field names are kept identical to the old version so Inspector values survive.
-/// </summary>
 [System.Serializable]
 public class PlayerCameraController
 {
@@ -68,7 +62,6 @@ public class PlayerCameraController
         targetHeight = standCamHeight;
     }
 
-    /// <summary>Camera-relative movement axes flattened onto the ground plane.</summary>
     public void GetPlanarBasis(out Vector3 forward, out Vector3 right)
     {
         Transform reference = cam != null ? cam.transform : followTarget;

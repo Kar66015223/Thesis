@@ -2,7 +2,6 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-/// <summary>Shows a message at full alpha, then fades it out. Owns its own coroutine.</summary>
 public class FadeOutText : MonoBehaviour
 {
     [SerializeField] private TMP_Text text;
@@ -24,7 +23,6 @@ public class FadeOutText : MonoBehaviour
         if (fadeRoutine != null)
             StopCoroutine(fadeRoutine);
 
-        // Coroutines can't start on an inactive object; just show the text in that case.
         fadeRoutine = isActiveAndEnabled ? StartCoroutine(FadeOut()) : null;
     }
 

@@ -1,10 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Coordinates the interaction feature: detector (what overlaps) -> handler (what is selected)
-/// -> UI (how it looks), and turns F / Space / scroll input into interactions.
-/// Moved here from PlayerController so the controller only deals with movement.
-/// </summary>
 public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] private GameObject player;
@@ -60,7 +55,6 @@ public class PlayerInteraction : MonoBehaviour
 
     private void TryInteract(InteractButton button)
     {
-        // While hiding, any interact button leaves the hiding spot.
         if (ctrl.IsHiding)
         {
             ctrl.CurrentHidingPlace.ToggleHide(player);

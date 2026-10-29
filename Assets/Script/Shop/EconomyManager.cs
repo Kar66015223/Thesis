@@ -1,10 +1,6 @@
 using System;
 using UnityEngine;
 
-/// <summary>
-/// The player's money. Kept alive across scenes like <see cref="MissionManager"/>, so money earned in the
-/// hideout is still there after a mission. Must sit on a root GameObject for DontDestroyOnLoad to work.
-/// </summary>
 public class EconomyManager : MonoBehaviour
 {
     public static EconomyManager Instance { get; private set; }
@@ -38,7 +34,6 @@ public class EconomyManager : MonoBehaviour
         SetMoney(CurrentMoney + amount);
     }
 
-    /// <summary>Checkpoint respawn: puts back the money the player had when the checkpoint was reached.</summary>
     public void RestoreMoney(int amount) => SetMoney(Mathf.Max(0, amount));
 
     private void SetMoney(int amount)

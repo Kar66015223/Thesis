@@ -4,18 +4,11 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 
-/// <summary>
-/// Adapter from the Input System to plain C# events.
-/// It only reports what was pressed; toggles (crouch, demon eye) are owned by the systems
-/// that can refuse them, so the toggle state can never get out of sync.
-/// The public On... methods are wired to PlayerInput's Unity Events in the Player prefab - keep their names.
-/// </summary>
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerInputHandler : MonoBehaviour
 {
     private PlayerInput input;
 
-    // Actions
     public event Action<Vector2> OnMoveInput;
     public event Action<Vector2> OnLookInput;
     public event Action<bool> OnRunInput;
@@ -24,12 +17,10 @@ public class PlayerInputHandler : MonoBehaviour
 
     public event Action OnInteractFInput;
     public event Action OnInteractSpacebarInput;
-    /// <summary>Mouse wheel; positive = up.</summary>
     public event Action<float> OnScrollInput;
 
     public event Action OnStruggleInput;
 
-    /// <summary>Bound in both the Player and UI maps so the same key closes the inventory again.</summary>
     public event Action OnInventoryPressed;
 
     public event Action<bool> OnPhysSkillMenuInput;
@@ -51,15 +42,12 @@ public class PlayerInputHandler : MonoBehaviour
         InputModeService.Refresh();
     }
 
-    // Ask again once the scene has finished waking up: on the first frame OnEnable can run before
-    // MapManager.Awake (no base/mission choice yet) or before PlayerInput turns on its Default Map.
     void Start() => InputModeService.Refresh();
 
     void OnDisable() => InputModeService.ActionMapChanged -= SwitchActionMap;
    
     void Update()
     {
-        // Read through the Input System (not legacy Input) so all input lives in one place.
         Mouse mouse = Mouse.current;
         if (mouse == null)
             return;

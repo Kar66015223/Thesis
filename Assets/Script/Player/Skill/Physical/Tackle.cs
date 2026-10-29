@@ -1,22 +1,16 @@
 using UnityEngine;
 
-/// <summary>
-/// Dashes to the enemy that was targeted when the dash started and stuns it on contact.
-/// The user can't be caught mid-dash, so tackling a chasing enemy no longer ends in a grab.
-/// Talks to enemies only through <see cref="IStunnable"/>, so it no longer creates enemy states itself.
-/// </summary>
 public class Tackle : Skill
 {
     private const int MaxCandidates = 8;
-    // Give up when the target can't be reached in time (it outran the dash, or a wall is in the way).
     private const float MaxDashTimeMultiplier = 2f;
     private const float HitTolerance = 0.05f;
 
     private readonly TackleData data;
     private readonly Collider[] overlapBuffer = new Collider[MaxCandidates];
 
-    private Component trackedTarget;   // nearest stunnable in range (shown by the tracking UI)
-    private Component dashTarget;      // locked when the dash starts
+    private Component trackedTarget;
+    private Component dashTarget;
     private bool isDashing;
     private float dashElapsed;
 
@@ -27,7 +21,6 @@ public class Tackle : Skill
         if (isDashing || trackedTarget == null || Context.Body == null || Context.Body.IsHiding)
             return;
 
-        // Lock the target now: losing sight of it mid-dash used to leave the player frozen forever.
         dashTarget = trackedTarget;
         isDashing = true;
         dashElapsed = 0f;
@@ -45,14 +38,12 @@ public class Tackle : Skill
 
     private void UpdateDash(float deltaTime)
     {
-        // The target was destroyed mid-dash.
         if (dashTarget == null)
         {
             EndDash(hit: false);
             return;
         }
 
-        // Steer every frame so a moving target is still reached, and stop at hit distance instead of pushing into it.
         Vector3 toTarget = FlatOffsetToTarget();
         float remaining = toTarget.magnitude - data.hitDistance;
         if (remaining > 0f)
@@ -64,7 +55,6 @@ public class Tackle : Skill
             Context.Body.Dash(direction * Mathf.Min(speed * deltaTime, remaining));
         }
 
-        // Measure after moving: collisions may have stopped the dash short of the target.
         if (FlatOffsetToTarget().magnitude <= data.hitDistance + HitTolerance)
         {
             EndDash(hit: true);
@@ -81,7 +71,6 @@ public class Tackle : Skill
         isDashing = false;
         Context.Body.SetCanMove(true);
 
-        // Stun before the user becomes catchable again so the target can't grab them on the same frame.
         if (hit && dashTarget is IStunnable stunnable)
             stunnable.Stun();
 

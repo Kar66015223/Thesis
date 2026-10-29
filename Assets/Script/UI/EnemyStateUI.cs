@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>View for one enemy indicator: a main icon (fillable) and an optional small sub icon.</summary>
 public class EnemyStateUI : MonoBehaviour
 {
     [SerializeField] private Image mainImg;

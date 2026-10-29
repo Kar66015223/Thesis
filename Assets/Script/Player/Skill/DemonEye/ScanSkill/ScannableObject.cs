@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Renders the object on top of walls while it is inside the Demon Eye scan.</summary>
 public class ScannableObject : MonoBehaviour, IScannable
 {
     [Header("Highlight Settings")]
@@ -9,7 +8,6 @@ public class ScannableObject : MonoBehaviour, IScannable
 
     private LayerHighlighter highlighter;
 
-    // Lazy so it works whatever the init order.
     private LayerHighlighter Highlighter => highlighter ??= new LayerHighlighter(gameObject, highlightLayerName);
 
     public void OnScanEnter() => Highlighter.Apply();

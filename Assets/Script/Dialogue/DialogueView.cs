@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Draws the dialogue panel: speaker name, line text and choice buttons. No flow logic.</summary>
 public class DialogueView
 {
     private readonly GameObject panel;
@@ -67,7 +66,6 @@ public class DialogueView
 
         foreach(Transform child in choicesParent)
         {
-            // ป้องกันการกดซ้ำก่อนปุ่มถูกลบ (block double clicks before the button is destroyed)
             if (child.TryGetComponent(out Button button))
                 button.interactable = false;
 

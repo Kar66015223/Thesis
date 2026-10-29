@@ -2,11 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Composition root for the HUD. It only holds the Inspector references and hands them to one
-/// presenter per panel; each presenter owns exactly one piece of UI behaviour.
-/// (Field names are unchanged so the references on the Player prefab survive.)
-/// </summary>
 public class UIManager : MonoBehaviour
 {
     [Header("Read UI")]

@@ -2,10 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Hold-to-open ring of physical skills. Slots are rebuilt only when the skill list changes
-/// (it used to re-check and re-layout every frame).
-/// </summary>
 public class SkillRadialMenu : MonoBehaviour
 {
     [SerializeField] private GameObject slotParent;

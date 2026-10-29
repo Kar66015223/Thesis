@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Opens/closes the password pad and tells it which lock it is for.</summary>
 public class PasswordPanelPresenter : IUIPresenter
 {
     private readonly GameObject panel;

@@ -1,14 +1,7 @@
 using UnityEngine;
 
-/// <summary>
-/// Holds the player: StartCatch grab -> the player's neck goes into the right hand and GotCaught plays ->
-/// both loop (CatchedPlayerLoop / GotCaughtLoop) while the player struggles. The struggle itself runs on the
-/// player (PlayerStruggle), which calls back through <see cref="IPlayerCatcher.ReleasePlayer"/> when it ends.
-/// </summary>
 public class CatchingState : EnemyStateBase
 {
-    // The struggle only starts in the loop, so if StartCatch or GotCaught never reported its end (behaviour missing
-    // from the state, clip that never finishes) the player would be held forever. Move on after this long instead.
     private const float MaxGrabPhaseTime = 5f;
 
     private readonly PlayerStruggle player;
@@ -59,14 +52,12 @@ public class CatchingState : EnemyStateBase
         if (!hasCaught)
             return;
 
-        // The loop leaves through Catching = false (to OutofCatch); before that only CancelCatch gets out of StartCatch.
         if (isStrangling)
             ctrl.Anim.SetCatching(false);
         else
             ctrl.Anim.CancelCatch();
     }
 
-    // StartCatch is over: the hand is where the neck should be.
     private void HoldPlayer()
     {
         ctrl.StartCatchAnimationFinished -= HoldPlayer;
@@ -76,7 +67,6 @@ public class CatchingState : EnemyStateBase
         isHolding = true;
         phaseTimer = 0f;
 
-        // Subscribe first: without a GotCaught animation the player reports it finished straight away.
         player.GotCaughtFinished += StartStrangling;
         player.BeginHold(ctrl.RightHand, ctrl.transform.position);
     }

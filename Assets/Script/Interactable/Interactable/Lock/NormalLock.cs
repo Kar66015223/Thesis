@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// One-sided lock. From <see cref="unlockableSide"/> it opens freely (unless it needs a key);
-/// from the other side it needs <see cref="requiredKey"/> when <see cref="needKey"/> is set.
-/// </summary>
 public class NormalLock : Lock
 {
     [SerializeField] private Transform unlockableSide;
@@ -21,20 +17,17 @@ public class NormalLock : Lock
             if (!needKey)
                 return Unlock();
 
-            // UIEvents.ShowTip("Locked from the other side.");
             return false;
         }
 
         if (!needKey)
         {
-            // UIEvents.ShowTip("Can't open from this side.");
             return false;
         }
 
         if (HasKey(interactor))
             return Unlock();
 
-        // UIEvents.ShowTip("Door locked, need key.");
         return false;
     }
 
@@ -50,7 +43,6 @@ public class NormalLock : Lock
         return key != null && interactor.TryGetComponent(out IItemHolder holder) && holder.HasItem(key);
     }
 
-    // Keeps existing scenes working until requiredKey is assigned in the Inspector.
     private ItemData ResolveRequiredKey()
     {
         if (requiredKey != null)

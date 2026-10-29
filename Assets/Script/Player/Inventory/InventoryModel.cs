@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-/// <summary>
-/// Pure inventory rules (stacking, swapping, sorting) with no UI code,
-/// so it can be unit-tested and shown by any view.
-/// </summary>
 public class InventoryModel : IItemHolder
 {
     public class Slot
@@ -65,7 +61,6 @@ public class InventoryModel : IItemHolder
         return space >= amount;
     }
 
-    /// <summary>All-or-nothing: returns false and changes nothing when there is not enough room.</summary>
     public bool AddItem(ItemData item, int amount = 1)
     {
         if (!CanAdd(item, amount))
@@ -74,7 +69,6 @@ public class InventoryModel : IItemHolder
         int maxStack = MaxStackOf(item);
         int remaining = amount;
 
-        // Top up existing stacks first, then use empty slots.
         foreach (Slot slot in slots)
         {
             if (remaining == 0)
@@ -124,7 +118,6 @@ public class InventoryModel : IItemHolder
         Changed?.Invoke();
     }
 
-    /// <summary>Drag-and-drop: merges into a matching stack, otherwise swaps.</summary>
     public void Move(int from, int to)
     {
         if (!IsValid(from) || !IsValid(to) || from == to || slots[from].IsEmpty)
@@ -155,7 +148,6 @@ public class InventoryModel : IItemHolder
 
     public void Sort(bool ascending = true)
     {
-        // Group first so partial stacks of the same item are merged.
         var entries = slots
             .Where(s => !s.IsEmpty)
             .GroupBy(s => s.Item)
@@ -184,10 +176,8 @@ public class InventoryModel : IItemHolder
         Changed?.Invoke();
     }
 
-    /// <summary>Copy of every slot's contents, index-aligned with <see cref="Slots"/>.</summary>
     public (ItemData item, int stack)[] Snapshot() => slots.Select(s => (s.Item, s.Stack)).ToArray();
 
-    /// <summary>Puts back a <see cref="Snapshot"/>. Doesn't raise <see cref="ItemAdded"/>, since nothing was picked up.</summary>
     public void Restore(IReadOnlyList<(ItemData item, int stack)> contents)
     {
         for (int i = 0; i < slots.Length; i++)

@@ -21,7 +21,6 @@ public class EnemyVisionEditor : Editor
         Handles.DrawLine(origin, origin + viewAngleA * radius);
         Handles.DrawLine(origin, origin + viewAngleB * radius);
 
-        // Top and bottom of the cone's height band, joined at the eye and at both edges.
         Vector3 halfHeight = Vector3.up * fov.ViewVerticalSize / 2f;
         Vector3 bottom = origin - halfHeight;
         Vector3 top = origin + halfHeight;

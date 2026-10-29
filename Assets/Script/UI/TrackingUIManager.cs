@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Shows a single screen-edge marker for the current tracking target (e.g. the tackle target).
-/// Switching targets now removes the old marker (it used to be left behind).
-/// </summary>
 public class TrackingUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject trackingImgPrefab;

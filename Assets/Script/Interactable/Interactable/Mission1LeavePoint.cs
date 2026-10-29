@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Returns to the hideout once the interactor carries the required item.</summary>
 public class Mission1LeavePoint : Interactable
 {
     [Tooltip("Item needed to leave. If empty, the item from the scene's MorseCode pickup is used.")]
@@ -18,7 +17,6 @@ public class Mission1LeavePoint : Interactable
             UIEvents.ShowTip("I need to find the morse code first.");
     }
     
-    // Keeps the existing scene working until requiredItem is assigned in the Inspector.
     private ItemData ResolveRequiredItem()
     {
         if (requiredItem != null)

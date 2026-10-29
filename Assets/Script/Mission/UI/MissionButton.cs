@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 
-/// <summary>One row of the mission list. Refreshes itself when its mission's status changes.</summary>
 public class MissionButton : MonoBehaviour
 {
     [SerializeField] private TMP_Text nameText;

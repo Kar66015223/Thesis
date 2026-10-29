@@ -1,6 +1,5 @@
 using TMPro;
 
-/// <summary>Shows short hint messages that fade out.</summary>
 public class TipPresenter : IUIPresenter
 {
     private readonly TMP_Text tipsText;

@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// On the enemy's Found state: tells the controller when the animation ends. Stopping and resuming movement is
-/// ChaseState's job, because the states set Agent.isStopped themselves and would undo it from here.
-/// </summary>
 public class FoundStateBehavior : StateMachineBehaviour
 {
     private EnemyController ctrl;

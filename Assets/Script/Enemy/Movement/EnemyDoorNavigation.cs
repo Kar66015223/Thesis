@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// Wraps NavMeshAgent.SetDestination: when the path to the destination is blocked by a closed door,
-/// it walks to the door, opens it, then re-paths. States just call SetDestination and check HasArrived.
-/// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyDoorNavigation : MonoBehaviour
 {
@@ -18,7 +14,6 @@ public class EnemyDoorNavigation : MonoBehaviour
 
     private const float DoorApproachStoppingDistance = 0.1f;
     private const float MinRepathDelay = 0.05f;
-    // Destinations (idle points) can sit a little above the floor; snap them onto the NavMesh before path queries.
     private const float DestSampleRadius = 2f;
 
     private NavMeshAgent agent;
@@ -116,16 +111,10 @@ public class EnemyDoorNavigation : MonoBehaviour
         IsBlocked = true;
         nextDoorSearchTime = Time.time + retryDelay;
 
-        // A door that was just opened only stops carving the NavMesh once it stops swinging, which can be after
-        // the post-open re-path. Re-path now so the next check isn't judged on that stale path.
         agent.SetDestination(finalDest);
         return false;
     }
 
-    /// <summary>
-    /// The first closed door on the cheapest route to the destination (see <see cref="DoorRoutePlanner"/>),
-    /// so when several doors stand in the way they're opened in route order.
-    /// </summary>
     private bool TryFindDoor(out Door door, out Transform approachPoint)
     {
         Vector3 dest = NavMesh.SamplePosition(finalDest, out NavMeshHit hit, DestSampleRadius, agent.areaMask)

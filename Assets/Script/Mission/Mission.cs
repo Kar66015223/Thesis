@@ -1,10 +1,5 @@
 using System;
 
-/// <summary>
-/// A mission's data and status rules. It no longer holds a reference to its UI button:
-/// views subscribe to <see cref="StatusChanged"/> instead (model doesn't know the view).
-/// Status transitions are guarded here so subclasses can't put a mission in an invalid state.
-/// </summary>
 public abstract class Mission
 {
     protected Mission(string name, string desc, MissionType type, string sceneName)
@@ -51,10 +46,6 @@ public abstract class Mission
         OnCompleted();
     }
 
-    /// <summary>
-    /// Puts the mission back to a status saved at a checkpoint. Unlike Accept/Complete/Submit it may go backwards,
-    /// and it doesn't replay their side effects (tips); subclasses re-sync their event subscriptions in <see cref="OnStatusRestored"/>.
-    /// </summary>
     public void RestoreStatus(MissionStatus status)
     {
         if (status == Status)

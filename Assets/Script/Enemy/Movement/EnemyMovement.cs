@@ -2,10 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// Final agent speed = base speed (set by the current state) x every active multiplier
-/// (route step, future slow/haste effects...). Each source owns its own key, so they never overwrite each other.
-/// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyMovement : MonoBehaviour
 {

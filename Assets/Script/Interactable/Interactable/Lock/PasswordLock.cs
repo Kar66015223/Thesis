@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Opens the password pad. The correct code never leaves this class: the UI submits a guess
-/// through <see cref="IPasswordLock.TrySubmit"/>.
-/// </summary>
 public class PasswordLock : Lock, IPasswordLock
 {
     [SerializeField] private string correctPassword = "1111";
@@ -13,7 +9,7 @@ public class PasswordLock : Lock, IPasswordLock
     {
         waitingInteractor = interactor;
         UIEvents.TogglePasswordPanel(true, this);
-        return false; // Opens later, once the right code is submitted.
+        return false;
     }
 
     public bool TrySubmit(string code)

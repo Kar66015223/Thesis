@@ -21,11 +21,9 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
 
     public EnemyAnimation Anim { get; private set; }
 
-    /// <summary>Raised by <see cref="FoundStateBehavior"/> when the Found animation ends; ChaseState waits for it.</summary>
     public event System.Action FoundAnimationFinished;
     public void NotifyFoundAnimationFinished() => FoundAnimationFinished?.Invoke();
 
-    /// <summary>Raised by <see cref="StartCatchStateBehavior"/> when the grab reaches the player; CatchingState waits for it.</summary>
     public event System.Action StartCatchAnimationFinished;
     public void NotifyStartCatchAnimationFinished() => StartCatchAnimationFinished?.Invoke();
 
@@ -72,14 +70,11 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public float ConfirmWaitTime => confirmWaitTime;
     public float ConfirmGiveUpTime => confirmGiveUpTime;
 
-    // IPlayerCatcher
     public float CatchDamage => catchDamage;
     public float DamageInterval => damageCooldown;
-    // IPlayerCatcher
 
     public float StunTime => stunTime;
 
-    // The player hits the enemy every frame they keep pushing; contact with gaps shorter than this is one bump.
     private const float BumpContactGap = 0.25f;
     private const float RoutineSnapRadius = 2f;
     private const string RightHandBoneName = "hand.r";
@@ -154,7 +149,6 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
 
     public void SetDestination(Vector3 dest) => DoorNavigation.SetDestination(dest);
 
-    /// <summary>Route step changed to "stand here".</summary>
     public void ApplyIdlePoint(Transform point)
     {
         idlePoint = point;
@@ -164,7 +158,6 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
             SetDestination(idlePoint.position);
     }
 
-    /// <summary>Route step changed to "patrol these points".</summary>
     public void ApplyPatrolPoints(Waypoint[] points)
     {
         patrolPoints = points;
@@ -177,16 +170,11 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
             ImpulseSource.GenerateImpulse();
     }
     
-    // Senses
     public void OnHearSound(SoundSignal sound) => CurrentState?.OnHearSound(sound);
     public void OnSeenTarget(Transform target) => CurrentState?.OnSeenTarget(target);
 
-    // IStunnable
     public void Stun() => ChangeState(new StunnedState(this));
 
-    // IBumpable: treated as a "look at" noise where the player is, so each state decides like it does for sounds.
-    // Patrol, Idle and Distracted switch to DistractedState; Confirming, Chase, Catching and Stunned ignore it
-    // instead of being cut short.
     public void OnBumped(Transform bumper)
     {
         bool isNewBump = Time.time - lastBumpTime > BumpContactGap;
@@ -196,10 +184,8 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
             CurrentState?.OnHearSound(new SoundSignal(bumper.position, 0f, EnemyReaction.LookAt));
     }
 
-    // IPlayerCatcher
     public void OnCatchDamageDealt() => ShakeScreen();
 
-    // Leaving CatchingState (either way) ends the catch animation, so it isn't repeated here.
     public void ReleasePlayer(bool playerEscaped)
     {
         if (playerEscaped)
@@ -223,31 +209,22 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
         return null;
     }
 
-    // Chasing, searching or being stunned was about the player before they died, so drop it.
-    // Teleport rather than walk back, so the enemies are in place the moment the player gets control again.
     private void HandlePlayerRespawned() => SnapToRoutine();
 
-    /// <summary>
-    /// Puts the enemy straight onto the spot its routine walks to (the idle point, or the first patrol point,
-    /// facing the same way) and restarts the routine from there.
-    /// </summary>
     public void SnapToRoutine()
     {
         Transform spot = patrolPoints != null && patrolPoints.Length > 0 && patrolPoints[0] != null
             ? patrolPoints[0].wayPoint
             : idlePoint;
 
-        // A half-finished door approach would otherwise keep steering towards the old door after the warp.
         DoorNavigation.CancelDoorApproach();
 
-        // Points can sit a little above the floor, and Warp needs a spot on the NavMesh.
         if (spot != null && NavMesh.SamplePosition(spot.position, out NavMeshHit hit, RoutineSnapRadius, Agent.areaMask)
             && Agent.Warp(hit.position))
         {
             transform.rotation = Quaternion.Euler(0f, spot.eulerAngles.y, 0f);
         }
 
-        // Restart even an enemy that was already patrolling, so it heads on from the new spot instead of an old target.
         ReturnToDefaultState();
     }
 

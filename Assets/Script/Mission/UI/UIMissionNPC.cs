@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Mission board opened by the mission NPC: list -> detail -> accept.</summary>
 public class UIMissionNPC : MonoBehaviour
 {
     [Header("Mission List")]

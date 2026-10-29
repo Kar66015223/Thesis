@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Tiny reusable timer so every skill doesn't hand-roll "isCooldown / currentCooldown" fields.</summary>
 public class Cooldown
 {
     private float remaining;

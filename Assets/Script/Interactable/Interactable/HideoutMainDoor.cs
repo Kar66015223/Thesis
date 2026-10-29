@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Leaves the hideout for the scene of the mission in progress.</summary>
 public class HideoutMainDoor : Interactable
 {
     protected override void OnInteract(GameObject interactor)

@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>One 0-9 digit wheel of the password pad.</summary>
 public class PasswordSlot : MonoBehaviour
 {
     private const int DigitCount = 10;

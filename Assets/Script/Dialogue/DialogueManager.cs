@@ -2,12 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// Runs a conversation from a <see cref="DialogueData"/> asset.
-/// Responsibilities are split: <see cref="DialogueView"/> draws, <see cref="DialogueInput"/> reads keys,
-/// <see cref="InputModeService"/> owns the cursor, and this class only drives the conversation flow.
-/// Conversations start from <see cref="UIEvents.RequestDialogue"/>, so NPCs don't need this singleton.
-/// </summary>
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
@@ -33,15 +27,12 @@ public class DialogueManager : MonoBehaviour
     private DialogueData currentDialogue;
     private DialogueStage dialogueStage;
 
-    // ระบบบทสนทนาต่อเนื่อง (sequential conversation)
     private bool isSequenceDialogue;
     private int currentLineIndex;
 
-    // สถานะหลังเลือกคำตอบ (after picking a choice with no follow-up: click to close)
     private bool waitingForCloseClick;
     private int choiceSelectedFrame = -1;
 
-    // ป้องกันการกดปุ่มเริ่มสนทนาแล้วข้ามประโยคแรกทันที (don't skip the first line with the key that opened it)
     private bool waitForInputRelease;
     private int dialogueOpenedFrame = -1;
 
@@ -79,7 +70,6 @@ public class DialogueManager : MonoBehaviour
         if (!IsDialogueOpen)
             return;
 
-        // รอให้ปล่อยปุ่มที่ใช้เปิด Dialogue ก่อน (wait until the opening key is released)
         if (waitForInputRelease)
         {
             if (!DialogueInput.AnyHeld)
@@ -88,7 +78,6 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        // หลังเลือกคำตอบที่ไม่มีบทสนทนาถัดไป คลิกเมาส์อีกครั้งเพื่อปิด Panel
         if (waitingForCloseClick)
         {
             if (Time.frameCount > choiceSelectedFrame && DialogueInput.ClickPressed)
@@ -97,7 +86,6 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        // ป้องกันการรับคลิกในเฟรมที่เริ่มบทสนทนา (ignore the click from the opening frame)
         bool clicked = Time.frameCount > dialogueOpenedFrame && DialogueInput.ClickPressed;
         if (!clicked && !DialogueInput.ContinuePressed)
             return;
@@ -110,12 +98,9 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(DialogueData data)
     {
-        // ป้องกันการเปิด Dialogue ซ้อน (no nested dialogues)
         if (data == null || view == null || !view.IsValid || IsDialogueOpen)
             return;
 
-        // หยุดการเคลื่อนที่ของ Player (freeze the player): the UI action map turns the Player map off.
-        // Don't disable PlayerInput itself - it can't switch maps while disabled.
         InputModeService.RequestUI(this, true);
 
         waitForInputRelease = true;
@@ -136,7 +121,6 @@ public class DialogueManager : MonoBehaviour
         dialogueOpenedFrame = -1;
         waitForInputRelease = false;
 
-        // คืนสถานะการเดินเดิม (restore player movement)
         InputModeService.RequestUI(this, false);
     }
 
@@ -164,7 +148,6 @@ public class DialogueManager : MonoBehaviour
     {
         DialogueLine[] lines = currentDialogue.conversationLines;
 
-        // ข้ามบรรทัดที่ไม่ได้กำหนดข้อมูล (skip empty entries)
         while (currentLineIndex < lines.Length && lines[currentLineIndex] == null)
             currentLineIndex++;
 
@@ -181,7 +164,6 @@ public class DialogueManager : MonoBehaviour
 
     private string GetSequenceSpeaker(DialogueLine line)
     {
-        // บรรทัดแรกใช้ชื่อจาก Player Name, บรรทัดถัดไปใช้ Speaker Name, ถ้าไม่มีชื่อให้ใช้ชื่อ NPC
         string speaker = currentLineIndex == 0 ? currentDialogue.playerName : line.speakerName;
 
         if (currentLineIndex == 0 && string.IsNullOrWhiteSpace(speaker))
@@ -194,7 +176,6 @@ public class DialogueManager : MonoBehaviour
     {
         currentLineIndex++;
 
-        // อ่านครบทุกบรรทัดแล้วปิด Panel
         if (currentLineIndex < currentDialogue.conversationLines.Length)
             ShowSequenceLine();
         else
@@ -236,17 +217,13 @@ public class DialogueManager : MonoBehaviour
         switch (dialogueStage)
         {
             case DialogueStage.PlayerLine:
-                // แสดงบทพูด NPC หลังจาก Player พูด
                 ShowNpcDialogue();
                 break;
 
             case DialogueStage.NpcLine:
-                // ถ้าไม่มีตัวเลือก คลิกอีกครั้งเพื่อปิด
                 if (currentDialogue.choices == null || currentDialogue.choices.Length == 0)
                     EndDialogue();
                 break;
-
-                // ChoiceResponse: closing is handled in Update().
         }
     }
 
@@ -255,10 +232,8 @@ public class DialogueManager : MonoBehaviour
         if (choice == null || currentDialogue == null)
             return;
 
-        // ป้องกันการกดตัวเลือกซ้ำ
         view.ClearChoices();
 
-        // The shop replaces the conversation, so the two panels never sit on top of each other.
         if (choice.openShopUI)
         {
             EndDialogue();
@@ -272,14 +247,12 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        // ถ้ามีบทสนทนาถัดไป ให้เปลี่ยนทันที
         if (choice.nextDialogue != null)
         {
             LoadDialogue(choice.nextDialogue);
             return;
         }
 
-        // ไม่มีบทสนทนาถัดไป: แสดงคำตอบและรอคลิกเมาส์เพื่อปิด
         waitingForCloseClick = true;
         choiceSelectedFrame = Time.frameCount;
         dialogueStage = DialogueStage.ChoiceResponse;

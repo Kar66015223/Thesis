@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Shows the text of a readable item (notes, codes...).</summary>
 public class ReadPanelPresenter : IUIPresenter
 {
     private readonly GameObject panel;

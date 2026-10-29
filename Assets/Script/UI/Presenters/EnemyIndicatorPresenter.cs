@@ -1,10 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Floating "!" / "?" icons over enemies. Enemies only report their indicator; this class owns
-/// the sprite mapping, so the enemy code no longer knows which icon is used for what.
-/// </summary>
 public class EnemyIndicatorPresenter : IUIPresenter
 {
     public struct Sprites
@@ -66,7 +62,6 @@ public class EnemyIndicatorPresenter : IUIPresenter
 
     private void HandleConfirmProgress(Transform enemy, float progress)
     {
-        // Only the "?" icon fills up; every other icon stays full.
         if (enemy != null &&
             activeUIs.TryGetValue(enemy, out EnemyStateUI ui) && ui != null &&
             currentStates.TryGetValue(enemy, out EnemyState state) && state == EnemyState.Confirming)

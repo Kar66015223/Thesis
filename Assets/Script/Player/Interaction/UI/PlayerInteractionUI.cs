@@ -2,10 +2,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-/// <summary>
-/// Pure view: draws the pick-up list and the "[F]" prompt from what the handler decided.
-/// It never changes the selection itself (it used to, which caused the item-selection bug).
-/// </summary>
 [System.Serializable]
 public class PlayerInteractionUI
 {
@@ -75,7 +71,6 @@ public class PlayerInteractionUI
 
     private void RenderPrompt(PlayerInteractionHandler handler)
     {
-        // Show the prompt for whatever F would use; if F goes to the item list, show Space's target instead.
         if (!TryShowPrompt(handler.GetTarget(InteractButton.F)) &&
             !TryShowPrompt(handler.GetTarget(InteractButton.Space)))
         {

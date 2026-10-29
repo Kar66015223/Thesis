@@ -3,16 +3,11 @@ using UnityEngine;
 using Unity.AI.Navigation;
 using System.Collections.Generic;
 
-/// <summary>
-/// A door the player walks through and enemies can open. Locking rules are delegated to an optional
-/// <see cref="Lock"/> child (Strategy pattern), so new lock types never require changing this class.
-/// </summary>
 [RequireComponent(typeof(DoorSound))]
 public class Door : Interactable
 {
     private static readonly int IsOpenHash = Animator.StringToHash("IsOpen");
 
-    // Registry so enemies don't have to call FindObjectsByType<Door>() every time they're blocked.
     private static readonly List<Door> activeDoors = new();
     public static IReadOnlyList<Door> ActiveDoors => activeDoors;
 
@@ -26,10 +21,6 @@ public class Door : Interactable
     private Lock currentLock;
     private Coroutine colliderRoutine;
 
-    /// <summary>
-    /// Time.time when a door last opened, closed, appeared or disappeared, i.e. when enemy routes may have changed
-    /// (see <see cref="DoorRoutePlanner"/>).
-    /// </summary>
     public static float LastRouteChangeTime { get; private set; } = float.NegativeInfinity;
 
     public bool IsOpen { get; private set; }
@@ -37,10 +28,6 @@ public class Door : Interactable
     public Transform PlayerPointFront => playerPointFront;
     public Transform PlayerPointBack => playerPointBack;
 
-    /// <summary>
-    /// The door enemies treat as one unit: the topmost Door above this one (a double door's root, whose
-    /// Animator swings both leaves), or this door itself.
-    /// </summary>
     public Door Root { get; private set; }
 
     private DoorSound sound;
@@ -53,7 +40,6 @@ public class Door : Interactable
         Root = FindRootDoor();
         sound = GetComponent<DoorSound>();
 
-        // Closed doors block enemy paths until an enemy opens one (see EnemyDoorNavigation).
         if (link != null)
             link.enabled = IsOpen;
     }
@@ -92,8 +78,6 @@ public class Door : Interactable
     {
         Transform targetPoint = GetClosestPoint(interactor.transform.position);
 
-        // Movement is locked by the interact animation (InteractStateBehavior), not here:
-        // locking it here froze the player after a password door, which plays no animation.
         if (interactor.TryGetComponent(out IInteractorBody body))
             body.Teleport(targetPoint.position, targetPoint.rotation);
         else
@@ -122,13 +106,11 @@ public class Door : Interactable
         return true;
     }
 
-    /// <summary>Puts the door back to how it was at a checkpoint.</summary>
     public void RestoreState(bool open, bool locked)
     {
         if (currentLock != null && currentLock.IsLocked != locked)
             currentLock.RestoreLocked(locked);
 
-        // Only when it changed: SetDoorOpen also turns the enemy NavMeshLink on for good.
         if (IsOpen != open)
             SetDoorOpen(open);
     }
@@ -150,8 +132,6 @@ public class Door : Interactable
         IsOpen = open;
         LastRouteChangeTime = Time.time;
 
-        // Once a door has been opened the link stays on, so an agent that is already
-        // crossing it never has the link disabled under its feet.
         if (link != null)
             link.enabled = true;
 

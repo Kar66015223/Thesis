@@ -3,7 +3,6 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Builds the code from the digit slots and submits it to the lock. It never sees the correct code.</summary>
 public class PasswordInputUI : MonoBehaviour
 {
     [SerializeField] private List<PasswordSlot> allSlots = new();

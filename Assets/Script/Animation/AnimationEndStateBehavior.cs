@@ -1,10 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Base for state behaviours that report when their state's clip has played to the end, once per visit.
-/// Uses normalizedTime instead of OnStateExit, because StartCatch and GotCaught hold their last frame until code
-/// sets the parameter that leaves them. Not reported if the state is left before the end (a cancelled catch).
-/// </summary>
 public abstract class AnimationEndStateBehavior : StateMachineBehaviour
 {
     private bool hasReported;

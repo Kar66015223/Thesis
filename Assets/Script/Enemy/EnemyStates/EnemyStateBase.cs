@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Default no-op implementations so a state only overrides what it cares about
-/// (states used to repeat empty OnHearSound/OnSeenTarget/Exit methods), plus shared helpers.
-/// </summary>
 public abstract class EnemyStateBase : IEnemyState
 {
     protected const float ApproachStoppingDistance = 2f;

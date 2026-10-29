@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>"Was that the player?" - stops, stares, and either confirms (Chase) or gives up.</summary>
 public class ConfirmingState : EnemyStateBase
 {
     private readonly Transform target;

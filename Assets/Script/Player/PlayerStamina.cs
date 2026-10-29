@@ -1,10 +1,6 @@
 using UnityEngine;
 using System;
 
-/// <summary>
-/// Stamina rules only. Other components tell it what the player is doing (SetMoving / SetRunIntent)
-/// and listen to <see cref="Exhausted"/> instead of stamina calling sound or camera code itself.
-/// </summary>
 public class PlayerStamina : MonoBehaviour
 {
     [SerializeField] private float maxStamina = 100.0f;

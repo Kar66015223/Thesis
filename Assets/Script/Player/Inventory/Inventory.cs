@@ -1,11 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Grid view + context menu for an <see cref="InventoryModel"/>, opened and closed with the inventory key (Tab).
-/// All item rules live in the model; this class only builds slot views and forwards clicks.
-/// Sits on an always-active object (PlayerCanvas), not on the panel it hides, so it still hears the key while closed.
-/// </summary>
 public class Inventory : MonoBehaviour
 {
     [Header("Inventory")]
@@ -94,8 +89,6 @@ public class Inventory : MonoBehaviour
         if (panel == null || isOpen == IsOpen)
             return;
 
-        // Don't open on top of another UI (dialogue, password pad, ...) or while struggling.
-        // Checked against those maps, not the mission map, so it still opens in the hideout's Player_Base map.
         string currentMap = InputModeService.CurrentActionMap;
         if (isOpen && (currentMap == PlayerConstants.ACTIONMAP_UI || currentMap == PlayerConstants.ACTIONMAP_STRUGGLE))
             return;
@@ -107,8 +100,6 @@ public class Inventory : MonoBehaviour
         InputModeService.RequestUI(this, isOpen);
     }
 
-    // Getting grabbed switches to the Struggle map, where the inventory key can't close the panel.
-    // Watched on the map, not StruggleToggled: the struggle prompt only appears once the strangle loop starts.
     private void HandleActionMapChanged(string actionMap)
     {
         if (actionMap == PlayerConstants.ACTIONMAP_STRUGGLE)
@@ -138,21 +129,11 @@ public class Inventory : MonoBehaviour
         OnFinishMiniCanvas();
     }
 
-    /// <summary>Removes the item from the slot without spawning it in the world.</summary>
     public void DestroyItem()
     {
         model?.ClearSlot(contextSlotIndex);
         OnFinishMiniCanvas();
     }
-
-    // public void OpenMiniCanvas(int slotIndex, Vector2 screenPosition)
-    // {
-    //     if (miniCanvas == null) return;
-
-    //     contextSlotIndex = slotIndex;
-    //     miniCanvas.position = screenPosition;
-    //     miniCanvas.gameObject.SetActive(true);
-    // }
 
     public void OnFinishMiniCanvas()
     {
@@ -175,7 +156,6 @@ public class Inventory : MonoBehaviour
             return;
         }
 
-        // Only remove old slots so other UI under the panel survives.
         foreach (Transform child in inventoryPanel)
         {
             if (child.GetComponent<InventorySlot>() != null)

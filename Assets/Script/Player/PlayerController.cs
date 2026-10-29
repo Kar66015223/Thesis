@@ -1,12 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Composition root for the player's body: turns movement input into motion and owns the
-/// movement state (crouch / run / hiding / using skill). The actual work is delegated to
-/// <see cref="PlayerMotor"/>, <see cref="PlayerCameraController"/> and <see cref="PlayerAnimation"/>.
-/// Interaction, skills, stamina and health live in their own components.
-/// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInputHandler))]
 public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, IItemHolder, ISkillUser
@@ -51,20 +45,14 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     private bool isUsingSkill;
 
     public bool IsCrouching { get; private set; }
-    /// <summary>Crouching while the slow crouch key is held, whichever of the two happened first.</summary>
     public bool IsSlowCrouching { get; private set; }
     public bool IsRunning => stamina != null && stamina.IsRunning;
     public bool IsHiding => CurrentHidingPlace != null;
     public Hidable CurrentHidingPlace { get; private set; }
 
-    /// <summary>Running, using a skill or hiding all block starting a new interaction.</summary>
     public bool CanStartInteraction =>
         CurrentState == PlayerState.Normal || CurrentState == PlayerState.Crouching;
 
-    /// <summary>
-    /// Collected items. Lives here only until the inventory gets its own component on the Player prefab;
-    /// other code talks to it through <see cref="IItemHolder"/>, so moving it later is a one-line change.
-    /// </summary>
     public InventoryModel Inventory { get; } = new(InventoryCapacity);
 
     void Awake()
@@ -113,7 +101,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
             health.Revived -= HandleRevived;
         }
 
-        // Releases arrive while we're unsubscribed, so don't keep walking on stale input.
         moveInput = Vector2.zero;
         isRunHeld = false;
         isSlowCrouchHeld = false;
@@ -149,8 +136,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         RefreshSlowCrouch();
     }
 
-    // Always store the key, even while standing: dropping presses/releases outside the crouch could leave
-    // slow crouch stuck on (stand up while holding it, then let go) or never start (hold it, then crouch).
     private void HandleSlowCrouch(bool isHeld)
     {
         isSlowCrouchHeld = isHeld;
@@ -169,7 +154,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         PlayerEvents.RaiseSlowCrouch(isSlow);
     }
 
-    // Same ratio as the movement, so the feet keep matching the ground.
     private void ApplyCrouchWalkSpeed()
     {
         float animSpeed = IsSlowCrouching && crouchSpeed > 0f ? slowCrouchSpeed / crouchSpeed : 1f;
@@ -243,7 +227,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
             motor.SetStance(standColliderY, standColliderHeight);
     }
 
-    /// <summary>Highest priority first: hiding beats everything, crouching is the weakest.</summary>
     private void UpdateState()
     {
         if (IsHiding)
@@ -275,7 +258,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     public Vector3 Position => transform.position;
     public Vector3 Forward => GetForward();
 
-    /// <summary>Script-driven movement without gravity (e.g. the tackle dash).</summary>
     public void Dash(Vector3 delta) => motor.Displace(delta);
 
     public void FaceDirection(Vector3 direction)
@@ -332,10 +314,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         SetModelVisible(true);
     }
 
-    /// <summary>
-    /// Only toggles the renderers: deactivating the model would also disable everything parented to it,
-    /// including the interaction trigger that listens for the key to leave the hiding spot.
-    /// </summary>
     private void SetModelVisible(bool isVisible)
     {
         if (playerModel == null)
@@ -343,7 +321,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
         if (isVisible)
         {
-            // Restore only what we hid, so renderers that were already off (debug meshes) stay off.
             foreach (Renderer hidden in hiddenRenderers)
             {
                 if (hidden != null)
@@ -370,11 +347,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
     public Transform GetBone(HumanBodyBones bone) => anim.GetBone(bone);
 
-    /// <summary>
-    /// An enemy has the player by the neck: stop moving and colliding (PlayerStruggle keeps the body in the enemy's
-    /// hand, and a CharacterController would fight that), face the enemy and play GotCaught.
-    /// Returns false if there's no GotCaught animation to wait for.
-    /// </summary>
     public bool BeginCaught(Vector3 catcherPosition)
     {
         SetCanMove(false);
@@ -390,13 +362,11 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     {
         anim.StopGotCaught();
 
-        // Swapping the controller back reset its parameters: restore the stance the player is still in.
         anim.SetCrouch(IsCrouching);
         ApplyCrouchWalkSpeed();
 
         motor.SetEnabled(true);
 
-        // A player who died in the enemy's hands stays frozen for the game over screen.
         if (health == null || !health.IsDead)
             SetCanMove(true);
     }
@@ -405,7 +375,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
     #region Collisions
 
-    // Only fires while this CharacterController moves into something, i.e. the player walked into it.
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         IBumpable bumpable = hit.collider.GetComponentInParent<IBumpable>();

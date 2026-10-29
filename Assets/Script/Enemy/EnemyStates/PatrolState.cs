@@ -4,13 +4,12 @@ using UnityEngine;
 public class PatrolState : EnemyStateBase
 {
     private const float ArrivalTolerance = 0.1f;
-    // Points the enemy walks through switch to the next one a little early, before the agent brakes to a stop.
     private const float PassThroughTolerance = 0.5f;
 
     private int curTargetIndex;
     private float nextMoveTime;
     private bool destinationSet;
-    private Transform waitPoint;   // faced for as long as the enemy waits there
+    private Transform waitPoint;
 
     public PatrolState(EnemyController ctrl) : base(ctrl) { }
 
@@ -30,7 +29,6 @@ public class PatrolState : EnemyStateBase
 
         if (Time.time < nextMoveTime)
         {
-            // RotateTowards only turns a step per call, so keep calling it for the whole wait.
             if (waitPoint != null)
                 RotateTowards(waitPoint.rotation);
 
@@ -42,7 +40,6 @@ public class PatrolState : EnemyStateBase
 
         if (!destinationSet)
         {
-            // Moving again: hand rotation back to the agent so it faces along its path.
             ctrl.Agent.updateRotation = true;
             waitPoint = null;
 
@@ -60,7 +57,6 @@ public class PatrolState : EnemyStateBase
             {
                 nextMoveTime = Time.time + ctrl.PatrolWaitTime;
 
-                // Otherwise the agent keeps overriding the rotation while it settles on the point.
                 ctrl.Agent.updateRotation = false;
                 waitPoint = target != null ? target.wayPoint : null;
             }

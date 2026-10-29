@@ -1,10 +1,5 @@
 using System;
 
-/// <summary>
-/// Tracks the enemy's current route step (from EnemyManager): applies its points and speed,
-/// pauses it while the enemy is busy (chasing, stunned...) and resumes it afterwards.
-/// When a timed wait at an idle point finishes it raises <see cref="StepWaitCompleted"/>.
-/// </summary>
 public class EnemyStepTracking
 {
     private const string SpeedModifierKey = "Step";
@@ -25,7 +20,6 @@ public class EnemyStepTracking
 
     public void StartStep(EnemyMovementStep step)
     {
-        // A level event can advance the route mid-wait; don't carry the old step's wait into the new one.
         CancelWaiting();
         activeStep = step;
         stepInterrupted = false;
@@ -97,7 +91,6 @@ public class EnemyStepTracking
         else
             ctrl.ApplyPatrolPoints(activeStep.patrolPath.points);
 
-        // Only re-enter the routine state if the enemy is currently doing its routine.
         if (ctrl.IsInDefaultState)
             ctrl.ReturnToDefaultState();
     }

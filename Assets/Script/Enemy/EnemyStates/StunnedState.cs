@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Blind and frozen for <see cref="EnemyController.StunTime"/> seconds.</summary>
 public class StunnedState : EnemyStateBase
 {
     private float timer;

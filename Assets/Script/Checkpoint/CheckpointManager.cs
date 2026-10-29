@@ -12,16 +12,12 @@ public class CheckpointManager : MonoBehaviour
 
     private PlayerHealth health;
     private SkillManager skills;
-    // Picked up since the last save. Load puts them back in the world, since the restored inventory doesn't have them.
     private readonly HashSet<Item> itemsSinceSave = new();
-    // Nothing stores the power state, it's only an event, so keep track of it here. Scenes start with the power on.
     private bool isLightsOut;
-    // Every door in the scene; each one adds itself in Door.Start.
     private readonly List<Door> doors = new();
 
     public static CheckpointManager Instance { get; private set; }
     public Transform CurCheckpoint { get; private set; }
-    /// <summary>Player and level state at the last checkpoint. Null until the first checkpoint is reached.</summary>
     public CheckpointData SavedState { get; private set; }
 
     void Awake()
@@ -72,7 +68,6 @@ public class CheckpointManager : MonoBehaviour
 
     void SetCheckpoint(Transform point)
     {
-        // Walking back through the current checkpoint doesn't overwrite its save.
         if (CurCheckpoint == point)
             return;
 
@@ -80,10 +75,6 @@ public class CheckpointManager : MonoBehaviour
         Save();
     }
 
-    /// <summary>
-    /// Snapshots the player's inventory, mission statuses and skill cooldown, plus the enemies' route steps,
-    /// the power state, objective progress and every door, into <see cref="SavedState"/>.
-    /// </summary>
     public void Save()
     {
         if (player == null)
@@ -98,7 +89,6 @@ public class CheckpointManager : MonoBehaviour
             IsLightsOut = isLightsOut,
         };
 
-        // Missions live on the DontDestroyOnLoad MissionManager, which test scenes may not have.
         MissionManager missions = MissionManager.Instance;
         if (missions != null)
         {
@@ -110,7 +100,6 @@ public class CheckpointManager : MonoBehaviour
 
         if (skills != null)
             data.ScannerCooldownRemaining = skills.ScannerCooldownRemaining;
-        // Saved with the inventory so selling an item and then respawning can't give back both the item and its money.
         if (EconomyManager.Instance != null)
             data.Money = EconomyManager.Instance.CurrentMoney;
         if (enemyManager != null)
@@ -128,10 +117,6 @@ public class CheckpointManager : MonoBehaviour
         itemsSinceSave.Clear();
     }
 
-    /// <summary>
-    /// Respawns the player at <see cref="CurCheckpoint"/> with the state from the last <see cref="Save"/>.
-    /// Returns false (and changes nothing) when no checkpoint has been reached yet.
-    /// </summary>
     public bool Load()
     {
         if (SavedState == null || CurCheckpoint == null || player == null)
@@ -159,7 +144,6 @@ public class CheckpointManager : MonoBehaviour
 
         WorldEvents.SetLightsOut(SavedState.IsLightsOut);
 
-        // Before the enemies, whose routes are planned around which doors are open.
         foreach (KeyValuePair<Door, (bool isOpen, bool isLocked)> saved in SavedState.DoorStates)
         {
             if (saved.Key != null)
@@ -169,11 +153,9 @@ public class CheckpointManager : MonoBehaviour
         if (objectiveManager != null)
             objectiveManager.RestoreObjective(SavedState.ObjectiveIndex);
 
-        // Before Respawned, which teleports every enemy onto its routine spot: the spot of the restored step.
         if (enemyManager != null)
             enemyManager.RestoreRouteSteps(SavedState.EnemyRouteSteps);
 
-        // Last, so the player only gets control back once everything else is in place.
         if (health != null)
             health.Revive();
 

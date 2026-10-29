@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 
-/// <summary>One row in the pick-up list. Visuals only change when the selection actually changes.</summary>
 public class InteractItemUI : MonoBehaviour
 {
     [SerializeField] private GameObject selectedBG;

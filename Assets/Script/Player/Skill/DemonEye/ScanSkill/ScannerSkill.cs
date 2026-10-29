@@ -1,11 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Demon Eye scanner: turns the scan VFX (which carries the ScanTrigger) on and off, plays its audio
-/// and handles its cooldown. SkillManager decides *when* to toggle it.
-/// Field names are unchanged so the Inspector values on the Player prefab survive.
-/// </summary>
 public class ScannerSkill : MonoBehaviour
 {
     [Header("Skill Settings")]
@@ -14,7 +9,6 @@ public class ScannerSkill : MonoBehaviour
     [SerializeField] private float cooldownTime = 1f;
 
     [Header("Audio - Scanner Only")]
-    // AudioSource ตัวนี้ใช้สำหรับเสียง Scanner เท่านั้น (this AudioSource is for the scanner only)
     [SerializeField] private AudioSource scanAudioSource;
     [SerializeField] private AudioClip scanStartSound;
     [SerializeField] private AudioClip scanLoopSound;
@@ -60,7 +54,6 @@ public class ScannerSkill : MonoBehaviour
         StopScanAudio();
     }
 
-    /// <summary>Turns the scan off without starting a fresh cooldown and sets the time left, e.g. from a checkpoint.</summary>
     public void Restore(float cooldownRemaining)
     {
         IsActive = false;
@@ -87,7 +80,6 @@ public class ScannerSkill : MonoBehaviour
         audioCoroutine = StartCoroutine(PlayScanAudio());
     }
 
-    /// <summary>Start sound once, then fade the loop in (เสียง 1 -> เสียง 2).</summary>
     private IEnumerator PlayScanAudio()
     {
         if (scanStartSound != null)
@@ -96,7 +88,6 @@ public class ScannerSkill : MonoBehaviour
             yield return new WaitWhile(() => scanAudioSource.isPlaying);
         }
 
-        // Released before the first sound finished.
         if (!IsActive || scanLoopSound == null)
             yield break;
 

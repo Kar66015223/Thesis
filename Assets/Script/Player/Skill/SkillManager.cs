@@ -2,10 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Routes skill input to skills: the equipped physical skill and the Demon Eye scanner.
-/// (The Demon Eye toggle used to live in PlayerController.)
-/// </summary>
 [RequireComponent(typeof(PlayerInputHandler))]
 public class SkillManager : MonoBehaviour
 {
@@ -47,8 +43,6 @@ public class SkillManager : MonoBehaviour
 
     void Start()
     {
-        // if (tackleData != null)
-            // AddPhysicalSkill(new Tackle(tackleData, context));
     }
 
     void Update() => EquippedPhysSkill?.Tick(Time.deltaTime);
@@ -63,7 +57,6 @@ public class SkillManager : MonoBehaviour
         SkillsChanged?.Invoke();
     }
 
-    /// <summary>Respawn: switches the Demon Eye off and puts back the cooldown saved at the checkpoint.</summary>
     public void RestoreScannerCooldown(float remaining)
     {
         if (scanner == null)

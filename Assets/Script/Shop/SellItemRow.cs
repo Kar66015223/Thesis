@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>One row of the sell shop: an inventory stack, its total price and a sell button.</summary>
 public class SellItemRow : MonoBehaviour
 {
     [SerializeField] private Image icon;

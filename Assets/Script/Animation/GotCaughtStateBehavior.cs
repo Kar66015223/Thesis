@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>On the player's GotCaught state (Caught controller): tells PlayerStruggle the grab animation is over.</summary>
 public class GotCaughtStateBehavior : AnimationEndStateBehavior
 {
     private PlayerStruggle struggle;

@@ -1,4 +1,3 @@
-/// <summary>Get the morse code and return safely. Completes the moment the morse code is picked up.</summary>
 public class Mission1 : Mission
 {
     public Mission1()
@@ -20,7 +19,6 @@ public class Mission1 : Mission
 
     protected override void OnStatusRestored()
     {
-        // Listen for the morse code only while in progress, same as Accept/Complete do.
         WorldEvents.ItemCollected -= HandleItemCollected;
         if (Status == MissionStatus.OnProgress)
             WorldEvents.ItemCollected += HandleItemCollected;

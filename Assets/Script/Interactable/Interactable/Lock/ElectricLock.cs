@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Opens freely from <see cref="unlockableSide"/>; from the other side only while the power is out.</summary>
 public class ElectricLock : Lock
 {
     [SerializeField] private bool canUnlock = false;

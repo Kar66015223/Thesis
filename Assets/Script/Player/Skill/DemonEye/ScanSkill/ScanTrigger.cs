@@ -1,10 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// The scan volume. Reveals anything that implements <see cref="IScannable"/> -
-/// new scannable types need no change here (it used to check each concrete type).
-/// </summary>
 public class ScanTrigger : MonoBehaviour
 {
     private static readonly List<IScannable> componentBuffer = new();

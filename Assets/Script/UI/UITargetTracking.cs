@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Keeps a UI image over a world target, clamped to the screen edge when the target is off-screen.</summary>
 public class UITargetTracking : MonoBehaviour
 {
     [SerializeField] private Transform target;
@@ -25,14 +24,12 @@ public class UITargetTracking : MonoBehaviour
 
         imageUI.localPosition = ToClampedScreenOffset(cam.WorldToScreenPoint(target.position));
 
-        // Shown only after the first positioning, so it never flashes at the screen centre.
         if (!imageUI.gameObject.activeSelf)
             imageUI.gameObject.SetActive(true);
     }
 
     public void SetTarget(Transform newTarget) => target = newTarget;
 
-    /// <summary>Offset from screen centre; targets behind the camera are mirrored and pushed to the edge.</summary>
     private Vector3 ToClampedScreenOffset(Vector3 screenPos)
     {
         bool isBehind = screenPos.z < 0f;
@@ -49,7 +46,6 @@ public class UITargetTracking : MonoBehaviour
         if (!isOffScreen)
             return offset;
 
-        // Scale the direction so it touches the nearest screen edge.
         float scaleX = offset.x != 0f ? halfWidth / Mathf.Abs(offset.x) : float.PositiveInfinity;
         float scaleY = offset.y != 0f ? halfHeight / Mathf.Abs(offset.y) : float.PositiveInfinity;
         float scale = Mathf.Min(scaleX, scaleY);

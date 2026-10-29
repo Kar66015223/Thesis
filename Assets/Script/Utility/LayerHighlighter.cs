@@ -1,16 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Swaps a whole hierarchy to a render layer and back.
-/// Shared by enemy scan highlight and objective highlight, which used to duplicate this code.
-/// </summary>
 public class LayerHighlighter
 {
     private readonly GameObject root;
     private readonly int highlightLayer;
 
-    // Each object's own layer, so children on another layer than the root (UI, Enemy...) get theirs back.
     private readonly List<(GameObject obj, int layer)> originalLayers = new();
 
     public bool IsHighlighted { get; private set; }
@@ -51,8 +46,6 @@ public class LayerHighlighter
 
     private void SetHighlightRecursively(Transform target)
     {
-        // UI (e.g. a world-space FloatingText) is not drawn by the Render Objects passes,
-        // so moving it to the highlight layer would only hide it.
         if (target is RectTransform)
             return;
 

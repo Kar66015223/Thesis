@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>Moves the interactor over an obstacle along an arc.</summary>
 public class Vaultable : Interactable
 {
     [SerializeField] private Transform sideAPoint;

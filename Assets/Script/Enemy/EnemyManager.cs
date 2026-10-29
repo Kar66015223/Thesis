@@ -1,10 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Feeds each enemy its scripted route, one step at a time. An enemy advances when its own timed
-/// wait finishes, or all enemies advance together when a level event asks for it.
-/// </summary>
 public class EnemyManager : MonoBehaviour
 {
     [SerializeField] private List<EnemyMovementPointPair> allEnemiesMovementPair = new();
@@ -47,10 +43,8 @@ public class EnemyManager : MonoBehaviour
             ApplyCurrentStep(enemy);
     }
 
-    /// <summary>Each enemy's current route step, for checkpoints.</summary>
     public Dictionary<EnemyController, int> SnapshotRouteSteps() => new(stepIndex);
 
-    /// <summary>Puts enemies whose route moved on since the checkpoint back on the step saved there.</summary>
     public void RestoreRouteSteps(IReadOnlyDictionary<EnemyController, int> saved)
     {
         foreach (KeyValuePair<EnemyController, int> step in saved)
@@ -75,7 +69,6 @@ public class EnemyManager : MonoBehaviour
 
     private void AdvanceAll()
     {
-        // Copy the keys: advancing can't change the dictionary, but this keeps it safe if it ever does.
         foreach (EnemyController enemy in new List<EnemyController>(routes.Keys))
             Advance(enemy);
     }

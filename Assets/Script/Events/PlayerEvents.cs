@@ -1,17 +1,14 @@
 using System;
 using UnityEngine;
 
-/// <summary>Player state changes that other systems (mostly UI) observe.</summary>
 public static class PlayerEvents
 {
-    /// <summary>Slow crouch started (true) or ended (false): crouching while the slow crouch key is held.</summary>
     public static event Action<bool> SlowCrouch;
     public static void RaiseSlowCrouch(bool isSlowCrouching) => SlowCrouch?.Invoke(isSlowCrouching);
 
     public static event Action Died;
     public static void RaiseDied() => Died?.Invoke();
 
-    /// <summary>The player came back at a checkpoint after dying.</summary>
     public static event Action Respawned;
     public static void RaiseRespawned() => Respawned?.Invoke();
 
@@ -21,7 +18,6 @@ public static class PlayerEvents
     public static event Action<bool> StruggleToggled;
     public static void RaiseStruggleToggled(bool isStruggling) => StruggleToggled?.Invoke(isStruggling);
 
-    /// <summary>Normalized 0..1 progress towards breaking free.</summary>
     public static event Action<float> StruggleProgressChanged;
     public static void RaiseStruggleProgressChanged(float progress) => StruggleProgressChanged?.Invoke(progress);
 }

@@ -1,17 +1,11 @@
 using UnityEngine;
 using System;
 
-/// <summary>
-/// Health rules only: damage, heal, death. Reacting to death (stop moving, game-over screen)
-/// is done by listeners, so this class no longer depends on PlayerController or the UI.
-/// </summary>
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float curHP;
     [SerializeField] private float maxHP = 100f;
 
-    // The blood-effect settings stay on this component so existing Inspector values survive.
-    // Ideally move them to their own "PlayerHealthEffects" component in the Editor.
     [Header("Blood Effect")]
     [SerializeField] private Material bloodFX;
     [SerializeField] private float normalVignettePower = 20f;
@@ -27,7 +21,6 @@ public class PlayerHealth : MonoBehaviour
     public float MaxHP => maxHP;
     public bool IsDead { get; private set; }
 
-    /// <summary>(current, max)</summary>
     public event Action<float, float> HealthChanged;
     public event Action Died;
     public event Action Revived;
@@ -77,7 +70,6 @@ public class PlayerHealth : MonoBehaviour
         SetHealth(curHP + amount);
     }
 
-    /// <summary>Back to full health after dying, e.g. when respawning at a checkpoint.</summary>
     public void Revive()
     {
         if (!IsDead)
@@ -107,7 +99,6 @@ public class PlayerHealth : MonoBehaviour
         PlayerEvents.RaiseDied();
     }
 
-    // Replaces the old "takeDamage / heal" bools that were polled every frame.
     [ContextMenu("Debug/Take 10 Damage")]
     private void DebugTakeDamage() => TakeDamage(10f);
 

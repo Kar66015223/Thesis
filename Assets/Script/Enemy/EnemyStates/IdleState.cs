@@ -1,6 +1,5 @@
 using UnityEngine;
 
-/// <summary>Walks to the idle point, optionally waits there, then faces the point's direction.</summary>
 public class IdleState : EnemyStateBase
 {
     private bool arrived;
@@ -45,7 +44,6 @@ public class IdleState : EnemyStateBase
             FaceIdleDirection();
     }
 
-    // Scripted waits (e.g. guarding the circuit board) can't be interrupted.
     public override void OnHearSound(SoundSignal sound)
     {
         if (!ctrl.Tracking.IsWaiting)

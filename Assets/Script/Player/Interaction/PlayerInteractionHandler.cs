@@ -1,11 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Decides what each button would interact with right now.
-/// Rule: items (shown in the scroll list) win for their button; otherwise the nearest usable interactable.
-/// Items and other interactables are tracked separately so one can never overwrite the other's selection.
-/// </summary>
 public class PlayerInteractionHandler
 {
     private readonly List<Item> items = new();
@@ -37,7 +32,6 @@ public class PlayerInteractionHandler
             }
         }
 
-        // Keep the same item selected when the list changes around it.
         int previousIndex = previouslySelected != null ? items.IndexOf(previouslySelected) : -1;
         selectedItemIndex = previousIndex >= 0
             ? previousIndex : Mathf.Clamp(selectedItemIndex, 0, Mathf.Max(0, items.Count - 1));
@@ -45,7 +39,6 @@ public class PlayerInteractionHandler
         SortByDistance(others, interactor.transform.position);
     }
 
-    /// <summary>Wheel up selects the previous item, wheel down the next one (wrapping).</summary>
     public void ScrollItemSelection(float scrollDelta)
     {
         if (items.Count <= 1 || scrollDelta == 0f)

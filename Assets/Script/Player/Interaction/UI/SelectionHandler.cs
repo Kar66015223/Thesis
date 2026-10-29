@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Highlights the selected item button and keeps it scrolled into view.</summary>
 [System.Serializable]
 public class SelectionHandler
 {
@@ -21,7 +20,6 @@ public class SelectionHandler
                 pair.Value.SetSelected(pair.Key == selectedItem);
         }
 
-        // Only scroll when the selection changes, so the player can still scroll the list manually.
         bool selectionChanged = selectedIndex != lastIndex || items.Count != lastCount;
         if (scrollRect != null && items.Count > 1 && selectionChanged)
             scrollRect.verticalNormalizedPosition = 1f - (float)selectedIndex / (items.Count - 1);
