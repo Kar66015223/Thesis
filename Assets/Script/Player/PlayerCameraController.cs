@@ -7,14 +7,14 @@ public readonly struct CameraViewState
     public readonly bool IsRunning;
     public readonly bool IsCrouching;
     public readonly bool IsSkillVisionActive;
-    public readonly bool IsTired;
+    public readonly float StaminaRatio;
 
-    public CameraViewState(bool isRunning, bool isCrouching, bool isSkillVisionActive, bool isTired)
+    public CameraViewState(bool isRunning, bool isCrouching, bool isSkillVisionActive, float staminaRatio)
     {
         IsRunning = isRunning;
         IsCrouching = isCrouching;
         IsSkillVisionActive = isSkillVisionActive;
-        IsTired = isTired;
+        StaminaRatio = staminaRatio;
     }
 }
 
@@ -44,6 +44,7 @@ public class PlayerCameraController
     [SerializeField] private Volume grayScreenVol;
     [SerializeField] private float volumeFadeSpeed = 10f;
     [SerializeField] private Volume blackVignetteVol;
+    [Tooltip("Vignette weight at zero stamina. It fades in as stamina drops, and is 0 at full stamina.")]
     [SerializeField, Range(0f, 1f)] private float tiredVignetteWeight = 0.4f;
 
     private const float VolumeSnapThreshold = 0.01f;
@@ -77,7 +78,7 @@ public class PlayerCameraController
         UpdateCameraTarget();
         UpdateFOV(state);
         BlendVolume(grayScreenVol, state.IsSkillVisionActive ? 1f : 0f);
-        BlendVolume(blackVignetteVol, state.IsTired ? tiredVignetteWeight : 0f);
+        BlendVolume(blackVignetteVol, (1f - state.StaminaRatio) * tiredVignetteWeight);
 
         if(cameraInput != null)
             cameraInput.enabled = Cursor.lockState == CursorLockMode.Locked;

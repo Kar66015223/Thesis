@@ -131,7 +131,7 @@ Owns the movement state (`Normal`, `Crouching`, `Running`, `UsingSkill`, `Hiding
 | Helper | Job |
 |---|---|
 | `PlayerMotor` | Moves the `CharacterController`: gravity, horizontal movement, collider size per stance, teleporting |
-| `PlayerCameraController` | Cinemachine third-person rig: follow height, shoulder offset, FOV for running / crouching / scanning |
+| `PlayerCameraController` | Cinemachine third-person rig: follow height, shoulder offset, FOV for running / crouching / scanning, and a black vignette that fades in as stamina drops (**Tired Vignette Weight** at zero stamina) |
 | `PlayerAnimation` | The only place that touches Animator parameters, and swaps Animator controllers |
 | `PlayerStamina` | Running drains it, resting refills it, raises `Exhausted` / `Recovered` |
 | `PlayerHealth` | Damage, heal, death and revive. `HealthScreenEffect` drives the blood vignette from the health ratio |

@@ -115,8 +115,8 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         UpdateModelRotation();
         UpdateState();
 
-        bool isTired = stamina != null && stamina.IsExhausted;
-        camController.Tick(new CameraViewState(IsRunning, IsCrouching, isUsingSkill, isTired));
+        float staminaRatio = stamina != null ? stamina.Normalized : 1f;
+        camController.Tick(new CameraViewState(IsRunning, IsCrouching, isUsingSkill, staminaRatio));
     }
 
     #region Input
