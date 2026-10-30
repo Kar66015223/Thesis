@@ -25,6 +25,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Sprite walkSprite;
     [SerializeField] private Sprite chaseSprite;
     [SerializeField] private Sprite stunnedSprite;
+    [Tooltip("Shown in order as the enemy's confirm timer fills, each for an equal share of Confirm Wait Time.")]
+    [SerializeField] private Sprite[] confirmingLevelSprites;
 
     [Header("Game Over")]
     [SerializeField] private GameObject gameOverPanel;
@@ -55,6 +57,7 @@ public class UIManager : MonoBehaviour
                 Walk = walkSprite,
                 Chase = chaseSprite,
                 Stunned = stunnedSprite,
+                ConfirmLevels = confirmingLevelSprites,
             }),
             new GameOverPresenter(gameOverPanel, restartButton),
             new TutorialPresenter(tutorialPanel, tutorialHeader, tutorialBody, nextButton, tutorialImg)

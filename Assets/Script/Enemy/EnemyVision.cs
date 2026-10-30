@@ -36,6 +36,7 @@ public class EnemyVision : MonoBehaviour
     public Vector3 EyePosition => transform.position + Vector3.up * viewHeight;
     public IReadOnlyList<Transform> VisibleTargets => visibleTargets;
     public IReadOnlyList<Transform> ConfirmedTargets => confirmedTargets;
+    public bool IsConfirmed(Transform target) => confirmedTargets.Contains(target);
 
     void Awake() => ctrl = GetComponent<EnemyController>();
 
@@ -47,10 +48,10 @@ public class EnemyVision : MonoBehaviour
     {
         if (visibleTargets.Count > 0)
             UpdateConfirmation(visibleTargets[0]);
-        else if (confirmTimer > 0f)
+        else if (confirmTimer > 0f && !ctrl.IsConfirming)
             ResetConfirmation();
 
-        viewRadius = ctrl.IsChasing ? viewRadiusChasing : defaultViewRadius;
+        viewRadius =ctrl.IsChasing ? viewRadiusChasing : defaultViewRadius;
     }
 
     public void EnableVision()

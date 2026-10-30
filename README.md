@@ -306,7 +306,7 @@ The controller runs a state machine (`IEnemyState`, `EnemyStateBase`) and implem
 | `IdleState` | Walks to the idle point and faces its direction; may wait there (a scripted wait can't be interrupted) | Distracted (sound), Confirming (seen) |
 | `PatrolState` | Walks the patrol points in order. At points with **Wait At This Point** it stops for Patrol Wait Time, facing the point's direction | Distracted, Confirming |
 | `DistractedState` | `LookAt`: stops and turns to the sound. `WalkTo` / `RunTo`: goes there, then turns to it | Routine (after Distract Wait Time), Confirming |
-| `ConfirmingState` | Stops and stares at what it glimpsed | Chase (confirmed), routine (gave up) |
+| `ConfirmingState` | Stops and stares at what it glimpsed until the confirm timer fills. Breaking sight pauses the timer; re-spotting the player resumes it | Chase (confirmed), routine (out of sight for Confirm Give Up Time) |
 | `ChaseState` | Plays **Found** standing still, then runs after the player | Catching (in reach), routine (lost them) |
 | `CatchingState` | The grab and strangle sequence (see [Getting caught](#getting-caught-and-struggling)) | Stunned (player escaped), routine (player died) |
 | `StunnedState` | Blind and frozen for Stun Time | Routine |
@@ -322,7 +322,8 @@ The view cone is a wedge:
 
 Targets on **Target Mask** that aren't hidden behind **Obstacle Mask** are seen:
 1. The first glimpse calls `OnSeenTarget`, which usually sends the enemy to Confirming.
-2. After **Confirm Wait Time** the target is confirmed and `OnSeenTarget` is called again, which sends it to Chase.
+2. After **Confirm Wait Time** of total sight the target is confirmed (`IsConfirmed`), and `ConfirmingState` moves to
+   Chase. Losing sight pauses the timer during Confirming; in any other state it resets the timer.
 
 `EnemyVisionEditor` draws the cone, its height band and the confirmed targets in the Scene view.
 
@@ -355,7 +356,9 @@ States just call `SetDestination` and check `HasArrived`.
 
 `EnemyEvents.IndicatorChanged` drives the icons that point toward enemies (`EnemyIndicatorPresenter`, `EnemyStateUI`,
 `EnemyIndicatorUI`).
-Confirm progress fills the icon.
+While an enemy is confirming, its icon steps through the **Confirming Level Sprites** on `UIManager` as the confirm
+timer fills (a quarter of Confirm Wait Time each). If the player breaks line of sight, it holds its current level until
+the player is seen again or the enemy gives up.
 
 ---
 

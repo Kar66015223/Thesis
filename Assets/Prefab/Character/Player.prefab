@@ -1788,8 +1788,12 @@ MonoBehaviour:
   seeSprite: {fileID: 21300000, guid: dd1056460e0ef2c4d90b88a163b1f7ba, type: 3}
   hearSprite: {fileID: 21300000, guid: 1ddfe8cf37b839145be35e3c88ca95fd, type: 3}
   walkSprite: {fileID: 21300000, guid: 5d5a235daaac5a7489bbec08a1aabab6, type: 3}
-  chaseSprite: {fileID: 21300000, guid: e2bc98fb72f98c140b655ca497f02f01, type: 3}
+  chaseSprite: {fileID: 21300000, guid: 50893ee78fcad9d49b7b51e771c4afdf, type: 3}
   stunnedSprite: {fileID: 21300000, guid: 7d2c353af6aa3ed478645094f1b1880d, type: 3}
+  confirmingLevelSprites:
+  - {fileID: 21300000, guid: d46ed19ae74ceea4ab06c90243e9d8c5, type: 3}
+  - {fileID: 21300000, guid: 99b040b528462a4428ddac42d1de38ee, type: 3}
+  - {fileID: 21300000, guid: 24afb2ef4cad39248b76337bb1f2d09a, type: 3}
   gameOverPanel: {fileID: 519956399745423240}
   restartButton: {fileID: 8010675237175564884}
   tutorialPanel: {fileID: 3799694781344319828}

@@ -25,6 +25,18 @@ public class ConfirmingState : EnemyStateBase
 
         FaceInstantly(target.position);
 
+        if (ctrl.Vision.IsConfirmed(target))
+        {
+            ctrl.ChangeState(new ChaseState(ctrl, target));
+            return;
+        }
+
+        if (ctrl.Vision.VisibleTargets.Count > 0)
+        {
+            giveUpTimer = 0f;
+            return;
+        }
+
         giveUpTimer += Time.deltaTime;
         if (giveUpTimer >= ctrl.ConfirmGiveUpTime)
             ctrl.ReturnToDefaultState();
@@ -37,6 +49,4 @@ public class ConfirmingState : EnemyStateBase
 
         ctrl.Tracking.ResumeInterruptedStep();
     }
-
-    public override void OnSeenTarget(Transform seenTarget) => ctrl.ChangeState(new ChaseState(ctrl, seenTarget));
 }

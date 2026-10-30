@@ -10,6 +10,7 @@ public class EnemyIndicatorPresenter : IUIPresenter
         public Sprite Walk;
         public Sprite Chase;
         public Sprite Stunned;
+        public Sprite[] ConfirmLevels;
     }
 
     private readonly Transform parent;
@@ -55,9 +56,8 @@ public class EnemyIndicatorPresenter : IUIPresenter
         if (ui == null)
             return;
 
-        GetSprites(state, out Sprite main, out Sprite sub);
-        ui.SetIcons(main, sub);
-        ui.SetFill(state == EnemyState.Confirming ? 0f : 1f);
+        GetSprites(state, out Sprite main, out Sprite sub, out Color color);
+        ui.SetIcons(main, sub, color);
     }
 
     private void HandleConfirmProgress(Transform enemy, float progress)
@@ -66,20 +66,55 @@ public class EnemyIndicatorPresenter : IUIPresenter
             activeUIs.TryGetValue(enemy, out EnemyStateUI ui) && ui != null &&
             currentStates.TryGetValue(enemy, out EnemyState state) && state == EnemyState.Confirming)
         {
-            ui.SetFill(progress);
+            ui.SetIcons(GetConfirmSprite(progress), null, Color.white);
         }
     }
 
-    private void GetSprites(EnemyState state, out Sprite main, out Sprite sub)
+    private Sprite GetConfirmSprite(float progress)
+    {
+        Sprite[] levels = sprites.ConfirmLevels;
+        if (levels == null || levels.Length == 0)
+            return sprites.See;
+
+        int level = Mathf.Min(Mathf.FloorToInt(progress * levels.Length), levels.Length - 1);
+        return levels[level];
+    }
+
+    private void GetSprites(EnemyState state, out Sprite main, out Sprite sub, out Color color)
     {
         switch (state)
         {
-            case EnemyState.DistractedLook: main = sprites.Hear; sub = sprites.See; break;
-            case EnemyState.DistractedMove: main = sprites.Hear; sub = sprites.Walk; break;
-            case EnemyState.Confirming: main = sprites.See; sub = null; break;
-            case EnemyState.Chase: main = sprites.Chase; sub = null; break;
-            case EnemyState.Stunned: main = sprites.Stunned; sub = null; break;
-            default: main = null; sub = null; break;
+            case EnemyState.DistractedLook:
+                main = sprites.Hear;
+                sub = sprites.See;
+                color = Color.white;
+                break;
+
+            case EnemyState.DistractedMove:
+                main = sprites.Hear;
+                sub = sprites.Walk; 
+                color = Color.white;
+                break;
+
+            case EnemyState.Confirming:
+                main = GetConfirmSprite(0f);
+                sub = null; 
+                color = Color.white;
+                break;
+
+            case EnemyState.Chase:
+                main = sprites.Chase;
+                sub = null; 
+                color = Color.red;
+                break;
+
+            case EnemyState.Stunned:
+                main = sprites.Stunned;
+                sub = null; 
+                color = Color.white;
+                break;
+
+            default: main = null; sub = null; color = Color.white; break;
         }
     }
 

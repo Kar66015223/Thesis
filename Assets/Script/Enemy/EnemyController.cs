@@ -82,6 +82,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     private float lastBumpTime = float.NegativeInfinity;
 
     public bool IsChasing => CurrentState is ChaseState;
+    public bool IsConfirming => CurrentState is ConfirmingState;
     public bool IsInDefaultState => CurrentState is IdleState || CurrentState is PatrolState;
 
     void Awake()
