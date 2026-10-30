@@ -12,10 +12,11 @@ public class PlayerAnimation
     private RuntimeAnimatorController controllerBeforeCaught;
 
     private static readonly int MoveHash = Animator.StringToHash("Move");
-    private static readonly int CaughtHash = Animator.StringToHash("Caught");
     private static readonly int CrouchHash = Animator.StringToHash("Crouch");
     private static readonly int InteractHash = Animator.StringToHash("Interact");
     private static readonly int CrouchWalkSpeedHash = Animator.StringToHash("CrouchWalkSpeed");
+
+    private static readonly int CaughtHash = Animator.StringToHash("Caught");
 
     public void Initialize()
     {
@@ -57,8 +58,11 @@ public class PlayerAnimation
     public void StopGotCaught()
     {
         if (anim != null && anim.runtimeAnimatorController == caughtAnimCtrl && controllerBeforeCaught != null)
-            SetAnimCtrl(controllerBeforeCaught);
+            anim.SetBool(CaughtHash, false);
+        // SetAnimCtrl(controllerBeforeCaught);
     }
+
+    public void BackToDefaultAnimCtrl() => SetAnimCtrl(controllerBeforeCaught);
 
     public void SetMove(int value)
     {
