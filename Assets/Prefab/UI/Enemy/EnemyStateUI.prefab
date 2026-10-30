@@ -238,12 +238,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8427312992490417567}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbac272ab2df6a54f8b834b1507fb4cc, type: 3}
+  m_Script: {fileID: 11500000, guid: 4678a5650d7865a45a386ff991a17958, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UITargetTracking
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyIndicatorUI
   target: {fileID: 0}
   imageUI: {fileID: 5676572821356986355}
-  margin: 50
+  radius: 300
 --- !u!114 &6020602918280784894
 MonoBehaviour:
   m_ObjectHideFlags: 0

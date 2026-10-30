@@ -99,8 +99,8 @@ public class EnemyIndicatorPresenter : IUIPresenter
             return null;
         }
 
-        if (instance.TryGetComponent(out UITargetTracking tracking))
-            tracking.SetTarget(anchor != null ? anchor : enemy);
+        if (instance.TryGetComponent(out EnemyIndicatorUI indicator))
+            indicator.SetTarget(anchor != null ? anchor : enemy);
 
         activeUIs[enemy] = ui;
         return ui;

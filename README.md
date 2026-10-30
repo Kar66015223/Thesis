@@ -353,7 +353,8 @@ States just call `SetDestination` and check `HasArrived`.
 
 ### Indicators
 
-`EnemyEvents.IndicatorChanged` drives the floating icons over enemies (`EnemyIndicatorPresenter`, `EnemyStateUI`).
+`EnemyEvents.IndicatorChanged` drives the icons that point toward enemies (`EnemyIndicatorPresenter`, `EnemyStateUI`,
+`EnemyIndicatorUI`).
 Confirm progress fills the icon.
 
 ---
@@ -481,13 +482,15 @@ Each presenter subscribes to its events while bound:
 | `TipPresenter` | Short hints that fade out (`FadeOutText`) |
 | `PasswordPanelPresenter` | Password pad for a `PasswordLock` |
 | `LightsOutPresenter` | Lights-out screen effect |
-| `EnemyIndicatorPresenter` | Icons over enemies |
+| `EnemyIndicatorPresenter` | Enemy state icons, on a circle around the screen centre |
 | `GameOverPresenter` | Game over panel; Restart respawns at the last checkpoint |
 | `TutorialPresenter` | Tutorial pages |
 
 Other UI:
 - **`PlayerStruggleUI`**: the "[Space] to free" prompt and progress bar.
 - **`TrackingUIManager` / `UITargetTracking`**: an on-screen marker for the tackle target, clamped to the screen edge.
+- **`EnemyIndicatorUI`**: places each enemy's icon on a circle around the screen centre (**Radius**), in the enemy's
+  direction. Icons stay on the circle even when the enemy is on screen.
 - **Mission board**, **inventory**, **shop**: see their sections.
 
 ---
