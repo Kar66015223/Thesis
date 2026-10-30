@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
+    , IPointerClickHandler
 {
     [Header("UI")]
     [SerializeField] private Color emptyColor = Color.white;
@@ -99,5 +100,11 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
         if (source == null || source == this || source.inventory != inventory) return;
 
         inventory.MoveItem(source.Index, Index);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right || inventory == null || isEmpty) return;
+        inventory.OpenMiniCanvas(Index, eventData.position);
     }
 }

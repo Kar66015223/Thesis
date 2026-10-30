@@ -1,12 +1,11 @@
-using UnityEditor.Animations;
 using UnityEngine;
 
 [System.Serializable]
 public class PlayerAnimation
 {
     [SerializeField] private Animator anim;
-    [SerializeField] private AnimatorController baseAnimCtrl;
-    [SerializeField] private AnimatorController missionAnimCtrl;
+    [SerializeField] private RuntimeAnimatorController baseAnimCtrl;
+    [SerializeField] private RuntimeAnimatorController missionAnimCtrl;
     [Tooltip("Swapped in while an enemy holds the player: starts on GotCaught, loops while 'Caught' is on.")]
     [SerializeField] private RuntimeAnimatorController caughtAnimCtrl;
 
