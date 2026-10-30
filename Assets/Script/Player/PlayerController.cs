@@ -371,6 +371,8 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
             SetCanMove(true);
     }
 
+    public void BackToDefaultAnimCtrl() => anim.BackToDefaultAnimCtrl();
+
     #endregion
 
     #region Collisions
