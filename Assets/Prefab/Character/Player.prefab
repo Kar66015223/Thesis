@@ -1279,7 +1279,7 @@ MonoBehaviour:
     m_ActionName: 'Player_Base/Inventory[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: 1ce808b0-4a3b-4781-8f08-e73854336c62
+  m_DefaultActionMap: Player_Base
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!143 &8755811207983697812
@@ -1483,7 +1483,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e8d3c927d0e8d9d4790db9a21bbbc1d3, type: 3}
   - {fileID: 8300000, guid: 4a4b22ddca413a04bb9ac7377cbfcd16, type: 3}
   - {fileID: 8300000, guid: 05d15457f8ef4c54a83f41c323a9b7d6, type: 3}
-  tiredClip: {fileID: 8300000, guid: 12c10926d8fbd4a439884fa1a665b2be, type: 3}
+  tiredClip: {fileID: 8300000, guid: 9650f9684c6e4554284fba003b89ab01, type: 3}
   walkVolume: 0.2
   runVolume: 0.6
   tiredVolume: 1
@@ -1492,6 +1492,9 @@ MonoBehaviour:
   walkSoundRadius: 5
   runSoundRadius: 7
   footstepReaction: 1
+  caughtClip: {fileID: 8300000, guid: 5b548743ed8b7794aa964d3de9bb89f2, type: 3}
+  struggleClip: {fileID: 8300000, guid: 5b548743ed8b7794aa964d3de9bb89f2, type: 3}
+  caughtVolume: 1
 --- !u!114 &6872179149545432460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1505,7 +1508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStruggle
   struggleThreshold: 100
-  struggleValue: 10
+  struggleValue: 5
 --- !u!82 &5448438016998072887
 AudioSource:
   m_ObjectHideFlags: 0

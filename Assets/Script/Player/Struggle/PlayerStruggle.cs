@@ -25,6 +25,9 @@ public class PlayerStruggle : MonoBehaviour
     public bool IsCatchImmune { get; private set; }
     public bool CanBeCaught => !IsCaught && !IsCatchImmune && !hp.IsDead;
 
+    public event Action Caught;
+    public event Action<bool> Struggle;
+
     public event Action GotCaughtFinished;
 
     void Awake()
@@ -98,6 +101,7 @@ public class PlayerStruggle : MonoBehaviour
             body.PlayCaughtLoop();
 
         IsStruggling = true;
+        Struggle?.Invoke(true);
         damageTimer = 0f;
         PlayerEvents.RaiseStruggleToggled(true);
         PlayerEvents.RaiseStruggleProgressChanged(0f);
@@ -130,6 +134,7 @@ public class PlayerStruggle : MonoBehaviour
             return false;
 
         IsCaught = true;
+        Caught?.Invoke();
         CatchingEnemy = catcher;
         struggleProgress = 0f;
         damageTimer = 0f;
@@ -154,6 +159,7 @@ public class PlayerStruggle : MonoBehaviour
 
         IsCaught = false;
         IsStruggling = false;
+        Struggle?.Invoke(false);
         CatchingEnemy = null;
         struggleProgress = 0f;
 

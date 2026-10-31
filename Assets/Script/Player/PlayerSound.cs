@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(SoundEmitter))]
@@ -25,9 +26,16 @@ public class PlayerSound : MonoBehaviour
     [SerializeField] private float runSoundRadius = 7f;
     [SerializeField] private EnemyReaction footstepReaction = EnemyReaction.WalkTo;
 
+    [Header("Caught")]
+    [SerializeField] private AudioClip caughtClip;
+    [SerializeField] private AudioClip struggleClip;
+
+    [SerializeField] private float caughtVolume = 1f;
+
     private AudioSource source;
     private SoundEmitter emitter;
     private PlayerStamina stamina;
+    private PlayerStruggle struggle;
     private int lastClipIndex = -1;
 
     private bool isSlowCrouching;
@@ -37,6 +45,7 @@ public class PlayerSound : MonoBehaviour
         source = GetComponent<AudioSource>();
         emitter = GetComponent<SoundEmitter>();
         stamina = GetComponent<PlayerStamina>();
+        struggle = GetComponent<PlayerStruggle>();
 
         source.playOnAwake = false;
         source.loop = false;
@@ -47,6 +56,12 @@ public class PlayerSound : MonoBehaviour
         if (stamina != null)
             stamina.Exhausted += PlayTiredSound;
 
+        if (struggle != null)
+        {
+            struggle.Caught += PlayCaughtSound;
+            struggle.Struggle += PlayStruggleSoundLoop;
+        }
+
         PlayerEvents.SlowCrouch += HandleSlowCrouchChanged;
     }
 
@@ -54,6 +69,12 @@ public class PlayerSound : MonoBehaviour
     {
         if (stamina != null)
             stamina.Exhausted -= PlayTiredSound;
+        
+        if (struggle != null)
+        {
+            struggle.Caught -= PlayCaughtSound;
+            struggle.Struggle -= PlayStruggleSoundLoop;
+        }
 
         PlayerEvents.SlowCrouch -= HandleSlowCrouchChanged;
     }
@@ -76,6 +97,31 @@ public class PlayerSound : MonoBehaviour
 
         source.pitch = 1f;
         source.PlayOneShot(tiredClip, tiredVolume);
+    }
+
+    public void PlayCaughtSound()
+    {
+        if (caughtClip != null)
+            source.PlayOneShot(caughtClip, caughtVolume);
+    }
+
+    public void PlayStruggleSoundLoop(bool isStruggle)
+    {
+        if (struggleClip == null)
+            return;
+            
+        if (isStruggle)
+        {
+            source.clip = struggleClip;
+            source.loop = true;
+            source.Play();
+        }
+        else
+        {
+            source.clip = null;
+            source.loop = false;
+            source.Stop();
+        }
     }
 
     private void PlayFootstep(float baseVolume, float noiseRadius)
