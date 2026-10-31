@@ -84,10 +84,14 @@ public class PlayerSound : MonoBehaviour
 
     public void PlayCrouchWalkSound()
     {
-        if (isSlowCrouching || FindFootstepArea() == null)
+        if (FindFootstepArea() == null)
             return;
 
-        PlayFootstep(walkVolume, walkSoundRadius);
+        if (!isSlowCrouching)
+            PlayFootstep(walkVolume, walkSoundRadius);
+        else
+            PlayFootstep(
+                walkVolume / FindFootstepArea().SoundMultiplier, walkSoundRadius / FindFootstepArea().SoundMultiplier);
     }
 
     public void PlayTiredSound()
