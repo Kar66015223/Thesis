@@ -3,21 +3,40 @@ using UnityEngine.UI;
 
 public class EnemyStateUI : MonoBehaviour
 {
-    [SerializeField] private Image mainImg;
-    [SerializeField] private Image subImg;
+    private static readonly Vector2 ArrowArtDirection = Vector2.up;
 
-    public void SetIcons(Sprite main, Sprite sub, Color color)
+    [SerializeField] private Image mainImg;
+    [SerializeField] private Image indicatorArrow;
+
+    private RectTransform arrowRect;
+    private Vector2 arrowRestPosition;
+
+    void Awake()
+    {
+        if (indicatorArrow == null)
+            return;
+
+        arrowRect = indicatorArrow.rectTransform;
+        arrowRestPosition = arrowRect.anchoredPosition;
+    }
+
+    public void SetIcons(Sprite main, Color color)
     {
         if (mainImg != null)
         {
             mainImg.sprite = main;
             mainImg.color = color;
+            indicatorArrow.color = color;
         }
+    }
 
-        if (subImg == null)
+    public void PointArrow(Vector2 direction)
+    {
+        if (arrowRect == null)
             return;
 
-        subImg.enabled = sub != null;
-        subImg.sprite = sub;
+        Quaternion rotation = Quaternion.Euler(0f, 0f, Vector2.SignedAngle(ArrowArtDirection, direction));
+        arrowRect.localRotation = rotation;
+        arrowRect.anchoredPosition = rotation * arrowRestPosition;
     }
 }

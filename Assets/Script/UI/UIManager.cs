@@ -20,9 +20,7 @@ public class UIManager : MonoBehaviour
     [Header("Enemy State")]
     [SerializeField] private Transform enemyStateUIParent;
     [SerializeField] private GameObject enemyStateUIPrefab;
-    [SerializeField] private Sprite seeSprite;
     [SerializeField] private Sprite hearSprite;
-    [SerializeField] private Sprite walkSprite;
     [SerializeField] private Sprite chaseSprite;
     [SerializeField] private Sprite stunnedSprite;
     [Tooltip("Shown in order as the enemy's confirm timer fills, each for an equal share of Confirm Wait Time.")]
@@ -52,9 +50,7 @@ public class UIManager : MonoBehaviour
             new LightsOutPresenter(lightsOutEffect),
             new EnemyIndicatorPresenter(enemyStateUIParent, enemyStateUIPrefab, new EnemyIndicatorPresenter.Sprites
             {
-                See = seeSprite,
                 Hear = hearSprite,
-                Walk = walkSprite,
                 Chase = chaseSprite,
                 Stunned = stunnedSprite,
                 ConfirmLevels = confirmingLevelSprites,

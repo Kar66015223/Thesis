@@ -493,7 +493,8 @@ Other UI:
 - **`PlayerStruggleUI`**: the "[Space] to free" prompt and progress bar.
 - **`TrackingUIManager` / `UITargetTracking`**: an on-screen marker for the tackle target, clamped to the screen edge.
 - **`EnemyIndicatorUI`**: places each enemy's icon on a circle around the screen centre (**Radius**), in the enemy's
-  direction. Icons stay on the circle even when the enemy is on screen.
+  direction. Icons stay on the circle even when the enemy is on screen. `EnemyStateUI`'s **Indicator Arrow** rotates
+  around the icon and always points outward from the screen centre, in the enemy's direction.
 - **Mission board**, **inventory**, **shop**: see their sections.
 
 ---

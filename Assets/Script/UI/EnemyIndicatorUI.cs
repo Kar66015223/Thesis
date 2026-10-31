@@ -8,6 +8,9 @@ public class EnemyIndicatorUI : MonoBehaviour
     [SerializeField, Min(0f)] private float radius = 400f;
 
     private Camera cam;
+    private EnemyStateUI stateUI;
+
+    void Awake() => stateUI = GetComponent<EnemyStateUI>();
 
     void Start() => cam = Camera.main;
 
@@ -23,7 +26,11 @@ public class EnemyIndicatorUI : MonoBehaviour
                 return;
         }
 
-        imageUI.localPosition = GetDirectionFromCentre(cam.WorldToScreenPoint(target.position)) * radius;
+        Vector3 direction = GetDirectionFromCentre(cam.WorldToScreenPoint(target.position));
+        imageUI.localPosition = direction * radius;
+
+        if (stateUI != null)
+            stateUI.PointArrow(direction);
 
         if (!imageUI.gameObject.activeSelf)
             imageUI.gameObject.SetActive(true);
