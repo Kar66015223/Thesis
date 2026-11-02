@@ -6423,6 +6423,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 83687467833049706, guid: 82d9cdca5b25e2546a23fbd93a21c5b0, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 4df123b433971f244a135eabb3824120, type: 3}
     - target: {fileID: 2130764711534732854, guid: 82d9cdca5b25e2546a23fbd93a21c5b0, type: 3}
       propertyPath: catchDamage
       value: 0
