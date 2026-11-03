@@ -214,6 +214,9 @@ hiding spot.
 - **`Inventory`** is the grid view (Tab), built from `InventorySlot` views. It sits on the always-active PlayerCanvas,
   so it still hears the key while closed. It won't open over another UI or during a struggle, and it closes itself
   when the player is grabbed.
+- The slot grid is a scroll view: slots spawn into `SlotScrollView/Viewport/Content` (mouse wheel or the scrollbar).
+  `FixedHandleScrollbar` keeps the scrollbar's diamond handle at its own size instead of stretching it. While a slot is
+  dragged, `Inventory` pauses the grid layout and the Content's size fitter so the list doesn't jump.
 
 ---
 
@@ -554,6 +557,8 @@ normally without extra setup.
 | Sound line checks | Scene view: green reached, red blocked by Soundproof |
 | Interaction line checks | Scene view: green usable, red blocked; Console logs the blocking objects |
 | Vision cone | Scene view, with the enemy selected (`EnemyVisionEditor`) |
+| Build Inventory Layout | **Tools > For Your Tomorrow** menu (`InventoryLayoutBuilder`). Adds the inventory header, item details panel and quick slot panel to the Player prefab's InventoryPanel. Running it again rebuilds those parts and replaces any manual edits to them |
+| Build Inventory Scroll View | Same menu. Turns `SlotScrollView` into a scroll view (Viewport, Content with the grid) with the `SlotScrollbar` and points `Inventory` at the new Content. Running it again keeps the grid settings and rebuilds only the scrollbar |
 
 ---
 

@@ -24,6 +24,7 @@ public class Inventory : MonoBehaviour
     private InventoryModel model;
     private InventorySlot[] slotViews = new InventorySlot[0];
     private GridLayoutGroup gridLayoutGroup;
+    private ContentSizeFitter contentSizeFitter;
     private PlayerInputHandler inputHandler;
     private int contextSlotIndex = -1;
 
@@ -153,8 +154,14 @@ public class Inventory : MonoBehaviour
 
     public void SetLayoutControlChild(bool isControlled)
     {
+        if (!isControlled && contentSizeFitter != null)
+            contentSizeFitter.enabled = false;
+
         if (gridLayoutGroup != null)
             gridLayoutGroup.enabled = isControlled;
+
+        if (isControlled && contentSizeFitter != null)
+            contentSizeFitter.enabled = true;
     }
 
     private void BuildSlotViews()
@@ -171,7 +178,8 @@ public class Inventory : MonoBehaviour
                 Destroy(child.gameObject);
         }
 
-        gridLayoutGroup = inventoryPanel.GetComponent<GridLayoutGroup>();
+        gridLayoutGroup = inventoryPanel.GetComponentInChildren<GridLayoutGroup>();
+        contentSizeFitter = inventoryPanel.GetComponentInChildren<ContentSizeFitter>();
         slotViews = new InventorySlot[model.Capacity];
 
         for (int i = 0; i < slotViews.Length; i++)
