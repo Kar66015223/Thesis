@@ -60,7 +60,8 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
         {
             icon.color = isEmpty ? emptyColor : itemColor;
             icon.sprite = isEmpty ? emptySprite : slot.Item.icon;
-            icon.enabled = icon.sprite != null;
+            icon.preserveAspect = true;
+            icon.enabled = icon.sprite != null && !isEmpty;
         }
 
         if (stackText != null)
