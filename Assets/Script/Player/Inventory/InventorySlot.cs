@@ -9,8 +9,11 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
     [Header("UI")]
     [SerializeField] private Color emptyColor = Color.white;
     [SerializeField] private Color itemColor = Color.white;
-    [SerializeField] private Sprite emptySprite;
+
+    [SerializeField] private Image slotBG;
+    [SerializeField] private Sprite normalSprite;
     [SerializeField] private Sprite selectedSprite;
+
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI stackText;
 
@@ -47,6 +50,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
         siblingIndex = transform.GetSiblingIndex();
+        ApplyBackground();
     }
 
     public void Show(InventoryModel.Slot slot)
@@ -59,7 +63,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
         if (icon != null)
         {
             icon.color = isEmpty ? emptyColor : itemColor;
-            icon.sprite = isEmpty ? emptySprite : slot.Item.icon;
+            icon.sprite = isEmpty ? null : slot.Item.icon;
             icon.preserveAspect = true;
             icon.enabled = icon.sprite != null && !isEmpty;
         }
@@ -116,6 +120,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
         if (source == null || source == this || source.inventory != inventory) return;
 
         inventory.MoveItem(source.Index, Index);
+        SetSelected(true);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -128,15 +133,27 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
     public void SetSelected(bool isSelected)
     {
         this.isSelected = isSelected;
+        ApplyBackground();
+
         if (isSelected)
             UIEvents.RequestSlotSelect(this);
     }
 
     public void OnSelectSlot(InventorySlot slot)
     {
-        if (slot == this)
+        if (slot == this || !isSelected)
             return;
 
-        isSelected = false;
+        SetSelected(false);
+    }
+
+    private void ApplyBackground()
+    {
+        if (slotBG == null)
+            return;
+
+        Sprite sprite = isSelected ? selectedSprite : normalSprite;
+        if (sprite != null)
+            slotBG.sprite = sprite;
     }
 }

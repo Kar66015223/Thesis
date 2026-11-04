@@ -400,7 +400,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 21300000, guid: fc7ee463a1ddb6e4ba47f4a7931a3303, type: 3}
+    m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -409,7 +409,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 154574959783884430}
+  m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -439,7 +439,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
   emptyColor: {r: 1, g: 1, b: 1, a: 1}
   itemColor: {r: 1, g: 1, b: 1, a: 1}
-  emptySprite: {fileID: 0}
+  slotBG: {fileID: 154574959783884430}
+  normalSprite: {fileID: 21300000, guid: 3d7febe151cff6f478915f71bb7e0456, type: 3}
   selectedSprite: {fileID: 21300000, guid: fc7ee463a1ddb6e4ba47f4a7931a3303, type: 3}
   icon: {fileID: 9116414197941428598}
   stackText: {fileID: 7533570639243444259}
