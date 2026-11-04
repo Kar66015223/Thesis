@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6ba11c72b98228b479f03054b952e6ab
+guid: 5345e8f66c7691b488b4d9b34064b394
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
@@ -18,7 +18,10 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'ANM_CHR-002_Felix_Walk' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'spine_01.x' has translation
+      animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -30,7 +33,36 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: ANM_CHR-002_Felix_Walk
+      takeName: ANM_CHR-002_Felix_Walk
+      internalID: 4815756259638027483
+      firstFrame: 0
+      lastFrame: 96
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 1
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -525,73 +557,73 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: CHR-002_Felix_Model_RiggedFixV2(Clone)
+    - name: Felix_Model_Rigged(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: bag
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: ears
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: eyes.l
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: eyes.r
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: eyesbow
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: eyesbow2
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: eyeslashes
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: face
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: hair
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: handLeft.l
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: handRight.r
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: hat
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: root
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
@@ -1031,32 +1063,32 @@ ModelImporter:
       rotation: {x: -0.00000009266658, y: -0.00000018253927, z: 0.000000092666596, w: 1}
       scale: {x: 0.99999994, y: 1, z: 0.9999999}
     - name: shirt
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: shirt2
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: teethtop
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: teethunder
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: thounge
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: under
-      parentName: CHR-002_Felix_Model_RiggedFixV2(Clone)
+      parentName: Felix_Model_Rigged(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
