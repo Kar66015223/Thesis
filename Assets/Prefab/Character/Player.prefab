@@ -1763,7 +1763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: 0}
+  m_Actions: {fileID: -944628639613478452, guid: 8b7b7bbc31d6acc46aa3e804cfddd5f6, type: 3}
   m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -2311,11 +2311,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4a4b22ddca413a04bb9ac7377cbfcd16, type: 3}
   - {fileID: 8300000, guid: 05d15457f8ef4c54a83f41c323a9b7d6, type: 3}
   tiredClip: {fileID: 8300000, guid: 9650f9684c6e4554284fba003b89ab01, type: 3}
-  walkVolume: 0.2
-  runVolume: 0.6
-  tiredVolume: 1
-  pitchVariation: 0.02
-  volumeVariation: 0.04
+  walkVolume: 0.07
+  runVolume: 0.14
+  tiredVolume: 0.5
+  pitchVariation: 0
+  volumeVariation: 0
   walkSoundRadius: 5
   runSoundRadius: 7
   footstepReaction: 1
