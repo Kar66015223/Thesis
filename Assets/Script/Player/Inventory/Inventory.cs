@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,12 @@ public class Inventory : MonoBehaviour
     [SerializeField] private Transform inventoryPanel;
     [Tooltip("Only used when no PlayerController is found to provide the model.")]
     [SerializeField, Min(1)] private int slotAmount = 30;
+
+    private InventorySlot selectedSlot;
+
+    [Header("Item Detail")]
+    [SerializeField] private TMP_Text itemNameText;
+    [SerializeField] private TMP_Text itemDescText;
 
     [Header("Sort Buttons")]
     [SerializeField] private Button sortAscendingButton;
@@ -51,6 +58,7 @@ public class Inventory : MonoBehaviour
             inputHandler.OnInventoryPressed += Toggle;
 
         InputModeService.ActionMapChanged += HandleActionMapChanged;
+        UIEvents.SlotSelectRequest += RefreshSelected;
     }
 
     void OnDisable()
@@ -60,6 +68,8 @@ public class Inventory : MonoBehaviour
 
         InputModeService.ActionMapChanged -= HandleActionMapChanged;
         InputModeService.RequestUI(this, false);
+
+        UIEvents.SlotSelectRequest -= RefreshSelected;
     }
 
     void Start()
@@ -194,7 +204,27 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < slotViews.Length; i++)
         {
             if (slotViews[i] != null)
+            {
                 slotViews[i].Show(model.Slots[i]);
+            }
         }
+    }
+
+    private void RefreshSelected(InventorySlot selected)
+    {
+        foreach (InventorySlot slot in slotViews)
+        {
+            if (slot == null)
+                continue;
+
+            if (selected == slot)
+                selectedSlot = slot;
+        }
+
+        if (selectedSlot == null)
+            return;
+
+        itemNameText.text = selectedSlot.ItemName;
+        itemDescText.text = selectedSlot.ItemDesc;
     }
 }

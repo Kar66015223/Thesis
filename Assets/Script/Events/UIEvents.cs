@@ -29,4 +29,7 @@ public static class UIEvents
     public static event Action<bool, TutorialData> TutorialToggled;
     public static void ToggleTutorialPanel(bool isOpen, TutorialData data = null)
         => TutorialToggled?.Invoke(isOpen, data);
+
+    public static event Action<InventorySlot> SlotSelectRequest;
+    public static void RequestSlotSelect(InventorySlot slot) => SlotSelectRequest?.Invoke(slot);
 }

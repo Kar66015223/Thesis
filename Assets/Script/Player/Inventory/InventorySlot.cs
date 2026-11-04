@@ -10,8 +10,14 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
     [SerializeField] private Color emptyColor = Color.white;
     [SerializeField] private Color itemColor = Color.white;
     [SerializeField] private Sprite emptySprite;
+    [SerializeField] private Sprite selectedSprite;
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI stackText;
+
+    private string itemName;
+    public string ItemName => itemName;
+    private string itemDesc;
+    public string ItemDesc => itemDesc;
 
     [Header("Drag and Drop")]
     [SerializeField] private RectTransform draggable;
@@ -21,6 +27,8 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
     private CanvasGroup canvasGroup;
     private int siblingIndex;
     private bool isEmpty = true;
+    private bool isSelected = false;
+    public bool IsSelected => isSelected;
 
     public int Index { get; private set; }
 
@@ -29,6 +37,10 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
         inventory = owner;
         Index = index;
     }
+
+    void OnEnable() => UIEvents.SlotSelectRequest += OnSelectSlot;
+    void OnDisable() => UIEvents.SlotSelectRequest -= OnSelectSlot;
+    void OnDestroy() => UIEvents.SlotSelectRequest -= OnSelectSlot;
 
     void Start()
     {
@@ -40,6 +52,9 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
     public void Show(InventoryModel.Slot slot)
     {
         isEmpty = slot.IsEmpty;
+
+        itemName = isEmpty ? "" : slot.Item.itemName;
+        itemDesc = isEmpty ? "" : slot.Item.itemDesc;
 
         if (icon != null)
         {
@@ -104,7 +119,23 @@ public class InventorySlot : MonoBehaviour, IDropHandler, IDragHandler, IBeginDr
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button != PointerEventData.InputButton.Right || inventory == null || isEmpty) return;
-        inventory.OpenMiniCanvas(Index, eventData.position);
+        if (eventData.button == PointerEventData.InputButton.Left && (inventory != null || !isEmpty))
+            SetSelected(true);
+            // inventory.OpenMiniCanvas(Index, eventData.position);
+    }
+
+    public void SetSelected(bool isSelected)
+    {
+        this.isSelected = isSelected;
+        if (isSelected)
+            UIEvents.RequestSlotSelect(this);
+    }
+
+    public void OnSelectSlot(InventorySlot slot)
+    {
+        if (slot == this)
+            return;
+
+        isSelected = false;
     }
 }
