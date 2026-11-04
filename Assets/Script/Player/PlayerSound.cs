@@ -29,6 +29,7 @@ public class PlayerSound : MonoBehaviour
     [Header("Caught")]
     [SerializeField] private AudioClip caughtClip;
     [SerializeField] private AudioClip struggleClip;
+    [SerializeField] private AudioClip freedClip;
 
     [SerializeField] private float caughtVolume = 1f;
 
@@ -60,6 +61,7 @@ public class PlayerSound : MonoBehaviour
         {
             struggle.Caught += PlayCaughtSound;
             struggle.Struggle += PlayStruggleSoundLoop;
+            struggle.Freed += PlayFreedSound;
         }
 
         PlayerEvents.SlowCrouch += HandleSlowCrouchChanged;
@@ -74,6 +76,7 @@ public class PlayerSound : MonoBehaviour
         {
             struggle.Caught -= PlayCaughtSound;
             struggle.Struggle -= PlayStruggleSoundLoop;
+            struggle.Freed -= PlayFreedSound;
         }
 
         PlayerEvents.SlowCrouch -= HandleSlowCrouchChanged;
@@ -113,7 +116,7 @@ public class PlayerSound : MonoBehaviour
     {
         if (struggleClip == null)
             return;
-            
+
         if (isStruggle)
         {
             source.clip = struggleClip;
@@ -126,6 +129,12 @@ public class PlayerSound : MonoBehaviour
             source.loop = false;
             source.Stop();
         }
+    }
+    
+    public void PlayFreedSound()
+    {
+        if (freedClip != null)
+            source.PlayOneShot(freedClip, caughtVolume);
     }
 
     private void PlayFootstep(float baseVolume, float noiseRadius)

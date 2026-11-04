@@ -1763,7 +1763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: 8b7b7bbc31d6acc46aa3e804cfddd5f6, type: 3}
+  m_Actions: {fileID: 0}
   m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -2321,6 +2321,7 @@ MonoBehaviour:
   footstepReaction: 1
   caughtClip: {fileID: 8300000, guid: 4f6dec8dfb2a53d41b0b7e1b2595677a, type: 3}
   struggleClip: {fileID: 8300000, guid: f8a152cbc756fd64d94d96d6c03ce916, type: 3}
+  freedClip: {fileID: 0}
   caughtVolume: 1
 --- !u!114 &6872179149545432460
 MonoBehaviour:
@@ -7088,8 +7089,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5014081619451891361}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1.1830374e-24, z: -1.9595452e-17, w: 1}
-  m_LocalPosition: {x: 1, y: 1.7000002, z: -1}
+  m_LocalRotation: {x: 0.13649625, y: 0.8321558, z: 0.48339656, w: -0.23497507}
+  m_LocalPosition: {x: 1.2591082, y: 0.8313312, z: 0.42222908}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7174,7 +7175,7 @@ MonoBehaviour:
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: 0
+    Value: -148.46391
     Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
@@ -7184,7 +7185,7 @@ MonoBehaviour:
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: 0
+    Value: -60.304325
     Center: 0
     Range: {x: -89, y: 89}
     Wrap: 0

@@ -27,6 +27,7 @@ public class PlayerStruggle : MonoBehaviour
 
     public event Action Caught;
     public event Action<bool> Struggle;
+    public event Action Freed;
 
     public event Action GotCaughtFinished;
 
@@ -169,5 +170,8 @@ public class PlayerStruggle : MonoBehaviour
         PlayerEvents.RaiseStruggleToggled(false);
 
         catcher.ReleasePlayer(playerEscaped);
+
+        if (playerEscaped)
+            Freed?.Invoke();
     }
 }
