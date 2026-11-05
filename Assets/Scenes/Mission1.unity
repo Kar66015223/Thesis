@@ -57711,12 +57711,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1861987529}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 786352414465070458, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1574070544}
     - targetCorrespondingSourceObject: {fileID: 1767571315258326913, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 968805929}
+    - targetCorrespondingSourceObject: {fileID: 786352414465070458, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1574070544}
   m_SourcePrefab: {fileID: 100100000, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
 --- !u!4 &968805925 stripped
 Transform:
@@ -133954,6 +133954,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mission 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4958992905710828449, guid: 053da86a42ba42f4d9d7ad0b2f0f9187, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 5255507018194290404, guid: 053da86a42ba42f4d9d7ad0b2f0f9187, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a6196edba0011fe4fba3d4b4ac7f2b96, type: 2}
     - target: {fileID: 6167991474306407309, guid: 053da86a42ba42f4d9d7ad0b2f0f9187, type: 3}
       propertyPath: m_LocalPosition.x
       value: -41
@@ -133994,6 +134002,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8853281235388675792, guid: 053da86a42ba42f4d9d7ad0b2f0f9187, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a6196edba0011fe4fba3d4b4ac7f2b96, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
