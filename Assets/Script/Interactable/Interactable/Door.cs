@@ -35,6 +35,9 @@ public class Door : Interactable
     void Awake()
     {
         anim = GetComponentInChildren<Animator>();
+        if (anim == null)
+            anim = GetComponentInParent<Animator>();
+            
         col = GetComponent<Collider>();
         currentLock = GetComponentInChildren<Lock>();
         Root = FindRootDoor();
