@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, IItemHolder, ISkillUser
 {
     private const int InventoryCapacity = 30;
+    private const float MaxInventoryWeight = 50f;
     private const float MoveInputDeadZoneSqr = 0.1f;
 
     [field: SerializeField] public PlayerState CurrentState { get; private set; } = PlayerState.Normal;
@@ -16,6 +17,8 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     [SerializeField] private float crouchSpeed = 2f;
     [Tooltip("Crouch speed while holding the slow crouch key. The crouch walk animation slows by the same ratio.")]
     [SerializeField] private float slowCrouchSpeed = 1f;
+    [Tooltip("Walk and run speed are multiplied by this while the inventory weighs more than its max weight.")]
+    [SerializeField, Range(0.1f, 1f)] private float overweightSpeedMultiplier = 0.5f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float rotationSpeed = 10f;
 
@@ -53,7 +56,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     public bool CanStartInteraction =>
         CurrentState == PlayerState.Normal || CurrentState == PlayerState.Crouching;
 
-    public InventoryModel Inventory { get; } = new(InventoryCapacity);
+    public InventoryModel Inventory { get; } = new(InventoryCapacity, MaxInventoryWeight);
 
     void Awake()
     {
@@ -199,7 +202,8 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         if (IsCrouching)
             return IsSlowCrouching ? slowCrouchSpeed : crouchSpeed;
 
-        return IsRunning ? runSpeed : moveSpeed;
+        float speed = IsRunning ? runSpeed : moveSpeed;
+        return Inventory.IsOverweight ? speed * overweightSpeedMultiplier : speed;
     }
 
     private int GetMoveAnimValue(bool isMoving)

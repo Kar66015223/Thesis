@@ -33,11 +33,17 @@ public class InventoryModel : IItemHolder
     public int Capacity => slots.Length;
     public IReadOnlyList<Slot> Slots => slots;
 
-    public InventoryModel(int capacity)
+    public float CurrentWeight { get; private set; }
+    public float MaxWeight { get; private set; }
+    public bool IsOverweight => CurrentWeight > MaxWeight;
+
+    public InventoryModel(int capacity, float maxWeight)
     {
         slots = new Slot[Mathf.Max(1, capacity)];
         for (int i = 0; i < slots.Length; i++)
             slots[i] = new Slot();
+
+        MaxWeight = maxWeight;
     }
 
     public static int MaxStackOf(ItemData item) => item == null ? 0 : Mathf.Max(1, item.maxStack);
@@ -93,6 +99,8 @@ public class InventoryModel : IItemHolder
             remaining -= added;
         }
 
+        RecalculateWeight();
+
         ItemAdded?.Invoke(item);
         Changed?.Invoke();
 
@@ -105,6 +113,7 @@ public class InventoryModel : IItemHolder
             return;
 
         slots[index].Set(null, 0);
+        RecalculateWeight();
         Changed?.Invoke();
     }
 
@@ -115,6 +124,7 @@ public class InventoryModel : IItemHolder
 
         Slot slot = slots[index];
         slot.Set(slot.Item, slot.Stack - 1);
+        RecalculateWeight();
         Changed?.Invoke();
     }
 
@@ -188,7 +198,20 @@ public class InventoryModel : IItemHolder
                 slots[i].Set(null, 0);
         }
 
+        RecalculateWeight();
         Changed?.Invoke();
+    }
+
+    private void RecalculateWeight()
+    {
+        float total = 0f;
+        foreach (Slot slot in slots)
+        {
+            if (!slot.IsEmpty)
+                total += slot.Item.weight * slot.Stack;
+        }
+
+        CurrentWeight = total;
     }
 
     private bool IsValid(int index) => index >= 0 && index < slots.Length;

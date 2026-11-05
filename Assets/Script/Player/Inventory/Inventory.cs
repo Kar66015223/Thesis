@@ -12,6 +12,9 @@ public class Inventory : MonoBehaviour
     [SerializeField] private Transform inventoryPanel;
     [Tooltip("Only used when no PlayerController is found to provide the model.")]
     [SerializeField, Min(1)] private int slotAmount = 30;
+    [SerializeField, Min(0.1f)] private float maxWeight = 50f;
+
+    [SerializeField] private TMP_Text weightText;
 
     private InventorySlot selectedSlot;
 
@@ -77,7 +80,7 @@ public class Inventory : MonoBehaviour
         if (model == null)
         {
             PlayerController owner = GetComponentInParent<PlayerController>();
-            Bind(owner != null ? owner.Inventory : new InventoryModel(slotAmount));
+            Bind(owner != null ? owner.Inventory : new InventoryModel(slotAmount, maxWeight));
         }
 
         if (miniCanvas != null)
@@ -208,6 +211,11 @@ public class Inventory : MonoBehaviour
                 slotViews[i].Show(model.Slots[i]);
             }
         }
+
+        if (model.CurrentWeight > model.MaxWeight)
+            weightText.SetText($"Weight: <color=red>{model.CurrentWeight}</color> / {model.MaxWeight}");
+        else
+            weightText.SetText($"Weight: {model.CurrentWeight} / {model.MaxWeight}");
     }
 
     private void RefreshSelected(InventorySlot selected)
