@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +23,10 @@ public class Inventory : MonoBehaviour
     [Header("Item Detail")]
     [SerializeField] private TMP_Text itemNameText;
     [SerializeField] private TMP_Text itemDescText;
+
+    [SerializeField] private GameObject actionButtonPrefab;
+    [SerializeField] private Transform actionButtonsParent;
+    private List<GameObject> spawnedActionButtons = new();
 
     [Header("Sort Buttons")]
     [SerializeField] private Button sortAscendingButton;
@@ -234,5 +240,46 @@ public class Inventory : MonoBehaviour
 
         itemNameText.text = selectedSlot.ItemName;
         itemDescText.text = selectedSlot.ItemDesc;
+
+        ShowActionButtons(GetItemAt(selectedSlot.Index));
+    }
+
+    private ItemData GetItemAt(int index)
+    {
+        if (model == null || index < 0 || index >= model.Capacity)
+            return null;
+
+        InventoryModel.Slot slot = model.Slots[index];
+        return slot.IsEmpty ? null : slot.Item;
+    }
+
+    private void ShowActionButtons(ItemData item)
+    {
+        ClearActionButtons();
+
+        if (item == null || item.actionButtons == null || actionButtonPrefab == null || actionButtonsParent == null)
+            return;
+
+        for (int i = 0; i < item.actionButtons.Count; i++)
+        {
+            GameObject button = Instantiate(actionButtonPrefab, actionButtonsParent);
+
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label != null)
+                label.text = item.actionButtons[i];
+
+            spawnedActionButtons.Add(button);
+        }
+    }
+
+    private void ClearActionButtons()
+    {
+        foreach (GameObject button in spawnedActionButtons)
+        {
+            if (button != null)
+                Destroy(button);
+        }
+
+        spawnedActionButtons.Clear();
     }
 }
