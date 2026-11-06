@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -25,3 +26,4 @@ public static class MeshColliderTools
     [MenuItem("Tools/For Your Tomorrow/Add Mesh Collider to selection", true)]
     private static bool CanAdd() => Selection.gameObjects.Length > 0;
 }
+#endif
