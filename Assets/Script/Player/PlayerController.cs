@@ -65,6 +65,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         stamina = GetComponent<PlayerStamina>();
         health = GetComponent<PlayerHealth>();
         motor = new PlayerMotor(charController);
+        PlayerSession.RestoreInventory(Inventory);
 
         if (playerModel == null)
         {
