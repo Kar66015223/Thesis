@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 public static class GeneralTools
 {
@@ -9,24 +10,41 @@ public static class GeneralTools
     private static void GroupAllInteractables()
     {
         int added = 0;
+        Transform found = null;
+
+        Transform[] allTransform = StageUtility.GetCurrentStageHandle().FindComponentsOfType<Transform>();
+        foreach (var transform in allTransform)
+        {
+            if (transform.gameObject.name == parentName)
+            {
+                found = transform;
+                break;
+            }
+        }
         
-        Transform parent = GameObject.Find(parentName).transform;
-        if (parent == null)
+        if (found == null)
         {
             Debug.LogWarning($"Can't find object named {parentName}");
-            return;
+            return; 
         }
+        Transform parent = found.transform;
 
-        foreach (GameObject selected in Selection.gameObjects)
+        foreach (Transform selected in Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.Editable))
         {
-            GameObject targetObj = selected.GetComponentInChildren<InteractableBase>(true).Owner;
-            if (targetObj == null || targetObj.transform.parent == parent)
+            if (!IsValid(selected, parent))
                 continue;
 
-            targetObj.transform.SetParent(parent);
+            Undo.SetTransformParent(selected, parent, "Group Interactables");
             added++;
         }
 
-        Debug.Log($"Added {added} objects to {parent.name}");
+        Debug.Log($"Added {added} objects to {parent.gameObject.name}");
     }
+
+    private static bool IsValid(Transform obj, Transform parent) =>
+        obj.parent != parent
+        && obj != parent
+        && !parent.IsChildOf(obj)
+        && obj.gameObject.scene == parent.gameObject.scene
+        && obj.GetComponentInChildren<Interactable>(true) != null;
 }
