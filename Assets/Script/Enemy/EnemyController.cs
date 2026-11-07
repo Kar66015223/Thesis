@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.AI;
+
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyVision))]
 [RequireComponent(typeof(EnemyMovement))]
 [RequireComponent(typeof(EnemyDoorNavigation))]
-
 [RequireComponent(typeof(EnemyAnimation))]
 public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunnable, IBumpable
 {

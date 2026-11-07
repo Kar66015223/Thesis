@@ -8,6 +8,7 @@ public class EnemyDoorNavigation : MonoBehaviour
              "Only bounds its cost; keep it large enough to include every door a route might need.")]
     [SerializeField] private float destSearchRadius = 30f;
     [SerializeField] private float doorArrivalTolerance = 0.2f;
+    [Tooltip("Minimum wait after opening a door. The enemy also waits until the door has finished opening.")]
     [SerializeField] private float repathDelay = 0.2f;
     [SerializeField] private float retryDelay = 1f;
     [SerializeField] private float destReachTolerance = 1.5f;
@@ -22,6 +23,7 @@ public class EnemyDoorNavigation : MonoBehaviour
     private bool hasDest;
 
     private Door targetDoor;
+    private Door openedDoor;
     private Transform approachPoint;
 
     private bool goingToDoor;
@@ -66,10 +68,12 @@ public class EnemyDoorNavigation : MonoBehaviour
         if (waitingToRepath)
         {
             repathTimer -= Time.deltaTime;
+            bool doorReady = openedDoor == null || openedDoor.IsSettled;
 
-            if (repathTimer <= 0f)
+            if (repathTimer <= 0f && doorReady)
             {
                 waitingToRepath = false;
+                openedDoor = null;
 
                 agent.ResetPath();
                 agent.isStopped = false;
@@ -153,6 +157,7 @@ public class EnemyDoorNavigation : MonoBehaviour
             return;
         }
 
+        openedDoor = targetDoor;
         targetDoor = null;
         approachPoint = null;
         goingToDoor = false;
@@ -194,6 +199,7 @@ public class EnemyDoorNavigation : MonoBehaviour
         waitingToRepath = false;
 
         targetDoor = null;
+        openedDoor = null;
         approachPoint = null;
 
         if (agent == null)

@@ -333,6 +333,7 @@ MonoBehaviour:
   playerPointBack: {fileID: 2639513790578623354}
   colDisableWaitTime: 0.5
   link: {fileID: 7764194457374148058}
+  maxSettleTime: 3
 --- !u!114 &9200387962887287146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,7 +361,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

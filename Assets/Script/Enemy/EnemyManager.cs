@@ -90,16 +90,16 @@ public class EnemyManager : MonoBehaviour
 
         enemy.Tracking.StartStep(step);
     }
-    
+
     private static bool IsValid(EnemyMovementStep step, EnemyController enemy)
     {
-        switch(step.movementType)
+        switch (step.movementType)
         {
             case EnemyMovementType.Idle when step.idlePoint == null:
                 Debug.LogWarning($"{enemy.name} has an Idle step with no idle point", enemy);
                 return false;
 
-            case EnemyMovementType.Patrol 
+            case EnemyMovementType.Patrol
             when step.patrolPath.points == null || step.patrolPath.points.Length == 0:
                 Debug.LogWarning($"{enemy.name} has a Patrol step with no waypoints", enemy);
                 return false;
@@ -108,4 +108,7 @@ public class EnemyManager : MonoBehaviour
                 return true;
         }
     }
+
+    [ContextMenu("Debug/Advance All Routes")]
+    private void DebugAdvanceAllRoutes() => EnemyEvents.RequestAdvanceAllRoutes();
 }
