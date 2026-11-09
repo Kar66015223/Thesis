@@ -3,7 +3,37 @@ guid: 26fa86b878037e04d9f32c01b323be8e
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DoorAndWindow
+    second: {fileID: 2100000, guid: e462e0d8cb3720f4bb40e5c69e576b76, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Basement_floor
+    second: {fileID: 2100000, guid: 0dd2d174e0b7ec042be368f26dc037fb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Buinding
+    second: {fileID: 2100000, guid: 39fe08451ccbc154fa9d70d0107b0d3c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_PlasterWallbasement
+    second: {fileID: 2100000, guid: 3dadb7acc50d4fd4c8ca4a993be08da7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_brickroad
+    second: {fileID: 2100000, guid: 9f1e6f90e08167747b67294d6eb2ee5f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_woodwall_inside
+    second: {fileID: 2100000, guid: a6196edba0011fe4fba3d4b4ac7f2b96, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
