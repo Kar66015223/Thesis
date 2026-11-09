@@ -34,11 +34,18 @@ public class PlayerCameraController
 
     [Header("Camera Target Positioning")]
     [SerializeField] private Transform camTarget;
-    [SerializeField] private float shoulderOffset = 0.5f;
-    [SerializeField] private float targetHeight = 1.3f;
+
+    [SerializeField] private float normalShoulderOffset = 0f;
+    [SerializeField] private float scanShoulderOffset = 0.5f;
+    private float targetShoulderOffset;
+    private float curShoulderOffset;
+
     [SerializeField] private float standCamHeight = 1.3f;
     [SerializeField] private float crouchCamHeight = 1f;
-    [SerializeField] private float heightTransitionSpeed = 10f;
+    [SerializeField] private float targetHeight;
+    private float currentCamHeight;
+
+    [SerializeField] private float transitionSpeed = 10f;
 
     [Header("Camera VFX")]
     [SerializeField] private Volume grayScreenVol;
@@ -50,7 +57,6 @@ public class PlayerCameraController
     private const float VolumeSnapThreshold = 0.01f;
 
     private Transform followTarget;
-    private float currentCamHeight;
 
     public void Initialize(Transform followTarget)
     {
@@ -61,6 +67,9 @@ public class PlayerCameraController
 
         currentCamHeight = standCamHeight;
         targetHeight = standCamHeight;
+
+        curShoulderOffset = normalShoulderOffset;
+        targetShoulderOffset = normalShoulderOffset;
     }
 
     public void GetPlanarBasis(out Vector3 forward, out Vector3 right)
@@ -74,6 +83,7 @@ public class PlayerCameraController
     public void Tick(CameraViewState state)
     {
         targetHeight = state.IsCrouching ? crouchCamHeight : standCamHeight;
+        targetShoulderOffset = state.IsSkillVisionActive ? scanShoulderOffset : normalShoulderOffset;
 
         UpdateCameraTarget();
         UpdateFOV(state);
@@ -91,8 +101,10 @@ public class PlayerCameraController
 
         Vector3 right = Vector3.ProjectOnPlane(cam.transform.right, Vector3.up).normalized;
 
-        currentCamHeight = Mathf.Lerp(currentCamHeight, targetHeight, heightTransitionSpeed * Time.deltaTime);
-        camTarget.position = followTarget.position + Vector3.up * currentCamHeight + right * shoulderOffset;
+        currentCamHeight = Mathf.Lerp(currentCamHeight, targetHeight, transitionSpeed * Time.deltaTime);
+        curShoulderOffset = Mathf.Lerp(curShoulderOffset, targetShoulderOffset, transitionSpeed * Time.deltaTime);
+
+        camTarget.position = followTarget.position + Vector3.up * currentCamHeight + right * curShoulderOffset;
     }
 
     private void UpdateFOV(CameraViewState state)
