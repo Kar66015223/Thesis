@@ -5729,6 +5729,7 @@ GameObject:
   - component: {fileID: 311607698}
   - component: {fileID: 311607697}
   - component: {fileID: 311607696}
+  - component: {fileID: 311607700}
   m_Layer: 0
   m_Name: SellNPC
   m_TagString: Untagged
@@ -5828,9 +5829,24 @@ Transform:
   m_LocalPosition: {x: -11.9, y: 1, z: -11.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 509030350}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &311607700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311607695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f28a357a59f5c8429ce16b283538480, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractShopNPC
+  highlight: {fileID: 0}
+  <InteractPromptPos>k__BackingField: {fileID: 509030350}
 --- !u!114 &319626011 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 889704396706555617, guid: f19191f884c93ec4c95ac4256cb52c0a, type: 3}
@@ -10196,6 +10212,37 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &509030349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 509030350}
+  m_Layer: 0
+  m_Name: InteractPromptPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &509030350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 509030349}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 311607699}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &514381135
 Mesh:
   m_ObjectHideFlags: 0

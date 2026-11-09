@@ -450,7 +450,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.1
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 45f022a04ecbd154b9622cb1ac75cb62, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 309ec8981451aca4f9806a48ac87719f, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &2045194698357646557
 GameObject:
@@ -32466,6 +32466,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8278206267075822358, guid: ab780b3b8b312694b9e1b63cafce7458, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8278206267075822358, guid: ab780b3b8b312694b9e1b63cafce7458, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.12
+      objectReference: {fileID: 0}
     - target: {fileID: -8009389852582209724, guid: ab780b3b8b312694b9e1b63cafce7458, type: 3}
       propertyPath: m_StaticShadowCaster
       value: 1
@@ -32509,6 +32517,14 @@ PrefabInstance:
     - target: {fileID: -4657887854245765370, guid: ab780b3b8b312694b9e1b63cafce7458, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: -4371827444419991037, guid: ab780b3b8b312694b9e1b63cafce7458, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4371827444419991037, guid: ab780b3b8b312694b9e1b63cafce7458, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: -3927845419953853871, guid: ab780b3b8b312694b9e1b63cafce7458, type: 3}
       propertyPath: m_StaticShadowCaster

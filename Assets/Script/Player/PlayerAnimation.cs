@@ -72,6 +72,9 @@ public class PlayerAnimation
 
     public void SetInteract()
     {
+        if (anim.runtimeAnimatorController == baseAnimCtrl)
+            return;
+        
         if (anim != null)
             anim.SetTrigger(InteractHash);
     }
