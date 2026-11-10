@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,11 +8,21 @@ public class UISimpleSellShop : MonoBehaviour
     [Header("Shop UI")]
     [SerializeField] private GameObject rootPanel;
     [SerializeField] private TMP_Text playerMoneyText;
-    [SerializeField] private Button closeButton;
 
-    [Header("Sell List")]
-    [SerializeField] private Transform contentParent;
-    [SerializeField] private SellItemRow sellItemPrefab;
+    [SerializeField] private Button closeButton;
+    [SerializeField] private Button removeAllButton;
+    [SerializeField] private Button sellButton;
+
+    [Header("Inventory Panel")]
+    [SerializeField] private Transform inventoryContentParent;
+    [SerializeField] private SellItemRow sellItemRowPrefab;
+
+    [Header("Sell Panel")]
+    [SerializeField] private Transform sellingContentParent;
+    [SerializeField] private SellItemSlot sellItemSlotPrefab;
+
+    private List<ItemData> itemsInSellingPanel = new();
+    private List<ItemData> soldItems = new();
 
     private InventoryModel playerInventory;
     private EconomyManager economy;
@@ -20,6 +31,10 @@ public class UISimpleSellShop : MonoBehaviour
     {
         if (closeButton != null)
             closeButton.onClick.AddListener(() => UIEvents.ToggleShopBoard(false));
+        if (removeAllButton != null)
+            removeAllButton.onClick.AddListener(MoveAllSellingItems);
+        if (sellButton != null)
+            sellButton.onClick.AddListener(Sell);
     }
 
     void OnEnable() => UIEvents.ShopBoardToggled += SetOpen;
@@ -53,7 +68,12 @@ public class UISimpleSellShop : MonoBehaviour
         SetEconomy(isOpen ? EconomyManager.Instance : null);
 
         if (isOpen)
+        {
+            RefreshInventoryList();
             RefreshSellList();
+        }
+        else
+            MoveAllSellingItems();
     }
 
     private void SetEconomy(EconomyManager newEconomy)
@@ -69,15 +89,15 @@ public class UISimpleSellShop : MonoBehaviour
         UpdateMoneyText(economy.CurrentMoney);
     }
 
-    private void RefreshSellList()
+    private void RefreshInventoryList()
     {
-        foreach (Transform child in contentParent)
+        foreach (Transform child in inventoryContentParent)
         {
             if (child.TryGetComponent(out SellItemRow _))
                 Destroy(child.gameObject);
         }
 
-        if (playerInventory == null || sellItemPrefab == null)
+        if (playerInventory == null || sellItemRowPrefab == null)
             return;
 
         for (int i = 0; i < playerInventory.Slots.Count; i++)
@@ -90,12 +110,64 @@ public class UISimpleSellShop : MonoBehaviour
             ItemData item = slot.Item;
             int amount = slot.Stack;
 
-            SellItemRow row = Instantiate(sellItemPrefab, contentParent);
-            row.Bind(item, amount, () => SellSlot(slotIndex, item, amount));
+            SellItemRow row = Instantiate(sellItemRowPrefab, inventoryContentParent);
+            row.Bind(item, amount, () => MoveInventoryItem(slotIndex));
         }
     }
 
-    private void SellSlot(int slotIndex, ItemData item, int amount)
+    private void RefreshSellList()
+    {
+        foreach (Transform child in sellingContentParent)
+            if (child.TryGetComponent(out SellItemSlot _))
+                Destroy(child.gameObject);
+
+        if (itemsInSellingPanel.Count == 0 || sellItemSlotPrefab == null)
+            return;
+
+        for(int i = 0; i < itemsInSellingPanel.Count; i++)
+        {
+            int slotIndex = i;
+            ItemData item = itemsInSellingPanel[i];
+
+            SellItemSlot slot = Instantiate(sellItemSlotPrefab, sellingContentParent);
+            slot.Bind(item, 1, () => MoveSellingItem(slotIndex));
+        }
+    }
+
+    private void MoveInventoryItem(int slotIndex)
+    {
+        InventoryModel.Slot slot = playerInventory.Slots[slotIndex];
+        itemsInSellingPanel.Add(slot.Item);
+        playerInventory.ClearSlot(slotIndex);
+
+        RefreshInventoryList();
+        RefreshSellList();
+    }
+
+    private void MoveSellingItem(int slotIndex)
+    {
+        ItemData item = itemsInSellingPanel[slotIndex];
+        playerInventory.AddItem(item);
+        itemsInSellingPanel.RemoveAt(slotIndex);
+
+        RefreshInventoryList();
+        RefreshSellList();
+    }
+    
+    private void MoveAllSellingItems()
+    {
+        if (itemsInSellingPanel.Count == 0)
+            return;
+
+        for (int i = 0; i < itemsInSellingPanel.Count; i++)
+            playerInventory.AddItem(itemsInSellingPanel[i]);
+
+        itemsInSellingPanel.Clear();
+        RefreshInventoryList();
+        RefreshSellList();
+    }
+
+    private void Sell()
     {
         if (economy == null)
         {
@@ -103,15 +175,20 @@ public class UISimpleSellShop : MonoBehaviour
             return;
         }
 
-        InventoryModel.Slot slot = playerInventory.Slots[slotIndex];
-        if (slot.IsEmpty || slot.Item != item || slot.Stack != amount)
+        soldItems.Clear();
+        foreach (ItemData item in itemsInSellingPanel)
         {
-            RefreshSellList();
-            return;
+            soldItems.Add(item);
+            economy.AddMoney(item.sellPrice);
         }
 
-        economy.AddMoney(item.sellPrice * amount);
-        playerInventory.ClearSlot(slotIndex);
+        foreach(ItemData sold in soldItems)
+        {
+            if (itemsInSellingPanel.Contains(sold))
+                itemsInSellingPanel.Remove(sold);
+        }
+            
+        RefreshInventoryList();
         RefreshSellList();
     }
 

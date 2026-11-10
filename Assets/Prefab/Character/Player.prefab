@@ -169,8 +169,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4540040352235064199}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.9605406}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1130,9 +1130,9 @@ RectTransform:
   - {fileID: 9066573534289537732}
   m_Father: {fileID: 1052367362342901917}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 504.48337, y: -92.361206}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4448648218648511213
@@ -3577,7 +3577,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Cancel
+  m_text: Remove All
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5478,9 +5478,9 @@ RectTransform:
   - {fileID: 8535838678474529413}
   m_Father: {fileID: 1052367362342901917}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100.896675, y: -92.361206}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4394461001541589536
@@ -6877,9 +6877,9 @@ RectTransform:
   - {fileID: 8250474338674510093}
   m_Father: {fileID: 1052367362342901917}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 302.69003, y: -92.361206}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5937365350983666456
@@ -7409,8 +7409,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5014081619451891361}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000011034749, y: -0.00000017484555, z: -1.9293769e-14, w: 1}
-  m_LocalPosition: {x: 1.0000002, y: 1.7000002, z: -1}
+  m_LocalRotation: {x: 0.0000000046655817, y: -1.1988389e-15, z: -8.002371e-18, w: 1}
+  m_LocalPosition: {x: 1, y: 1.7000002, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7973,7 +7973,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 4477821563814735418}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
@@ -11496,7 +11496,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_Viewport: {fileID: 5182215839021027337}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
@@ -11878,7 +11878,7 @@ GameObject:
   - component: {fileID: 1488776814961624704}
   - component: {fileID: 249991875417315869}
   m_Layer: 5
-  m_Name: CancelButton
+  m_Name: RemoveAllButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13738,8 +13738,12 @@ MonoBehaviour:
   rootPanel: {fileID: 3767915939173467992}
   playerMoneyText: {fileID: 940923625891558184}
   closeButton: {fileID: 6198496535256770944}
-  contentParent: {fileID: 820478297902997518}
-  sellItemPrefab: {fileID: 8518942480490863736, guid: 1a701dd0df0190149850568eacfa40aa, type: 3}
+  removeAllButton: {fileID: 249991875417315869}
+  sellButton: {fileID: 4964981783546352915}
+  inventoryContentParent: {fileID: 820478297902997518}
+  sellItemRowPrefab: {fileID: 8518942480490863736, guid: 1a701dd0df0190149850568eacfa40aa, type: 3}
+  sellingContentParent: {fileID: 1903224723591454201}
+  sellItemSlotPrefab: {fileID: 7472417151197820658, guid: 1543a1624bf83fd45a7c8e6a0fb006e7, type: 3}
 --- !u!1 &8538934549603735838
 GameObject:
   m_ObjectHideFlags: 0
@@ -13794,7 +13798,7 @@ MonoBehaviour:
     m_Right: 30
     m_Top: 20
     m_Bottom: 20
-  m_ChildAlignment: 1
+  m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 95, y: 100}

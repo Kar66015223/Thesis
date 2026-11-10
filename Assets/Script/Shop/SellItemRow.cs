@@ -10,8 +10,15 @@ public class SellItemRow : MonoBehaviour
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button sellButton;
 
+    private ItemData item;
+    public ItemData Item => item;
+    private int amount = 0;
+
     public void Bind(ItemData item, int amount, Action onSell)
     {
+        if(this.item != item)
+            this.item = item;
+        
         if (icon != null)
             icon.sprite = item.icon;
         if (nameText != null)
