@@ -3,6 +3,6 @@ using UnityEngine;
 public interface IScanInteractable
 {
     GameObject Owner { get; }
-    void CanInteract();
+    bool CanInteract();
     void Interact();
 }
