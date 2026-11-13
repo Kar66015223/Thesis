@@ -23,11 +23,19 @@ public abstract class Hidable : Interactable
         {
             occupant = agent;
             agent.EnterHiding(this, enterPos.position);
+            OnEnterHiding(agent);
         }
         else if(occupant == agent)
         {
             occupant = null;
             agent.ExitHiding(exitPos.position);
+            OnExitHiding(agent);
         }
     }
+
+    /// <summary>เรียกหลังผู้เล่นเข้าไปซ่อน (override เพื่อเพิ่มเสียง/เอฟเฟกต์)</summary>
+    protected virtual void OnEnterHiding(IHidingAgent agent) { }
+
+    /// <summary>เรียกหลังผู้เล่นออกจากที่ซ่อน (override เพื่อเพิ่มเสียง/เอฟเฟกต์)</summary>
+    protected virtual void OnExitHiding(IHidingAgent agent) { }
 }

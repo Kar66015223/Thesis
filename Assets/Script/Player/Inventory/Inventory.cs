@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(AudioSource))]
 public class Inventory : MonoBehaviour
 {
     [Header("Inventory")]
@@ -37,6 +38,20 @@ public class Inventory : MonoBehaviour
     [SerializeField] private Button useButton;
     [SerializeField] private Button destroyButton;
 
+    [Header("Sound")]
+    [Tooltip("เสียงตอนเปิดหน้าต่าง Inventory")]
+    [SerializeField] private AudioClip openClip;
+    [Tooltip("เสียงตอนปิดหน้าต่าง Inventory")]
+    [SerializeField] private AudioClip closeClip;
+    [Tooltip("เสียงตอนคลิก UI ต่างๆ (ปุ่ม, เลือกช่อง, ย้ายไอเทม)")]
+    [SerializeField] private AudioClip clickClip;
+    [Range(0f, 1f)]
+    [SerializeField] private float openCloseVolume = 1f;
+    [Range(0f, 1f)]
+    [SerializeField] private float clickVolume = 1f;
+
+    private AudioSource audioSource;
+
     private InventoryModel model;
     private InventorySlot[] slotViews = new InventorySlot[0];
     private GridLayoutGroup gridLayoutGroup;
@@ -51,14 +66,18 @@ public class Inventory : MonoBehaviour
     {
         inputHandler = GetComponentInParent<PlayerInputHandler>();
 
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f; // เสียง UI เป็น 2D
+
         if (sortAscendingButton != null)
-            sortAscendingButton.onClick.AddListener(() => SortItem(true));
+            sortAscendingButton.onClick.AddListener(() => { PlayClick(); SortItem(true); });
         if (sortDescendingButton != null)
-            sortDescendingButton.onClick.AddListener(() => SortItem(false));
+            sortDescendingButton.onClick.AddListener(() => { PlayClick(); SortItem(false); });
         if (useButton != null)
-            useButton.onClick.AddListener(UseItem);
+            useButton.onClick.AddListener(() => { PlayClick(); UseItem(); });
         if (destroyButton != null)
-            destroyButton.onClick.AddListener(DestroyItem);
+            destroyButton.onClick.AddListener(() => { PlayClick(); DestroyItem(); });
     }
 
     void OnEnable()
@@ -118,6 +137,8 @@ public class Inventory : MonoBehaviour
 
         panel.SetActive(isOpen);
         InputModeService.RequestUI(this, isOpen);
+
+        PlaySound(isOpen ? openClip : closeClip, openCloseVolume);
     }
 
     private void HandleActionMapChanged(string actionMap)
@@ -140,7 +161,13 @@ public class Inventory : MonoBehaviour
         Refresh();
     }
 
-    public void MoveItem(int fromIndex, int toIndex) => model?.Move(fromIndex, toIndex);
+    public void MoveItem(int fromIndex, int toIndex)
+    {
+        if (fromIndex != toIndex)
+            PlayClick();
+
+        model?.Move(fromIndex, toIndex);
+    }
     public void SortItem(bool ascending = true) => model?.Sort(ascending);
 
     public void UseItem()
@@ -162,6 +189,8 @@ public class Inventory : MonoBehaviour
         contextSlotIndex = slotIndex;
         miniCanvas.position = screenPosition;
         miniCanvas.gameObject.SetActive(true);
+
+        PlayClick();
     }
 
     public void OnFinishMiniCanvas()
@@ -238,6 +267,8 @@ public class Inventory : MonoBehaviour
         if (selectedSlot == null)
             return;
 
+        PlayClick();
+
         itemNameText.text = selectedSlot.ItemName;
         itemDescText.text = selectedSlot.ItemDesc;
 
@@ -268,8 +299,31 @@ public class Inventory : MonoBehaviour
             if (label != null)
                 label.text = item.actionButtons[i];
 
+            Button actionButton = button.GetComponentInChildren<Button>(true);
+            if (actionButton != null)
+                actionButton.onClick.AddListener(PlayClick);
+
             spawnedActionButtons.Add(button);
         }
+    }
+
+    /// <summary>ปรับ volume ของเสียงทั้งหมดใน Inventory พร้อมกัน (เช่น จากเมนู Options)</summary>
+    public void SetSfxVolume(float value)
+    {
+        value = Mathf.Clamp01(value);
+        openCloseVolume = value;
+        clickVolume = value;
+    }
+
+    /// <summary>เล่นเสียงคลิก UI (เรียกจากปุ่มอื่นๆ ได้ด้วย)</summary>
+    public void PlayClick() => PlaySound(clickClip, clickVolume);
+
+    private void PlaySound(AudioClip clip, float volume)
+    {
+        if (clip == null || audioSource == null)
+            return;
+
+        audioSource.PlayOneShot(clip, volume);
     }
 
     private void ClearActionButtons()
