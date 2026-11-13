@@ -21,20 +21,20 @@ public class ScanInteraction : MonoBehaviour
             scanUI = GetComponentInChildren<ScanSkillUI>(true);
         inputHandler = GetComponentInParent<PlayerInputHandler>();
 
-        detector.Initialize(scanSkill != null ? scanSkill.transform : transform);
-        handler.Initialize(detector);
+        detector.Initialize(inputHandler.transform);
+        handler.Initialize(inputHandler.gameObject, detector);
     }
 
     void OnEnable()
     {
         if (inputHandler != null)
-            inputHandler.OnInteractFInput += TryInteract;
+            inputHandler.OnInteractFHeld += HandleInteractHeld;
     }
 
     void OnDisable()
     {
         if(inputHandler != null)
-            inputHandler.OnInteractFInput -= TryInteract;
+            inputHandler.OnInteractFHeld -= HandleInteractHeld;
 
         detector.Clear();
 
@@ -47,12 +47,14 @@ public class ScanInteraction : MonoBehaviour
         if (scanSkill == null || !scanSkill.IsActive)
         {
             detector.Clear();
+            handler.CancelHold();
             if (scanUI != null)
                 scanUI.ClearCrosshairTarget();
             return;
         }
 
         detector.CheckInteractable();
+        handler.Tick(Time.deltaTime);
 
         if (scanUI == null)
             return;
@@ -61,11 +63,15 @@ public class ScanInteraction : MonoBehaviour
             scanUI.SetCrosshairTarget(detector.Camera, detector.TargetCenter);
         else
             scanUI.ClearCrosshairTarget();
+
+        scanUI.UpdateInteractProgress(handler.Progress);
     }
 
-    private void TryInteract()
+    private void HandleInteractHeld(bool isHeld)
     {
-        if (handler.TryInteract())
-            Debug.Log("Scan Interaction Successful");
+        if (isHeld && scanSkill != null && scanSkill.IsActive)
+            handler.BeginHold();
+        else
+            handler.CancelHold();
     }
 }

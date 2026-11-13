@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScanSkillUI : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class ScanSkillUI : MonoBehaviour
     [SerializeField] private RectTransform crosshair;
     [Tooltip("How fast the crosshair slides to a scan interactable and back to the centre. 0 = snap instantly.")]
     [SerializeField, Min(0f)] private float crosshairMoveSpeed = 20f;
+
+    [SerializeField] private Image interactProgress;
 
     private ScannerSkill scanSkill;
     private Canvas canvas;
@@ -68,4 +71,6 @@ public class ScanSkillUI : MonoBehaviour
     }
 
     public void ClearCrosshairTarget() => targetCrosshairPosition = defaultCrosshairPosition;
+
+    public void UpdateInteractProgress(float progress) => interactProgress.fillAmount = progress;
 }

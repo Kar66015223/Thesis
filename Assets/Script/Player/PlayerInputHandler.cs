@@ -17,6 +17,9 @@ public class PlayerInputHandler : MonoBehaviour
 
     public event Action OnInteractFInput;
     public event Action OnInteractSpacebarInput;
+
+    public event Action<bool> OnInteractFHeld;
+
     public event Action<float> OnScrollInput;
 
     public event Action OnStruggleInput;
@@ -83,6 +86,8 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (context.performed)
             OnInteractFInput?.Invoke();
+
+        RaiseHold(context, OnInteractFHeld);
     }
 
     public void OnInteractSpacebar(InputAction.CallbackContext context)

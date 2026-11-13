@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7772219054953178941}
   - component: {fileID: 7476545166377164146}
   - component: {fileID: 7892309641778788111}
-  - component: {fileID: 1519650556440282058}
+  - component: {fileID: 87225547587391714}
   m_Layer: 0
   m_Name: ValuableItem
   m_TagString: Untagged
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   highlight: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: c9704408f30544a4a8b5670bdab33f6a, type: 2}
---- !u!114 &1519650556440282058
+--- !u!114 &87225547587391714
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,6 +137,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1920380081497284826}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03acff509f422d04999f72b2f5327989, type: 3}
+  m_Script: {fileID: 11500000, guid: 7daf4df90dbf73d439117e12a2856936, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScanInteractTest
+  m_EditorClassIdentifier: Assembly-CSharp::ScanTakeableItem
+  holdTime: 1.5
