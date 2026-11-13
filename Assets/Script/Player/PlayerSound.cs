@@ -31,6 +31,8 @@ public class PlayerSound : MonoBehaviour
     [SerializeField] private AudioClip freedClip;
 
     [SerializeField] private float caughtVolume = 1f;
+    [Tooltip("Volume of the Freed sound only. 1 = clip's normal loudness, above 1 boosts it, below 1 reduces it.")]
+    [SerializeField, Range(0f, 3f)] private float freedVolume = 1.5f;
 
     private AudioSource source;
     private SoundEmitter emitter;
@@ -133,7 +135,7 @@ public class PlayerSound : MonoBehaviour
     public void PlayFreedSound()
     {
         if (freedClip != null)
-            source.PlayOneShot(freedClip, caughtVolume);
+            source.PlayOneShot(freedClip, freedVolume);
     }
 
     private void PlayFootstep(float baseVolume, float noiseRadius)

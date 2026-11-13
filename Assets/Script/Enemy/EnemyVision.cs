@@ -22,6 +22,15 @@ public class EnemyVision : MonoBehaviour
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
 
+    [Header("Spotted Sound")]
+    [Tooltip("Sound played the moment the enemy first sees the player.")]
+    [SerializeField] private AudioClip spottedClip;
+    [Tooltip("Optional. If empty, an AudioSource on this object is used (or one is added automatically).")]
+    [SerializeField] private AudioSource audioSource;
+    [Range(0f, 1f)][SerializeField] private float spottedVolume = 0.8f;
+    [Tooltip("Minimum seconds between two spotted sounds, so it doesn't spam if the player flickers in and out of sight.")]
+    [SerializeField, Min(0f)] private float spottedSoundCooldown = 2f;
+
     private readonly Collider[] overlapBuffer = new Collider[MaxTargetsPerScan];
     private readonly List<Transform> visibleTargets = new();
     private readonly List<Transform> confirmedTargets = new();
@@ -29,6 +38,7 @@ public class EnemyVision : MonoBehaviour
     private EnemyController ctrl;
     private Coroutine scanRoutine;
     private float confirmTimer;
+    private float lastSpottedSoundTime = float.NegativeInfinity;
 
     public float ViewRadius => viewRadius;
     public float ViewAngle => viewAngle;
@@ -38,7 +48,26 @@ public class EnemyVision : MonoBehaviour
     public IReadOnlyList<Transform> ConfirmedTargets => confirmedTargets;
     public bool IsConfirmed(Transform target) => confirmedTargets.Contains(target);
 
-    void Awake() => ctrl = GetComponent<EnemyController>();
+    /// <summary>Volume of the spotted sound (0-1). Can be changed at runtime, e.g. from an options menu.</summary>
+    public float SpottedVolume
+    {
+        get => spottedVolume;
+        set => spottedVolume = Mathf.Clamp01(value);
+    }
+
+    void Awake()
+    {
+        ctrl = GetComponent<EnemyController>();
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+        }
+    }
 
     void OnEnable() => EnableVision();
 
@@ -83,7 +112,10 @@ public class EnemyVision : MonoBehaviour
     private void UpdateConfirmation(Transform target)
     {
         if (confirmTimer == 0f)
+        {
             ctrl.OnSeenTarget(target);
+            PlaySpottedSound();
+        }
 
         confirmTimer += Time.deltaTime;
         float progress = ctrl.ConfirmWaitTime > 0f ? Mathf.Clamp01(confirmTimer / ctrl.ConfirmWaitTime) : 1f;
@@ -94,6 +126,18 @@ public class EnemyVision : MonoBehaviour
             confirmedTargets.Add(target);
             ctrl.OnSeenTarget(target);
         }
+    }
+
+    private void PlaySpottedSound()
+    {
+        if (spottedClip == null || audioSource == null)
+            return;
+
+        if (Time.time - lastSpottedSoundTime < spottedSoundCooldown)
+            return;
+
+        lastSpottedSoundTime = Time.time;
+        audioSource.PlayOneShot(spottedClip, spottedVolume);
     }
 
     private void ResetConfirmation()
