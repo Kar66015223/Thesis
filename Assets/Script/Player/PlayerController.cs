@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     [SerializeField, Range(0.1f, 1f)] private float overweightSpeedMultiplier = 0.5f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField, Range(0.1f, 1f)] private float starvingSpeedMultiplier = 0.6f;
 
     [Header("Collider Size")]
     [SerializeField] private float standColliderY = 0.7f;
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     private PlayerStamina stamina;
     private PlayerHealth health;
     private PlayerMotor motor;
+    private PlayerHunger hunger;
     private readonly List<Renderer> hiddenRenderers = new();
 
     private Vector2 moveInput;
@@ -47,6 +49,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     private bool canMove = true;
     private bool isUsingSkill;
 
+    public bool IsMoving { get; private set; }
     public bool IsCrouching { get; private set; }
     public bool IsSlowCrouching { get; private set; }
     public bool IsRunning => stamina != null && stamina.IsRunning;
@@ -65,6 +68,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         stamina = GetComponent<PlayerStamina>();
         health = GetComponent<PlayerHealth>();
         motor = new PlayerMotor(charController);
+        hunger = GetComponent<PlayerHunger>();
         PlayerSession.RestoreInventory(Inventory);
 
         if (playerModel == null)
@@ -85,6 +89,9 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         inputHandler.OnCrouchPressed += HandleCrouchPressed;
         inputHandler.OnSlowCrouchInput += HandleSlowCrouch;
 
+        if (hunger != null)
+            hunger.HungerPang += anim.SetHungry;
+
         if (health != null)
         {
             health.Died += HandleDied;
@@ -98,6 +105,9 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         inputHandler.OnRunInput -= HandleRunInput;
         inputHandler.OnCrouchPressed -= HandleCrouchPressed;
         inputHandler.OnSlowCrouchInput -= HandleSlowCrouch;
+
+        if (hunger != null)
+            hunger.HungerPang -= anim.SetHungry;
 
         if (health != null)
         {
@@ -179,14 +189,15 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         if (!canMove)
         {
             UpdateStamina(isMoving: false);
+            IsMoving = false;
             return;
         }
 
-        bool isMoving = moveInput.sqrMagnitude > MoveInputDeadZoneSqr;
-        UpdateStamina(isMoving);
+        IsMoving = moveInput.sqrMagnitude > MoveInputDeadZoneSqr;
+        UpdateStamina(IsMoving);
 
         motor.Move(moveDir * GetCurrentSpeed(), gravity, Time.deltaTime);
-        anim.SetMove(GetMoveAnimValue(isMoving));
+        anim.SetMove(GetMoveAnimValue(IsMoving));
     }
 
     private void UpdateStamina(bool isMoving)
@@ -200,11 +211,20 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
     private float GetCurrentSpeed()
     {
+        float speed;
         if (IsCrouching)
-            return IsSlowCrouching ? slowCrouchSpeed : crouchSpeed;
+            speed = IsSlowCrouching ? slowCrouchSpeed : crouchSpeed;
+        else
+        {
+            speed = IsRunning ? runSpeed : moveSpeed;
+            if (Inventory.IsOverweight)
+                speed *= overweightSpeedMultiplier;
+        }
 
-        float speed = IsRunning ? runSpeed : moveSpeed;
-        return Inventory.IsOverweight ? speed * overweightSpeedMultiplier : speed;
+        if (hunger != null && hunger.IsStarving)
+            speed *= starvingSpeedMultiplier;
+
+        return speed;
     }
 
     private int GetMoveAnimValue(bool isMoving)

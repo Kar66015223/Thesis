@@ -16,6 +16,7 @@ public class UISimpleSellShop : MonoBehaviour
     [Header("Inventory Panel")]
     [SerializeField] private Transform inventoryContentParent;
     [SerializeField] private SellItemRow sellItemRowPrefab;
+    [SerializeField] private Button addAllButton;
 
     [Header("Sell Panel")]
     [SerializeField] private Transform sellingContentParent;
@@ -35,6 +36,8 @@ public class UISimpleSellShop : MonoBehaviour
             removeAllButton.onClick.AddListener(MoveAllSellingItems);
         if (sellButton != null)
             sellButton.onClick.AddListener(Sell);
+        if (addAllButton != null)
+            addAllButton.onClick.AddListener(MoveAllInventoryItems);
     }
 
     void OnEnable() => UIEvents.ShopBoardToggled += SetOpen;
@@ -150,6 +153,26 @@ public class UISimpleSellShop : MonoBehaviour
         playerInventory.AddItem(item);
         itemsInSellingPanel.RemoveAt(slotIndex);
 
+        RefreshInventoryList();
+        RefreshSellList();
+    }
+    
+    private void MoveAllInventoryItems()
+    {
+        if (playerInventory.Slots.Count == 0)
+            return;
+
+        for (int i = 0; i < playerInventory.Slots.Count; i++)
+        {
+            InventoryModel.Slot slot = playerInventory.Slots[i];
+            if (slot.IsEmpty || slot.Item.sellPrice <= 0)
+                continue;
+
+            int slotIndex = i;
+            itemsInSellingPanel.Add(slot.Item);
+            playerInventory.ClearSlot(slotIndex);
+        }
+        
         RefreshInventoryList();
         RefreshSellList();
     }

@@ -8,7 +8,6 @@ public class SkillUpgradeData : ScriptableObject
     public string upgradeName;
     [TextArea] public string upgradeDesc;
 
-    public string progressMethod;
     public SkillUpgradeTrigger trigger;
     [Min(1)] public int maxProgress = 1;
     
