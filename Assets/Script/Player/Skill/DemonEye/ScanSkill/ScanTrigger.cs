@@ -22,6 +22,18 @@ public class ScanTrigger : MonoBehaviour
         StartCoroutine(Expand());
     }
 
+    void OnDisable()
+    {
+        StopAllCoroutines();
+        foreach (IScannable scannable in scanned)
+        {
+            if (scannable is Object unityObj && unityObj != null)
+                scannable.OnScanExit();
+        }
+
+        scanned.Clear();
+    }
+
     private IEnumerator Expand()
     {
         col.radius = 0f;
@@ -54,17 +66,5 @@ public class ScanTrigger : MonoBehaviour
             if (scanned.Remove(scannable))
                 scannable.OnScanExit();
         }
-    }
-
-    void OnDisable()
-    {
-        StopAllCoroutines();
-        foreach (IScannable scannable in scanned)
-        {
-            if (scannable is Object unityObj && unityObj != null)
-                scannable.OnScanExit();
-        }
-
-        scanned.Clear();
     }
 }
