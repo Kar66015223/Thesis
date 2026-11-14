@@ -28,7 +28,9 @@ public class PlayerInputHandler : MonoBehaviour
 
     public event Action<bool> OnPhysSkillMenuInput;
     public event Action<bool> OnPhysicalSkillInput;
+
     public event Action OnDemonEyeSkillPressed;
+    public event Action<bool> OnDemonEyeSkillHeld;
 
     void Awake()
     {
@@ -104,6 +106,8 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (context.performed)
             OnDemonEyeSkillPressed?.Invoke();
+
+        RaiseHold(context, OnDemonEyeSkillHeld);
     }
 
     public void OnStruggle(InputAction.CallbackContext context)

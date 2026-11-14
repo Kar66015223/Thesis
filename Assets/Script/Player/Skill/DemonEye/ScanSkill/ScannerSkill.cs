@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -7,6 +8,20 @@ public class ScannerSkill : MonoBehaviour
     [SerializeField] private GameObject scanVFX;
     [SerializeField] private GameObject scanVFX2;
     [SerializeField] private float cooldownTime = 1f;
+
+    [SerializeField] private float maxResource = 100f;
+    [SerializeField] private float _curResource;
+    public float CurResource
+    {
+        get => _curResource;
+        private set => _curResource = Mathf.Clamp(value, 0, maxResource);
+    }
+    [SerializeField] private float drainRate = 20f;
+    [SerializeField] private float regenRate = 15f;
+    [Range(0, 1)][SerializeField] private float recoveryThreshold;
+
+    public float Normalized => maxResource > 0f ? CurResource / maxResource : 0f;
+    public event Action<float> OnResourceChanged;
 
     [Header("Audio - Scanner Only")]
     [SerializeField] private AudioSource scanAudioSource;
@@ -20,10 +35,43 @@ public class ScannerSkill : MonoBehaviour
     private Coroutine audioCoroutine;
 
     public bool IsActive { get; private set; }
-    public bool CanActivate => !IsActive && cooldown.IsReady;
+    public bool OutOfResource { get; private set; } = false;
+    public event Action OnOutOfResource;
+    public event Action Recovered;
+    
+    public bool CanActivate => !IsActive && cooldown.IsReady && CurResource > 0 && !OutOfResource;
     public float CooldownRemaining => cooldown.Remaining;
 
-    void Update() => cooldown.Tick(Time.deltaTime);
+    void Start() => CurResource = maxResource;
+    void Update() => Tick(Time.deltaTime);
+
+    private void Tick(float deltaTime)
+    {
+        cooldown.Tick(deltaTime);
+
+        if (IsActive)
+        {
+            CurResource -= drainRate * deltaTime;
+            OnResourceChanged?.Invoke(Normalized);
+
+            if (CurResource <= 0f)
+            {
+                OutOfResource = true;
+                OnOutOfResource?.Invoke();
+            }
+        }
+        else
+        {
+            CurResource += regenRate * deltaTime;
+            OnResourceChanged?.Invoke(Normalized);
+
+            if(OutOfResource && CurResource >= maxResource * recoveryThreshold)
+            {
+                OutOfResource = false;
+                Recovered?.Invoke();
+            }
+        }
+    }
 
     void OnDisable()
     {

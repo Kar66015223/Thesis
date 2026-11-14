@@ -32,13 +32,17 @@ public class SkillManager : MonoBehaviour
     void OnEnable()
     {
         inputHandler.OnPhysicalSkillInput += HandlePhysicalSkillInput;
-        inputHandler.OnDemonEyeSkillPressed += ToggleDemonEye;
+        inputHandler.OnDemonEyeSkillHeld += ToggleDemonEye;
+
+        scanner.OnOutOfResource += DeactivateDemonEye;
     }
 
     void OnDisable()
     {
         inputHandler.OnPhysicalSkillInput -= HandlePhysicalSkillInput;
-        inputHandler.OnDemonEyeSkillPressed -= ToggleDemonEye;
+        inputHandler.OnDemonEyeSkillHeld -= ToggleDemonEye;
+
+        scanner.OnOutOfResource -= DeactivateDemonEye;
     }
 
     void Start()
@@ -80,15 +84,14 @@ public class SkillManager : MonoBehaviour
             EquippedPhysSkill.OnInputReleased();
     }
 
-    private void ToggleDemonEye()
+    private void ToggleDemonEye(bool isHeld)
     {
         if (scanner == null || controller == null)
             return;
 
-        if (scanner.IsActive)
+        if (!isHeld)
         {
-            scanner.Deactivate();
-            controller.SetUsingSkill(false);
+            DeactivateDemonEye();
             return;
         }
 
@@ -97,5 +100,11 @@ public class SkillManager : MonoBehaviour
 
         scanner.Activate();
         controller.SetUsingSkill(true);
+    }
+    
+    private void DeactivateDemonEye()
+    {
+        scanner.Deactivate();
+        controller.SetUsingSkill(false);
     }
 }

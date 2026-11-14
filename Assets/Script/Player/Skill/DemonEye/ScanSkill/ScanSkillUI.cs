@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,9 @@ public class ScanSkillUI : MonoBehaviour
     [SerializeField, Min(0f)] private float crosshairMoveSpeed = 20f;
 
     [SerializeField] private Image interactProgress;
+
+    [SerializeField] private GameObject resourceBarParent;
+    [SerializeField] private Image resourceBar;
 
     private ScannerSkill scanSkill;
     private Canvas canvas;
@@ -30,10 +34,25 @@ public class ScanSkillUI : MonoBehaviour
         targetCrosshairPosition = defaultCrosshairPosition;
     }
 
+    void OnEnable()
+    {
+        scanSkill.OnResourceChanged += UpdateResourceBar;
+    }
+
+    void OnDisable()
+    {
+        scanSkill.OnResourceChanged -= UpdateResourceBar;
+    }
+
     void Update() => ToggleRootPanel(scanSkill.IsActive);
 
     void LateUpdate()
     {
+        if (resourceBar.fillAmount == 1)
+            resourceBarParent.SetActive(false);
+        else
+            resourceBarParent.SetActive(true);
+
         if (crosshair == null)
             return;
 
@@ -71,6 +90,6 @@ public class ScanSkillUI : MonoBehaviour
     }
 
     public void ClearCrosshairTarget() => targetCrosshairPosition = defaultCrosshairPosition;
-
     public void UpdateInteractProgress(float progress) => interactProgress.fillAmount = progress;
+    public void UpdateResourceBar(float fillAmount) => resourceBar.fillAmount = fillAmount;
 }
