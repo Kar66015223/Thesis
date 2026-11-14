@@ -19,6 +19,13 @@ public static class UIEvents
     public static event Action<bool> ShopBoardToggled;
     public static void ToggleShopBoard(bool isOpen) => ShopBoardToggled?.Invoke(isOpen);
 
+    public static event Action<bool> SkillUpgradeToggled;
+    public static void ToggleSkillUpgrade(bool isOpen) => SkillUpgradeToggled?.Invoke(isOpen);
+
+    public static event Action<bool, SkillUpgradeData> SkillUpgradeDetailToggled;
+    public static void ToggleSkillUpgradeDetail(bool isOpen, SkillUpgradeData data) 
+        => SkillUpgradeDetailToggled?.Invoke(isOpen, data); 
+
     public static event Action<Transform, Sprite> TrackingTargetChanged;
     public static void SetTrackingTarget(Transform target, Sprite icon)
         => TrackingTargetChanged?.Invoke(target, icon);

@@ -4,7 +4,6 @@ public class ScanInteraction : MonoBehaviour
 {
     [SerializeField] private ScanInteractionDetector detector = new();
     [SerializeField] private ScanInteractionHandler handler = new();
-
     [Tooltip("Left empty, the ScannerSkill and ScanSkillUI on this object and its children are used.")]
     private ScannerSkill scanSkill;
     private ScanSkillUI scanUI;
@@ -12,6 +11,9 @@ public class ScanInteraction : MonoBehaviour
     public IScanInteractable Current => detector.Current;
 
     private PlayerInputHandler inputHandler;
+
+    [SerializeField] private SkillUpgradeData requiredUpgrade;
+    private bool IsUnlocked => requiredUpgrade == null || SkillUpgradeProgress.IsUnlocked(requiredUpgrade);
 
     void Awake()
     {
@@ -23,6 +25,8 @@ public class ScanInteraction : MonoBehaviour
 
         detector.Initialize(inputHandler.transform);
         handler.Initialize(inputHandler.gameObject, detector);
+
+        SkillUpgradeProgress.Track(requiredUpgrade);
     }
 
     void OnEnable()
@@ -53,6 +57,9 @@ public class ScanInteraction : MonoBehaviour
             return;
         }
 
+        if (!IsUnlocked)
+            return;
+
         detector.CheckInteractable();
         handler.Tick(Time.deltaTime);
 
@@ -69,6 +76,9 @@ public class ScanInteraction : MonoBehaviour
 
     private void HandleInteractHeld(bool isHeld)
     {
+        if (!IsUnlocked)
+            return;
+        
         if (isHeld && scanSkill != null && scanSkill.IsActive)
             handler.BeginHold();
         else
