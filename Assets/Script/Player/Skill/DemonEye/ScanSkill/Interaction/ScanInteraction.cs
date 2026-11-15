@@ -13,7 +13,9 @@ public class ScanInteraction : MonoBehaviour
     private PlayerInputHandler inputHandler;
 
     [SerializeField] private SkillUpgradeData requiredUpgrade;
-    private bool IsUnlocked => requiredUpgrade == null || SkillUpgradeProgress.IsUnlocked(requiredUpgrade);
+    public bool forceUnlockSkill = false;
+    private bool IsUnlocked => requiredUpgrade == null || SkillUpgradeProgress.IsUnlocked(requiredUpgrade)
+        || forceUnlockSkill;
 
     void Awake()
     {
