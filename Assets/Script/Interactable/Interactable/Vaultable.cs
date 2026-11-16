@@ -19,6 +19,9 @@ public class Vaultable : Interactable
     {
         isVaulting = true;
 
+        if (interactor.TryGetComponent(out PlayerController ctrl))
+            ctrl.SetVault();
+
         Transform start = GetClosestPoint(interactor.transform.position);
         Vector3 startPos = interactor.transform.position;
         Vector3 targetPos = (start == sideAPoint ? sideBPoint : sideAPoint).position;

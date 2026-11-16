@@ -62,6 +62,7 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         if (handler.TryInteract(button, player))
-            ctrl.PlayInteractAnimation();
+            if(!(handler.GetTarget(InteractButton.Space) as Vaultable))
+                ctrl.PlayInteractAnimation();
     }
 }

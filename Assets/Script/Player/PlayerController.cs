@@ -417,4 +417,6 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     public bool AddItem(ItemData item, int amount = 1) => Inventory.AddItem(item, amount);
 
     #endregion
+
+    public void SetVault() => anim.SetVault();
 }

@@ -20,6 +20,8 @@ public class PlayerAnimation
 
     private static readonly int HungryHash = Animator.StringToHash("Hungry");
 
+    private static readonly int VaulthHash = Animator.StringToHash("Vault");
+
     public void Initialize()
     {
         if (MapManager.Instance == null || MapManager.Instance.DefaultActionMapName == "")
@@ -97,5 +99,11 @@ public class PlayerAnimation
     {
         if (anim != null && anim.runtimeAnimatorController == missionAnimCtrl)
             anim.SetTrigger(HungryHash);
+    }
+
+    public void SetVault()
+    {
+        if (anim != null && anim.runtimeAnimatorController == missionAnimCtrl)
+            anim.SetTrigger(VaulthHash);
     }
 }
