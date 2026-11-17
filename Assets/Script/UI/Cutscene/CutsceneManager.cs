@@ -1,6 +1,4 @@
-using NUnit.Framework.Internal;
 using TMPro;
-using Unity.Collections;
 using UnityEngine;
 
 public class CutsceneManager : MonoBehaviour
@@ -47,10 +45,12 @@ public class CutsceneManager : MonoBehaviour
 
     void NextSequence()
     {
-        if(currentIndex < sequences.Length - 1)
+        if (currentIndex < sequences.Length - 1)
         {
             currentIndex++;
             ShowSequence(currentIndex);
         }
+        else
+            SceneLoader.LoadScene(SceneConstants.HIDEOUT_NAME);
     }
 }
