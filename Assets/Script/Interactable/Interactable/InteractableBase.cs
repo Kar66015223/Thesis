@@ -3,6 +3,7 @@ using UnityEngine;
 public abstract class InteractableBase : MonoBehaviour, IInteractable
 {
     [SerializeField] private ObjectiveHighlight highlight;
+    [SerializeField] private AudioClip interactSound;
 
     public GameObject Owner => gameObject;
     public virtual InteractButton InteractButton => InteractButton.F;
@@ -19,6 +20,9 @@ public abstract class InteractableBase : MonoBehaviour, IInteractable
         if (highlight != null)
             highlight.ReportInteraction();
 
+        if (TryGetComponent(out AudioSource source) && interactSound != null)
+            source.PlayOneShot(interactSound);
+            
         OnInteract(interactor);
     }
 
