@@ -330,12 +330,16 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         SetModelVisible(false);
     }
 
-    public void ExitHiding(Vector3 position)
+    public void ExitHiding(Vector3 position, Quaternion? facing = null)
     {
         CurrentHidingPlace = null;
         motor.SetEnabled(false);
         motor.Teleport(position);
         motor.SetEnabled(true);
+
+        if (facing.HasValue && playerModel != null)
+            playerModel.rotation = facing.Value;
+
         SetModelVisible(true);
     }
 
