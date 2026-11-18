@@ -11,7 +11,7 @@ public interface IHidingAgent
 {
     bool IsHiding { get; }
     void EnterHiding(Hidable spot, Vector3 position);
-    void ExitHiding(Vector3 position);
+    void ExitHiding(Vector3 position, Quaternion? facing = null);
 }
 
 public interface IPromptTarget

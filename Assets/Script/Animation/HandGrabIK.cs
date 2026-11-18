@@ -12,6 +12,10 @@ public class HandGrabIK : MonoBehaviour
     [Serializable]
     private class Grab
     {
+        [Tooltip("Only grab while this Animator state is playing (its name as shown in the Animator window).\n" +
+                 "Leave empty to grab in every state.")]
+        public string state;
+
         [Tooltip("Which hand grabs.")]
         public AvatarIKGoal hand = AvatarIKGoal.RightHand;
 
@@ -46,8 +50,10 @@ public class HandGrabIK : MonoBehaviour
         if (layerIndex != layer || grabs == null)
             return;
 
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+
         // Clamp so the last value of each curve holds once the clip has finished.
-        float progress = Mathf.Clamp01(animator.GetCurrentAnimatorStateInfo(layerIndex).normalizedTime);
+        float progress = Mathf.Clamp01(stateInfo.normalizedTime);
 
         foreach (AvatarIKGoal goal in Goals)
         {
@@ -58,6 +64,9 @@ public class HandGrabIK : MonoBehaviour
             foreach (Grab grab in grabs)
             {
                 if (grab.hand != goal || grab.target == null)
+                    continue;
+
+                if (!string.IsNullOrEmpty(grab.state) && !stateInfo.IsName(grab.state))
                     continue;
 
                 float weight = Mathf.Clamp01(grab.weight.Evaluate(progress));
