@@ -26,6 +26,7 @@ public abstract class Hidable : Interactable
         {
             occupant = agent;
             agent.EnterHiding(this, enterPos.position);
+            OnEnterHiding();
 
             if (TryGetComponent(out AudioSource source) && enterSound != null)
                 source.PlayOneShot(enterSound);
@@ -34,9 +35,16 @@ public abstract class Hidable : Interactable
         {
             occupant = null;
             agent.ExitHiding(exitPos.position);
+            OnExitHiding();
 
             if (TryGetComponent(out AudioSource source) && exitSound != null)
                 source.PlayOneShot(exitSound);
         }
     }
+
+    /// <summary>Called right after the player has gone into this hiding place.</summary>
+    protected virtual void OnEnterHiding() { }
+
+    /// <summary>Called right after the player has come out of this hiding place.</summary>
+    protected virtual void OnExitHiding() { }
 }
