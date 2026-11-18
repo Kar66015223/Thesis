@@ -330,6 +330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   highlight: {fileID: 0}
+  interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!1 &171732864 stripped
 GameObject:
@@ -484,6 +485,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   highlight: {fileID: 0}
+  interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!43 &195458343
 Mesh:
@@ -868,6 +870,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   highlight: {fileID: 0}
+  interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!114 &306563216
 MonoBehaviour:
@@ -1593,6 +1596,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   highlight: {fileID: 0}
+  interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 9a965561b9cacb74daaac4054ca33cd2, type: 2}
 --- !u!1 &523102008
 GameObject:
@@ -3858,7 +3862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4254743886045606895, guid: c2bc3fed7200e66419480b77da65dbce, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.983
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4254743886045606895, guid: c2bc3fed7200e66419480b77da65dbce, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5249,6 +5253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   highlight: {fileID: 0}
+  interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
 --- !u!1001 &1864340957
 PrefabInstance:
