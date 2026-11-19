@@ -20,14 +20,18 @@ public class Vaultable : Interactable
         isVaulting = true;
 
         if (interactor.TryGetComponent(out PlayerController ctrl))
+        {
             ctrl.SetVault();
+            ctrl.SetCanMove(false);
+        }
 
         Transform start = GetClosestPoint(interactor.transform.position);
-        Vector3 startPos = interactor.transform.position;
+        Vector3 startPos = start.position;
         Vector3 targetPos = (start == sideAPoint ? sideBPoint : sideAPoint).position;
 
         interactor.TryGetComponent(out IInteractorBody body);
         body?.SetPhysicsEnabled(false);
+        body?.Teleport(start.position, start.rotation);
 
         for (float elapsed = 0f; elapsed < vaultDuration; elapsed += Time.deltaTime)
         {
@@ -44,6 +48,7 @@ public class Vaultable : Interactable
         body?.SetPhysicsEnabled(true);
 
         isVaulting = false;
+        ctrl.SetCanMove(true);
     }
     
     private Transform GetClosestPoint(Vector3 pos)
