@@ -10,8 +10,9 @@ public interface IInteractorBody
 public interface IHidingAgent
 {
     bool IsHiding { get; }
-    void EnterHiding(Hidable spot, Vector3 position);
+    void EnterHiding(Hidable spot, Vector3 position, Quaternion? facing = null);
     void ExitHiding(Vector3 position, Quaternion? facing = null);
+    void SetCrouching(bool crouching);
 }
 
 public interface IPromptTarget

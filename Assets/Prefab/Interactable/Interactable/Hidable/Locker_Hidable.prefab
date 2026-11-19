@@ -261,7 +261,7 @@ MonoBehaviour:
   exitPos: {fileID: 3856791376847185627}
   enterSound: {fileID: 0}
   exitSound: {fileID: 0}
-  hidingCharacter: {fileID: 6303711191225389518}
+  hidingCharacterCopy: {fileID: 6303711191225389518}
 --- !u!82 &2753459040782208498
 AudioSource:
   m_ObjectHideFlags: 0
@@ -748,7 +748,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HandGrabIK
   grabs:
-  - hand: 3
+  - state: 
+    hand: 3
     target: {fileID: 4623275665988297421}
     weight:
       serializedVersion: 2

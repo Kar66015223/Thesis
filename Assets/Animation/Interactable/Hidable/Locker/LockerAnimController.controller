@@ -65,7 +65,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: 8995236623885256553}
   m_StateMachineBehaviours:
-  - {fileID: 3818583688634458916}
+  - {fileID: -1243497127986781842}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -80,6 +80,18 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-1243497127986781842
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26ba60744756fe74cbb9c1389d82f508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnterHideStateBehavior
 --- !u!91 &9100000
 AnimatorController:
   m_ObjectHideFlags: 0
@@ -165,18 +177,6 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!114 &3818583688634458916
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f12186dc457c2d4a8b2aef4c3dbb252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LockerEnterStateBehavior
 --- !u!1102 &6856251844273509349
 AnimatorState:
   serializedVersion: 6

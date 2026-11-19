@@ -139,15 +139,23 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
     private void HandleRunInput(bool isHeld) => isRunHeld = isHeld;
 
+    public void SetCrouching(bool crouching)
+    {
+        if (IsCrouching == crouching)
+            return;
+
+        IsCrouching = crouching;
+        anim.SetCrouch(IsCrouching);
+        ApplyStance();
+        RefreshSlowCrouch();
+    }
+
     private void HandleCrouchPressed()
     {
         if (CurrentState == PlayerState.Running || IsHiding)
             return;
 
-        IsCrouching = !IsCrouching;
-        anim.SetCrouch(IsCrouching);
-        ApplyStance();
-        RefreshSlowCrouch();
+        SetCrouching(!IsCrouching);
     }
 
     private void HandleSlowCrouch(bool isHeld)
@@ -237,7 +245,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
     private void UpdateModelRotation()
     {
-        if (!canMove || playerModel == null || moveDir == Vector3.zero)
+        if (!canMove || playerModel == null || moveDir == Vector3.zero || IsHiding)
             return;
 
         Quaternion targetRotation = Quaternion.LookRotation(moveDir);
@@ -322,7 +330,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
     #region IHidingAgent
 
-    public void EnterHiding(Hidable spot, Vector3 position)
+    public void EnterHiding(Hidable spot, Vector3 position, Quaternion? facing = null)
     {
         CurrentHidingPlace = spot;
         motor.Teleport(position);

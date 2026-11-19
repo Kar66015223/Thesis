@@ -12,8 +12,13 @@ public abstract class Hidable : Interactable
 
     private IHidingAgent occupant;
 
+    public bool IsHide { get; protected set; } = false;
     public bool IsOccupied => occupant != null;
-    protected virtual bool CanExit => true;
+    protected bool isExiting;
+    protected virtual bool CanExit => IsHide && !isExiting;
+
+    protected virtual bool CrouchOnEnter => false;
+    protected virtual Quaternion? EnterFacing => null;
 
     public override bool CanInteract(GameObject interactor) => base.CanInteract(interactor) && !IsOccupied;
     protected override void OnInteract(GameObject interactor) => ToggleHide(interactor);
@@ -26,7 +31,9 @@ public abstract class Hidable : Interactable
         if (occupant == null)
         {
             occupant = agent;
-            agent.EnterHiding(this, enterPos.position);
+            if (CrouchOnEnter)
+                agent.SetCrouching(true);
+            agent.EnterHiding(this, enterPos.position, EnterFacing);
             OnEnterHiding();
 
             if (TryGetComponent(out AudioSource source) && enterSound != null)
@@ -64,4 +71,6 @@ public abstract class Hidable : Interactable
 
     /// <summary>Called right after the player has come out of this hiding place.</summary>
     protected virtual void OnExitHiding() { }
+
+    public void SetHide(bool isHide) => IsHide = isHide;
 }
