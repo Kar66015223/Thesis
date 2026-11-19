@@ -26,7 +26,7 @@ public class ScannableObject : MonoBehaviour, IScannable
 
         if (!IsHiddenFromCamera())
         {
-            Debug.Log($"Enemy wasn't blocked by anything");
+            // Debug.Log($"Enemy wasn't blocked by anything");
             return;
         }
 
