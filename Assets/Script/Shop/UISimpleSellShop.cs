@@ -218,6 +218,6 @@ public class UISimpleSellShop : MonoBehaviour
     private void UpdateMoneyText(int money)
     {
         if (playerMoneyText != null)
-            playerMoneyText.text = $"Money: {money} G";
+            playerMoneyText.SetText(money.ToString());
     }
 }

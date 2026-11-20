@@ -24,7 +24,7 @@ public class SellItemRow : MonoBehaviour
         if (nameText != null)
             nameText.text = $"{item.itemName} (x{amount})";
         if (priceText != null)
-            priceText.text = $"Price: {item.sellPrice * amount} G";
+            priceText.text = $"{item.sellPrice * amount}";
 
         if (sellButton != null)
         {
