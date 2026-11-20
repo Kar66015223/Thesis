@@ -21,6 +21,7 @@ public class UISimpleSellShop : MonoBehaviour
     [Header("Sell Panel")]
     [SerializeField] private Transform sellingContentParent;
     [SerializeField] private SellItemSlot sellItemSlotPrefab;
+    [SerializeField] private TMP_Text totalText;
 
     private List<ItemData> itemsInSellingPanel = new();
     private List<ItemData> soldItems = new();
@@ -120,6 +121,8 @@ public class UISimpleSellShop : MonoBehaviour
 
     private void RefreshSellList()
     {
+        UpdateTotalText();
+        
         foreach (Transform child in sellingContentParent)
             if (child.TryGetComponent(out SellItemSlot _))
                 Destroy(child.gameObject);
@@ -219,5 +222,17 @@ public class UISimpleSellShop : MonoBehaviour
     {
         if (playerMoneyText != null)
             playerMoneyText.SetText(money.ToString());
+    }
+
+    private void UpdateTotalText()
+    {
+        if (totalText == null)
+            return;
+
+        int total = 0;
+        foreach (ItemData item in itemsInSellingPanel)
+            total += item.sellPrice;
+
+        totalText.SetText(total.ToString());
     }
 }
