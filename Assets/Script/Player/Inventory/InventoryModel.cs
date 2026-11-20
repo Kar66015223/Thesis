@@ -122,6 +122,14 @@ public class InventoryModel : IItemHolder
         if (!IsValid(index) || slots[index].IsEmpty)
             return;
 
+        Debug.Log($"Used one {slots[index].Item.itemName}");
+    }
+
+    public void RemoveOne(int index)
+    {
+        if (!IsValid(index) || slots[index].IsEmpty)
+            return;
+
         Slot slot = slots[index];
         slot.Set(slot.Item, slot.Stack - 1);
         RecalculateWeight();

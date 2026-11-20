@@ -5,8 +5,6 @@ public class InteractItemUI : MonoBehaviour
 {
     [SerializeField] private GameObject selectedBG;
     [SerializeField] private TMP_Text texts;
-    [SerializeField] private Color selectedTextColor = Color.black;
-    [SerializeField] private Color normalTextColor = Color.white;
 
     private bool? isSelected;
 
@@ -29,9 +27,5 @@ public class InteractItemUI : MonoBehaviour
 
         if (texts == null)
             return;
-
-        Color color = selected ? selectedTextColor : normalTextColor;
-        foreach (TMP_Text text in texts.GetComponentsInChildren<TMP_Text>())
-            text.color = color;
     }
 }
