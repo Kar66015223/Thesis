@@ -93,6 +93,9 @@ public class UIMissionNPC : MonoBehaviour
     private void AcceptSelectedMission()
     {
         if (selectedMission != null && MissionManager.Instance != null)
+        {
             MissionManager.Instance.Accept(selectedMission);
+            ToggleRootPanel(false);
+        }
     }
 }

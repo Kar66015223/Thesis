@@ -2986,7 +2986,6 @@ GameObject:
   - component: {fileID: 6359542970210708969}
   - component: {fileID: 7605890262776131244}
   - component: {fileID: 7956053478761395706}
-  - component: {fileID: 67762979964586688}
   - component: {fileID: 2906435264680143584}
   - component: {fileID: 4147205452238275588}
   m_Layer: 5
@@ -3130,28 +3129,6 @@ MonoBehaviour:
   tutorialBody: {fileID: 7500724863487470547}
   tutorialImg: {fileID: 6162829687898510490}
   nextButton: {fileID: 6121949496172705893}
---- !u!114 &67762979964586688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275720394783555798}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: baeb3dc260eadf244ab022b756e297b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIQuestNPC
-  rootPanel: {fileID: 5475068465091221449}
-  missionListScrollView: {fileID: 6843169205134824248}
-  missionButtonPrefab: {fileID: 5503010310320463204, guid: 9542876453b3f8c4089b1adc577a3134, type: 3}
-  missionButtonParent: {fileID: 4544159832003226189}
-  closeButton: {fileID: 5385945107184546182}
-  missionDetailPanel: {fileID: 7897564395793604909}
-  missionNameText: {fileID: 5668711274247796556}
-  missionDescText: {fileID: 2686318873461696550}
-  backButton: {fileID: 9212846497409320972}
-  acceptButton: {fileID: 7126350403577929687}
 --- !u!114 &2906435264680143584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3569,7 +3546,7 @@ RectTransform:
   m_Father: {fileID: 4743739010712123955}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4074,6 +4051,83 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!1 &2087127714705625950
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7147867394922811574}
+  - component: {fileID: 7213056793233108753}
+  - component: {fileID: 1170793896931303753}
+  m_Layer: 5
+  m_Name: RootPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &7147867394922811574
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087127714705625950}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1241473352077569349}
+  - {fileID: 4260951249144799931}
+  m_Father: {fileID: 7758778959909152951}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &7213056793233108753
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087127714705625950}
+  m_CullTransparentMesh: 1
+--- !u!114 &1170793896931303753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087127714705625950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5640,7 +5694,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 20}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7905542297837940838
 MonoBehaviour:
@@ -6009,14 +6063,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3318310064724819684}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1038173137314485153}
   - {fileID: 5100712160601768243}
-  m_Father: {fileID: 7758778959909152951}
+  m_Father: {fileID: 7147867394922811574}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -10536,13 +10590,14 @@ GameObject:
   - component: {fileID: 7758778959909152951}
   - component: {fileID: 2669670003588219662}
   - component: {fileID: 5261407063960613150}
+  - component: {fileID: 2907435598587832782}
   m_Layer: 5
-  m_Name: QuestNPCPanel
+  m_Name: QuestNPC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7758778959909152951
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10555,8 +10610,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1241473352077569349}
-  - {fileID: 4260951249144799931}
+  - {fileID: 7147867394922811574}
   m_Father: {fileID: 918599186666266939}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -10579,7 +10633,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5475068465091221449}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -10602,6 +10656,28 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2907435598587832782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5475068465091221449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baeb3dc260eadf244ab022b756e297b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIQuestNPC
+  rootPanel: {fileID: 2087127714705625950}
+  missionListScrollView: {fileID: 6843169205134824248}
+  missionButtonPrefab: {fileID: 5503010310320463204, guid: 9542876453b3f8c4089b1adc577a3134, type: 3}
+  missionButtonParent: {fileID: 4544159832003226189}
+  closeButton: {fileID: 5385945107184546182}
+  missionDetailPanel: {fileID: 7897564395793604909}
+  missionNameText: {fileID: 5668711274247796556}
+  missionDescText: {fileID: 2686318873461696550}
+  backButton: {fileID: 9212846497409320972}
+  acceptButton: {fileID: 7126350403577929687}
 --- !u!1 &5487398403950288383
 GameObject:
   m_ObjectHideFlags: 0
@@ -15771,7 +15847,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7897564395793604909}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -15780,7 +15856,7 @@ RectTransform:
   - {fileID: 7266594517978311731}
   - {fileID: 5250398662580089785}
   - {fileID: 8781825728218775392}
-  m_Father: {fileID: 7758778959909152951}
+  m_Father: {fileID: 7147867394922811574}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
