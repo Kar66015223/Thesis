@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using UnityEngine.Video;
 
 [RequireComponent(typeof(PlayerController))]
 [RequireComponent(typeof(PlayerHealthRegen))]
@@ -23,6 +22,7 @@ public class PlayerHunger : MonoBehaviour
     public bool IsStarving => Normalized < starvingRatio;
     public event Action HungerPang;
 
+    public float MaxHunger => maxHunger;
     public float CurHunger { get => _curHunger; private set => _curHunger = Mathf.Clamp(value, 0, maxHunger); }
     public float Normalized => maxHunger > 0f ? CurHunger / maxHunger : 0f;
     public bool IsEmpty => CurHunger <= 0f;
