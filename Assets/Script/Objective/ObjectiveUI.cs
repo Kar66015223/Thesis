@@ -31,7 +31,7 @@ public class ObjectiveUI : MonoBehaviour
         UIEvents.ChangeObjectiveRequest -= SetObjectiveText;
     }
 
-    public void SetObjectiveText(ObjectivData objTive)
+    public void SetObjectiveText(ObjectiveData objTive)
     {
         objectiveText.text = objTive.objectiveText;
         objectivePanel.SetActive(true);
@@ -46,7 +46,7 @@ public class ObjectiveUI : MonoBehaviour
         Vector2 from = shownPos + hiddenOffset;
         panelRect.anchoredPosition = from;
 
-        for (float t = 0f; t < slideDuration; t += Time.unscaledDeltaTime)
+        for (float t = 0f; t < slideDuration; t += Time.deltaTime)
         {
             panelRect.anchoredPosition =
                 Vector2.LerpUnclamped(from, shownPos, slideCurve.Evaluate(t / slideDuration));

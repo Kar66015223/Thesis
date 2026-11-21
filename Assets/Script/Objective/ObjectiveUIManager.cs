@@ -5,8 +5,9 @@ public class ObjectiveUIManager : MonoBehaviour
 {
     public static ObjectiveUIManager Instance;
 
-    public List<ObjectivData> allObjectives = new();
-    private ObjectivData curObjective;
+    public List<ObjectiveData> allObjectives = new();
+    private ObjectiveData curObjective;
+    public ObjectiveData CurObjective => curObjective;
 
     void Awake()
     {
@@ -30,7 +31,7 @@ public class ObjectiveUIManager : MonoBehaviour
         UIEvents.ChangeObjectiveRequest -= SetObjective;
     }
 
-    private void SetObjective(ObjectivData objTive)
+    private void SetObjective(ObjectiveData objTive)
     {
         if (curObjective == null)
             curObjective = objTive;

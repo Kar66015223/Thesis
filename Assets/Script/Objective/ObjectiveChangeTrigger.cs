@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ObjectiveChangeTrigger : MonoBehaviour
 {
-    [SerializeField] private ObjectivData data;
+    [SerializeField] private ObjectiveData data;
     
     void OnTriggerEnter(Collider other)
     {

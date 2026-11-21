@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Objective", menuName = "Scriptable Objects/Objective")]
-public class ObjectivData : ScriptableObject
+public class ObjectiveData : ScriptableObject
 {
     [TextArea] public string objectiveText;
 }

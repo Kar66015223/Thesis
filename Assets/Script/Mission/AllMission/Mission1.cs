@@ -1,6 +1,6 @@
 public class Mission1 : Mission
 {
-    public Mission1(ObjectivData data)
+    public Mission1(ObjectiveData data)
         : base("Mission1", "Get the morse code and return safely.", MissionType.Main, SceneConstants.MISSION1_NAME, data)
     {
     }

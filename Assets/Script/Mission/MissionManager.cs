@@ -10,7 +10,7 @@ public class MissionManager : MonoBehaviour
     public IReadOnlyList<Mission> AvailableMissions => availableMissions;
     public Mission ActiveMission { get; private set; }
 
-    [SerializeField] private ObjectivData mission1ObjectiveData;
+    [SerializeField] private ObjectiveData mission1ObjectiveData;
 
     void Awake()
     {

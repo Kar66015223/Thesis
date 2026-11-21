@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class MapManager : MonoBehaviour
 {
     public static MapManager Instance;
-    [SerializeField] private string defaultActionMapName;
+    private string defaultActionMapName;
     public string DefaultActionMapName => defaultActionMapName;
 
     private bool isBase;
@@ -24,10 +24,20 @@ public class MapManager : MonoBehaviour
         defaultActionMapName = isBase ?
             PlayerConstants.ACTIONMAP_PLAYER_BASE : PlayerConstants.ACTIONMAP_PLAYER_MISSION;
     }
-    
-    void Start()
+
+    private void OnEnable()
     {
-        if (isBase && ObjectiveUIManager.Instance != null)
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (ObjectiveUIManager.Instance != null && ObjectiveUIManager.Instance.allObjectives.Count > 0)
             UIEvents.RequestChangeObjective(ObjectiveUIManager.Instance.allObjectives[0]);
     }
 }

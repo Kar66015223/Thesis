@@ -16,7 +16,7 @@ public class ElectricLock : Lock
             return true;
         }
         
-        UIEvents.ShowTip("The morse code must be here, I need to find a way to get inside.");
+        // UIEvents.ShowTip("The morse code must be here, I need to find a way to get inside.");
         return false;
     }
 
