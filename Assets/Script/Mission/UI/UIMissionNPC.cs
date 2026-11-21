@@ -10,6 +10,7 @@ public class UIMissionNPC : MonoBehaviour
     [SerializeField] private GameObject missionButtonPrefab;
     [SerializeField] private Transform missionButtonParent;
     [SerializeField] private Button closeButton;
+    [SerializeField] private GameObject headerPanel;
 
     [Header("Mission Detail")]
     [SerializeField] private GameObject missionDetailPanel;
@@ -55,6 +56,7 @@ public class UIMissionNPC : MonoBehaviour
     {
         missionDetailPanel.SetActive(isOn);
         missionListScrollView.SetActive(!isOn);
+        headerPanel.SetActive(!isOn);
     }
 
     private void DisplayMissions()
