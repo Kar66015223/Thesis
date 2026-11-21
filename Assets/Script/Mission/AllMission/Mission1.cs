@@ -1,14 +1,14 @@
 public class Mission1 : Mission
 {
-    public Mission1()
-        : base("Mission1", "Get the morse code and return safely.", MissionType.Main, SceneConstants.MISSION1_NAME)
+    public Mission1(ObjectivData data)
+        : base("Mission1", "Get the morse code and return safely.", MissionType.Main, SceneConstants.MISSION1_NAME, data)
     {
     }
 
     protected override void OnAccepted()
     {
-        UIEvents.ShowTip("Mission Accepted");
         WorldEvents.ItemCollected += HandleItemCollected;
+        UIEvents.RequestChangeObjective(Data);
     }
 
     protected override void OnCompleted()

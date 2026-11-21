@@ -7,7 +7,9 @@ public class MapManager : MonoBehaviour
     public static MapManager Instance;
     [SerializeField] private string defaultActionMapName;
     public string DefaultActionMapName => defaultActionMapName;
-    
+
+    private bool isBase;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -17,9 +19,15 @@ public class MapManager : MonoBehaviour
         }
 
         Instance = this;
+        isBase = SceneManager.GetActiveScene().name == SceneConstants.HIDEOUT_NAME;
 
-        bool isBase = SceneManager.GetActiveScene().name == SceneConstants.HIDEOUT_NAME;
         defaultActionMapName = isBase ?
             PlayerConstants.ACTIONMAP_PLAYER_BASE : PlayerConstants.ACTIONMAP_PLAYER_MISSION;
+    }
+    
+    void Start()
+    {
+        if (isBase && ObjectiveUIManager.Instance != null)
+            UIEvents.RequestChangeObjective(ObjectiveUIManager.Instance.allObjectives[0]);
     }
 }

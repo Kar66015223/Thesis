@@ -10,6 +10,8 @@ public class MissionManager : MonoBehaviour
     public IReadOnlyList<Mission> AvailableMissions => availableMissions;
     public Mission ActiveMission { get; private set; }
 
+    [SerializeField] private ObjectivData mission1ObjectiveData;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -21,7 +23,7 @@ public class MissionManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        availableMissions.Add(new Mission1());
+        availableMissions.Add(new Mission1(mission1ObjectiveData));
     }
 
     void OnDestroy()

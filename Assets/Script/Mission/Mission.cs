@@ -2,12 +2,13 @@ using System;
 
 public abstract class Mission
 {
-    protected Mission(string name, string desc, MissionType type, string sceneName)
+    protected Mission(string name, string desc, MissionType type, string sceneName, ObjectivData data)
     {
         Name = name;
         Description = desc;
         Type = type;
         SceneName = sceneName;
+        Data = data; 
     }
     
     public string Name { get; }
@@ -15,6 +16,7 @@ public abstract class Mission
     public MissionType Type { get; }
     public MissionStatus Status { get; private set; } = MissionStatus.Pending;
     public string SceneName { get; }
+    public ObjectivData Data { get; }
 
     public bool IsCompleted => Status == MissionStatus.Completed || Status == MissionStatus.Submitted;
     public event Action<Mission> StatusChanged;

@@ -39,4 +39,7 @@ public static class UIEvents
 
     public static event Action<InventorySlot> SlotSelectRequest;
     public static void RequestSlotSelect(InventorySlot slot) => SlotSelectRequest?.Invoke(slot);
+
+    public static event Action<ObjectivData> ChangeObjectiveRequest;
+    public static void RequestChangeObjective(ObjectivData objTive) => ChangeObjectiveRequest?.Invoke(objTive);
 }
