@@ -16,6 +16,6 @@ public class PlayerHungerUI : MonoBehaviour
     void Update()
     {
         hungerBar.fillAmount = hunger.Normalized;
-        hungerText.text = $"{hunger.CurHunger:0.#}/{hunger.MaxHunger}";
+        hungerText.text = $"{hunger.CurHunger:F0}/{hunger.MaxHunger}";
     }
 }
