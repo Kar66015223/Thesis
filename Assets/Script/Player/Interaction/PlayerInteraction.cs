@@ -15,6 +15,8 @@ public class PlayerInteraction : MonoBehaviour
 
     public Transform rayStart;
 
+    private PlayerSound sound;
+
     void Awake()
     {
         ctrl = GetComponentInParent<PlayerController>();
@@ -24,6 +26,8 @@ public class PlayerInteraction : MonoBehaviour
         detector.Initialize(
             GetComponent<Collider>(), ctrl.GetComponent<CharacterController>(), blockingMask, rayStart);
         ui.Initialize();
+
+        sound = GetComponentInParent<PlayerSound>();
     }
 
     void OnEnable()
@@ -62,7 +66,12 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         if (handler.TryInteract(button, player))
+        {
+            if (handler.GetTarget(InteractButton.F) as Item)
+                sound.PlayPickUpItemSound();
+
             if(!(handler.GetTarget(InteractButton.Space) as Vaultable))
                 ctrl.PlayInteractAnimation();
+        }
     }
 }

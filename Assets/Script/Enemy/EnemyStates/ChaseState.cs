@@ -35,6 +35,8 @@ public class ChaseState : EnemyStateBase
         ctrl.Agent.isStopped = true;
         ctrl.FoundAnimationFinished += EndReaction;
         ctrl.Anim.SetFound();
+
+        PlayerEvents.RaisePlayerWasFound();
     }
 
     public override void Update()

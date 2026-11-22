@@ -53,7 +53,7 @@ public class IdleState : EnemyStateBase
     public override void OnSeenTarget(Transform target)
     {
         if (!ctrl.Tracking.IsWaiting)
-            ctrl.ChangeState(new ConfirmingState(ctrl, target));
+            ReactToSighting(target);
     }
     
     private void FaceIdleDirection()

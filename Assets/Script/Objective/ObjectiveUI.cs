@@ -15,10 +15,14 @@ public class ObjectiveUI : MonoBehaviour
     private Vector2 shownPos;
     private Coroutine slideRoutine;
 
+    private AudioSource source;
+    [SerializeField] private AudioClip objectiveChangeSound;
+
     void Awake()
     {
         panelRect = objectivePanel.GetComponent<RectTransform>();
         shownPos = panelRect.anchoredPosition;
+        source = GetComponent<AudioSource>();
     } 
 
     void OnEnable()
@@ -35,6 +39,7 @@ public class ObjectiveUI : MonoBehaviour
     {
         objectiveText.text = objTive.objectiveText;
         objectivePanel.SetActive(true);
+        source.PlayOneShot(objectiveChangeSound);
 
         if (slideRoutine != null)
             StopCoroutine(slideRoutine);

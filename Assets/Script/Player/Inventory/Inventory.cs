@@ -46,9 +46,13 @@ public class Inventory : MonoBehaviour
     public InventoryModel Model => model;
     public bool IsOpen => panel != null && panel.activeSelf;
 
+    private AudioSource source;
+    [SerializeField] private AudioClip toggleClip;
+
     void Awake()
     {
         inputHandler = GetComponentInParent<PlayerInputHandler>();
+        source = GetComponent<AudioSource>();
 
         if (sortAscendingButton != null)
             sortAscendingButton.onClick.AddListener(() => SortItem(true));
@@ -117,6 +121,9 @@ public class Inventory : MonoBehaviour
 
         panel.SetActive(isOpen);
         InputModeService.RequestUI(this, isOpen);
+
+        if(isOpen)
+            source.PlayOneShot(toggleClip);
     }
 
     private void HandleActionMapChanged(string actionMap)

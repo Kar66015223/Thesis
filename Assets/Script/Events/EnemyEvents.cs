@@ -13,4 +13,10 @@ public static class EnemyEvents
 
     public static event Action AdvanceAllRoutesRequested;
     public static void RequestAdvanceAllRoutes() => AdvanceAllRoutesRequested?.Invoke();
+
+    public static event Action<EnemyController> AlertRequested;
+    public static void RequestAlert(EnemyController enemy) => AlertRequested?.Invoke(enemy);
+
+    public static event Action AlertAllRequested;
+    public static void RequestAlertAll() => AlertAllRequested?.Invoke();
 }

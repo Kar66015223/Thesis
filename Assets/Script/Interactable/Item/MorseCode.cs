@@ -10,5 +10,6 @@ public class MorseCode : Item
         UIEvents.RequestChangeObjective(objTiveData);
         WorldEvents.SetLightsOut(false);
         EnemyEvents.RequestAdvanceAllRoutes();
+        EnemyEvents.RequestAlertAll();
     }
 }

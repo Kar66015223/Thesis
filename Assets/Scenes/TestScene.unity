@@ -332,6 +332,7 @@ MonoBehaviour:
   highlight: {fileID: 0}
   interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
+  pickUpClip: {fileID: 0}
 --- !u!1 &171732864 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3fa1587c001c09c4fa8c25a4635ac61a, type: 3}
@@ -487,6 +488,7 @@ MonoBehaviour:
   highlight: {fileID: 0}
   interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
+  pickUpClip: {fileID: 0}
 --- !u!43 &195458343
 Mesh:
   m_ObjectHideFlags: 0
@@ -872,6 +874,7 @@ MonoBehaviour:
   highlight: {fileID: 0}
   interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
+  pickUpClip: {fileID: 0}
 --- !u!114 &306563216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1598,6 +1601,7 @@ MonoBehaviour:
   highlight: {fileID: 0}
   interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 9a965561b9cacb74daaac4054ca33cd2, type: 2}
+  pickUpClip: {fileID: 0}
 --- !u!1 &523102008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1871,6 +1875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e12029eb70696a4cb106dc455b3ef83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissionManager
+  mission1ObjectiveData: {fileID: 0}
 --- !u!4 &598409447
 Transform:
   m_ObjectHideFlags: 0
@@ -4027,6 +4032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00e3eed4b88ff4f42a67f25ec1c22925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveChangeTrigger
+  data: {fileID: 0}
 --- !u!65 &1370681588
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5614,6 +5620,7 @@ MonoBehaviour:
   highlight: {fileID: 0}
   interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: 2feb3c0f4512e6a43b782d60a634296e, type: 2}
+  pickUpClip: {fileID: 0}
 --- !u!1001 &1864340957
 PrefabInstance:
   m_ObjectHideFlags: 0

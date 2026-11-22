@@ -14,6 +14,14 @@ public abstract class EnemyStateBase : IEnemyState
     public virtual void OnHearSound(SoundSignal sound) { }
     public virtual void OnSeenTarget(Transform target) { }
 
+    protected void ReactToSighting(Transform target)
+    {
+        if (ctrl.IsAlerted)
+            ctrl.ChangeState(new ChaseState(ctrl, target));
+        else
+            ctrl.ChangeState(new ConfirmingState(ctrl, target));
+    }
+
     protected bool HasReachedDestination(float extraTolerance = 0f)
         => !ctrl.Agent.pathPending && ctrl.Agent.remainingDistance <= ctrl.Agent.stoppingDistance + extraTolerance;
 

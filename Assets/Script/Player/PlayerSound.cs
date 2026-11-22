@@ -32,6 +32,11 @@ public class PlayerSound : MonoBehaviour
 
     [SerializeField] private float caughtVolume = 1f;
 
+    [Header("Interact")]
+    [SerializeField] private AudioClip pickUpItemClip;
+
+    [SerializeField] private AudioClip wasFoundSound;
+
     private AudioSource source;
     private SoundEmitter emitter;
     private PlayerStamina stamina;
@@ -64,6 +69,7 @@ public class PlayerSound : MonoBehaviour
         }
 
         PlayerEvents.SlowCrouch += HandleSlowCrouchChanged;
+        PlayerEvents.WasFound += PlayWasFoundSound;
     }
 
     void OnDisable()
@@ -79,6 +85,7 @@ public class PlayerSound : MonoBehaviour
         }
 
         PlayerEvents.SlowCrouch -= HandleSlowCrouchChanged;
+        PlayerEvents.WasFound -= PlayWasFoundSound;
     }
 
     public void PlayWalkSound() => PlayFootstep(walkVolume, walkSoundRadius);
@@ -129,11 +136,23 @@ public class PlayerSound : MonoBehaviour
             source.Stop();
         }
     }
-    
+
     public void PlayFreedSound()
     {
         if (freedClip != null)
             source.PlayOneShot(freedClip, caughtVolume);
+    }
+
+    public void PlayPickUpItemSound()
+    {
+        if (pickUpItemClip != null)
+            source.PlayOneShot(pickUpItemClip);
+    }
+    
+    public void PlayWasFoundSound()
+    {
+        if (wasFoundSound != null)
+            source.PlayOneShot(wasFoundSound);
     }
 
     private void PlayFootstep(float baseVolume, float noiseRadius)

@@ -46,7 +46,7 @@ public class DistractedState : EnemyStateBase
     }
 
     public override void OnHearSound(SoundSignal newSound) => ctrl.ChangeState(new DistractedState(ctrl, newSound));
-    public override void OnSeenTarget(Transform target) => ctrl.ChangeState(new ConfirmingState(ctrl, target));
+    public override void OnSeenTarget(Transform target) => ReactToSighting(target);
 
     private void UpdateLookAt()
     {

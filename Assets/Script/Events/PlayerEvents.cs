@@ -20,4 +20,7 @@ public static class PlayerEvents
 
     public static event Action<float> StruggleProgressChanged;
     public static void RaiseStruggleProgressChanged(float progress) => StruggleProgressChanged?.Invoke(progress);
+
+    public static event Action WasFound;
+    public static void RaisePlayerWasFound() => WasFound?.Invoke();
 }

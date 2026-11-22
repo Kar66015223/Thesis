@@ -63,7 +63,7 @@ and aren't covered here.
 | `PlayerEvents` | Died, Respawned, OnCheckpoint, StruggleToggled, StruggleProgressChanged, SlowCrouch |
 | `UIEvents` | ShowTip, read panel, password pad, mission board, shop board, dialogue requests, tutorial panel, tracking target |
 | `WorldEvents` | LightsOutChanged, ItemCollected, ObjectiveShow, ObjectiveCompleted |
-| `EnemyEvents` | Enemy indicator changes, confirm progress, AdvanceAllRoutesRequested |
+| `EnemyEvents` | Enemy indicator changes, confirm progress, AdvanceAllRoutesRequested, AlertRequested, AlertAllRequested |
 
 Anything that subscribes in `OnEnable` unsubscribes in `OnDisable`.
 
@@ -306,15 +306,46 @@ The controller runs a state machine (`IEnemyState`, `EnemyStateBase`) and implem
 
 | State | What it does | Leaves to |
 |---|---|---|
-| `IdleState` | Walks to the idle point and faces its direction; may wait there (a scripted wait can't be interrupted) | Distracted (sound), Confirming (seen) |
-| `PatrolState` | Walks the patrol points in order. At points with **Wait At This Point** it stops for Patrol Wait Time, facing the point's direction | Distracted, Confirming |
-| `DistractedState` | `LookAt`: stops and turns to the sound. `WalkTo` / `RunTo`: goes there, then turns to it | Routine (after Distract Wait Time), Confirming |
-| `ConfirmingState` | Stops and stares at what it glimpsed until the confirm timer fills. Breaking sight pauses the timer; re-spotting the player resumes it | Chase (confirmed), routine (out of sight for Confirm Give Up Time) |
+| `IdleState` | Walks to the idle point and faces its direction; may wait there (a scripted wait can't be interrupted) | Distracted (sound), Confirming (seen), Chase (seen while alerted) |
+| `PatrolState` | Walks the patrol points in order. At points with **Wait At This Point** it stops for Patrol Wait Time, facing the point's direction | Distracted, Confirming, Chase (seen while alerted) |
+| `DistractedState` | `LookAt`: stops and turns to the sound. `WalkTo` / `RunTo`: goes there, then turns to it | Routine (after Distract Wait Time), Confirming, Chase (seen while alerted) |
+| `ConfirmingState` | Stops and stares at what it glimpsed until the confirm timer fills. Breaking sight pauses the timer; re-spotting the player resumes it | Chase (confirmed, or alerted), routine (out of sight for Confirm Give Up Time) |
 | `ChaseState` | Plays **Found** standing still, then runs after the player | Catching (in reach), routine (lost them) |
 | `CatchingState` | The grab and strangle sequence (see [Getting caught](#getting-caught-and-struggling)) | Stunned (player escaped), routine (player died) |
 | `StunnedState` | Blind and frozen for Stun Time | Routine |
 
 The **routine** is Patrol if the current route step has patrol points, otherwise Idle.
+
+### Alerted
+
+Alerted isn't one of the states above. It's a flag on `EnemyController` (`IsAlerted`) that changes how every state
+behaves, so an enemy can be alerted whatever it's doing.
+
+**What changes:**
+- **Always runs.** `EnemyMovement` never lets the enemy move slower than **Run Speed**. Walking becomes running; a
+  route step that already makes it faster (for example a Speed Multiplier of 2) stays faster. The `Move` animation
+  parameter is always 2 (run) while the enemy moves.
+- **Finds the player immediately.** Seeing the player skips Confirming and goes straight to Chase. An enemy that's
+  already Confirming when it's alerted starts chasing on its next update.
+
+**What doesn't change:**
+- A Chasing or Catching enemy carries on as before.
+- A Stunned enemy stays stunned and blind until Stun Time runs out, then goes back to its routine, running.
+- An Idle enemy in a scripted wait still ignores the player until the wait ends.
+
+**How to alert enemies:**
+
+| Call | Alerts |
+|---|---|
+| `EnemyEvents.RequestAlert(enemy)` | One enemy (pass its `EnemyController`) |
+| `EnemyEvents.RequestAlertAll()` | Every enemy that's active at the time |
+| `enemyController.Alert()` | That enemy, directly, without the event |
+
+Each `EnemyController` listens for both events in `OnEnable` and stops in `OnDisable`, so an enemy that's inactive
+when `RequestAlertAll()` is raised stays calm.
+
+**How long it lasts:** until the scene reloads. There's no way to calm an alerted enemy, respawning doesn't reset it,
+and checkpoints don't save it.
 
 ### Vision (`EnemyVision`)
 
@@ -324,7 +355,8 @@ The view cone is a wedge:
 - **Height:** View Vertical Size, a band centred on the eye. A player crouching right in front is still inside it.
 
 Targets on **Target Mask** that aren't hidden behind **Obstacle Mask** are seen:
-1. The first glimpse calls `OnSeenTarget`, which usually sends the enemy to Confirming.
+1. The first glimpse calls `OnSeenTarget`, which usually sends the enemy to Confirming (or straight to Chase if it's
+   [alerted](#alerted)).
 2. After **Confirm Wait Time** of total sight the target is confirmed (`IsConfirmed`), and `ConfirmingState` moves to
    Chase. Losing sight pauses the timer during Confirming; in any other state it resets the timer.
 
@@ -520,6 +552,7 @@ Other UI:
 | `GotCaughtStateBehavior` | Player `Arthur_CaughtStart` (Caught controller) | Tells `PlayerStruggle` GotCaught is over |
 | `AnimationEndStateBehavior` | (base class) | Reports once when a state's clip reaches its end |
 | `PlayerAnimationEventHandler` | Player model (animation events) | `PlayWalkSound`, `PlayRunSound`, `PlayCrouchWalkSound` |
+| `EnemySound` | Enemy model, the GameObject with the Animator (animation events) | `PlayFootstep`: a random footstep clip (never the same one twice in a row) with random volume and pitch, played as a 3D one-shot at the enemy's position |
 
 Animator parameters used from code:
 
@@ -554,6 +587,7 @@ normally without extra setup.
 | Take 10 damage / Heal 10 | `PlayerHealth` context menu |
 | Make Sound | `SoundEmitter` context menu (uses Debug Radius and Cur Reaction) |
 | Next Objective | `ObjectiveManager` context menu |
+| Alert / Alert All Enemies | `EnemyController` context menu (**Debug > Alert**, **Debug > Alert All Enemies**). Both go through the `EnemyEvents` alert events |
 | Sound line checks | Scene view: green reached, red blocked by Soundproof |
 | Interaction line checks | Scene view: green usable, red blocked; Console logs the blocking objects |
 | Vision cone | Scene view, with the enemy selected (`EnemyVisionEditor`) |

@@ -3,7 +3,8 @@ using UnityEngine;
 public class Item : InteractableBase
 {
     [field: SerializeField] public ItemData Data { get; private set; }
-
+    [SerializeField] private AudioClip pickUpClip;
+    
     protected sealed override void OnInteract(GameObject interactor)
     {
         if (Data != null && interactor.TryGetComponent(out IItemHolder holder))

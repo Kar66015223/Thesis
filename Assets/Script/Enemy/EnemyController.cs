@@ -84,6 +84,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public bool IsChasing => CurrentState is ChaseState;
     public bool IsConfirming => CurrentState is ConfirmingState;
     public bool IsInDefaultState => CurrentState is IdleState || CurrentState is PatrolState;
+    public bool IsAlerted { get; private set; }
 
     void Awake()
     {
@@ -103,8 +104,19 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
         Tracking.Initialize(this);
     }
 
-    void OnEnable() => PlayerEvents.Respawned += HandlePlayerRespawned;
-    void OnDisable() => PlayerEvents.Respawned -= HandlePlayerRespawned;
+    void OnEnable()
+    {
+        PlayerEvents.Respawned += HandlePlayerRespawned;
+        EnemyEvents.AlertRequested += HandleAlertRequested;
+        EnemyEvents.AlertAllRequested += Alert;
+    }
+
+    void OnDisable()
+    {
+        PlayerEvents.Respawned -= HandlePlayerRespawned;
+        EnemyEvents.AlertRequested -= HandleAlertRequested;
+        EnemyEvents.AlertAllRequested -= Alert;
+    }
 
     void Start()
     {
@@ -121,7 +133,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
             CurrentState?.Update();
 
         if (Agent.velocity.magnitude > 1)
-            Anim.SetMove(Agent.speed > walkSpeed ? 2 : 1);
+            Anim.SetMove(IsAlerted || Agent.speed > walkSpeed ? 2 : 1);
         else
             Anim.SetMove(0);
     }
@@ -174,6 +186,27 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public void OnSeenTarget(Transform target) => CurrentState?.OnSeenTarget(target);
 
     public void Stun() => ChangeState(new StunnedState(this));
+
+    public void Alert()
+    {
+        if (IsAlerted)
+            return;
+
+        IsAlerted = true;
+        Movement.SetSpeedFloor(runSpeed);
+    }
+
+    private void HandleAlertRequested(EnemyController enemy)
+    {
+        if (enemy == this)
+            Alert();
+    }
+
+    [ContextMenu("Debug/Alert")]
+    private void DebugAlert() => EnemyEvents.RequestAlert(this);
+
+    [ContextMenu("Debug/Alert All Enemies")]
+    private void DebugAlertAll() => EnemyEvents.RequestAlertAll();
 
     public void OnBumped(Transform bumper)
     {

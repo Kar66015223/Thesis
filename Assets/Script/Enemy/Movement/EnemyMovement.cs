@@ -8,12 +8,19 @@ public class EnemyMovement : MonoBehaviour
     private readonly Dictionary<string, float> speedModifiers = new();
     private NavMeshAgent agent;
     private float baseSpeed;
+    private float speedFloor;
 
     private NavMeshAgent Agent => agent != null ? agent : agent = GetComponent<NavMeshAgent>();
 
     public void SetBaseSpeed(float speed)
     {
         baseSpeed = speed;
+        ApplySpeed();
+    }
+
+    public void SetSpeedFloor(float speed)
+    {
+        speedFloor = speed;
         ApplySpeed();
     }
 
@@ -35,6 +42,6 @@ public class EnemyMovement : MonoBehaviour
         foreach (float m in speedModifiers.Values)
             multiplier *= m;
 
-        Agent.speed = baseSpeed * multiplier;
+        Agent.speed = Mathf.Max(baseSpeed * multiplier, speedFloor);
     }
 }

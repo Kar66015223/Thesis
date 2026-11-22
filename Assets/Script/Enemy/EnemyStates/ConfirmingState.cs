@@ -25,7 +25,7 @@ public class ConfirmingState : EnemyStateBase
 
         FaceInstantly(target.position);
 
-        if (ctrl.Vision.IsConfirmed(target))
+        if (ctrl.IsAlerted || ctrl.Vision.IsConfirmed(target))
         {
             ctrl.ChangeState(new ChaseState(ctrl, target));
             return;

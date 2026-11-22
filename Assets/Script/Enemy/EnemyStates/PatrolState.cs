@@ -73,5 +73,5 @@ public class PatrolState : EnemyStateBase
     }
 
     public override void OnHearSound(SoundSignal sound) => ctrl.ChangeState(new DistractedState(ctrl, sound));
-    public override void OnSeenTarget(Transform target) => ctrl.ChangeState(new ConfirmingState(ctrl, target));
+    public override void OnSeenTarget(Transform target) => ReactToSighting(target);
 }

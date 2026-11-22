@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(PlayerController))]
 [RequireComponent(typeof(PlayerHealthRegen))]
@@ -52,6 +53,9 @@ public class PlayerHunger : MonoBehaviour
 
     void Update()
     {
+        if (SceneManager.GetActiveScene().name == SceneConstants.HIDEOUT_NAME)
+            return;
+
         float before = Normalized;
         CurHunger -= drainRate * GetMultiplier() * Time.deltaTime;
         float after = Normalized;
