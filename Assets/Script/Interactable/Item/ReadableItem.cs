@@ -5,7 +5,7 @@ public class ReadableItem : Item
     protected override void OnPickedUp(GameObject interactor)
     {
         if (Data is ReadableItemData readable)
-            UIEvents.ToggleReadPanel(true, readable.text);
+            UIEvents.ToggleReadPanel(true, readable.itemName, readable.text);
         else
             Debug.LogWarning($"{name} is a ReadableItem but its Data is not ReadableItemData.", this);
     }

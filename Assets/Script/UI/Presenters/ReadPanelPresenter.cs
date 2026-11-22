@@ -5,12 +5,14 @@ using UnityEngine.UI;
 public class ReadPanelPresenter : IUIPresenter
 {
     private readonly GameObject panel;
+    private readonly TMP_Text itemNameText;
     private readonly TMP_Text text;
     private readonly Button closeButton;
 
-    public ReadPanelPresenter(GameObject panel, TMP_Text text, Button closeButton)
+    public ReadPanelPresenter(GameObject panel, TMP_Text itemNameText, TMP_Text text, Button closeButton)
     {
         this.panel = panel;
+        this.itemNameText = itemNameText;
         this.text = text;
         this.closeButton = closeButton;
 
@@ -36,10 +38,12 @@ public class ReadPanelPresenter : IUIPresenter
 
     private void Close() => UIEvents.ToggleReadPanel(false);
 
-    private void Toggle(bool isOpen, string content)
+    private void Toggle(bool isOpen, string itemName, string content)
     {
         if (panel != null)
             panel.SetActive(isOpen);
+        if (itemNameText != null)
+            itemNameText.text = itemName;
         if (text != null)
             text.text = content;
 

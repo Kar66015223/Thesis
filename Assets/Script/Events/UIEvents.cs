@@ -6,8 +6,9 @@ public static class UIEvents
     public static event Action<string> TipRequested;
     public static void ShowTip(string message) => TipRequested?.Invoke(message);
 
-    public static event Action<bool, string> ReadPanelToggled;
-    public static void ToggleReadPanel(bool isOpen, string text = "") => ReadPanelToggled?.Invoke(isOpen, text);
+    public static event Action<bool, string, string> ReadPanelToggled;
+    public static void ToggleReadPanel(bool isOpen, string itemNameText = "", string text = "") =>
+        ReadPanelToggled?.Invoke(isOpen, itemNameText, text);
 
     public static event Action<bool, IPasswordLock> PasswordPanelToggled;
     public static void TogglePasswordPanel(bool isOpen, IPasswordLock target = null)

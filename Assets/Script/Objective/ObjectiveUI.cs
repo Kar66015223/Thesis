@@ -39,7 +39,6 @@ public class ObjectiveUI : MonoBehaviour
     {
         objectiveText.text = objTive.objectiveText;
         objectivePanel.SetActive(true);
-        source.PlayOneShot(objectiveChangeSound);
 
         if (slideRoutine != null)
             StopCoroutine(slideRoutine);
@@ -50,6 +49,8 @@ public class ObjectiveUI : MonoBehaviour
     {
         Vector2 from = shownPos + hiddenOffset;
         panelRect.anchoredPosition = from;
+
+        source.PlayOneShot(objectiveChangeSound);
 
         for (float t = 0f; t < slideDuration; t += Time.deltaTime)
         {

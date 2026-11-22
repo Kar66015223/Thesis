@@ -7,7 +7,7 @@ public class Item : InteractableBase
     
     protected sealed override void OnInteract(GameObject interactor)
     {
-        if (Data != null && interactor.TryGetComponent(out IItemHolder holder))
+        if (Data != null && !(Data as ReadableItemData) && interactor.TryGetComponent(out IItemHolder holder))
             holder.AddItem(Data);
 
         WorldEvents.RaiseItemCollected(this);

@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
 {
     [Header("Read UI")]
     [SerializeField] private GameObject readUIPanel;
+    [SerializeField] private TMP_Text itemNameText;
     [SerializeField] private TMP_Text readUIText;
     [SerializeField] private Button closeButton;
 
@@ -44,7 +45,7 @@ public class UIManager : MonoBehaviour
     {
         presenters = new IUIPresenter[]
         {
-            new ReadPanelPresenter(readUIPanel, readUIText, closeButton),
+            new ReadPanelPresenter(readUIPanel, itemNameText, readUIText, closeButton),
             new TipPresenter(tipsText),
             new PasswordPanelPresenter(passwordInputPanel),
             new LightsOutPresenter(lightsOutEffect),
