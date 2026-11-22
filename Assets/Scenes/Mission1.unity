@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.22761658, g: 0.25553218, b: 0.2924528, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.076
+  m_FogDensity: 0.074
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -4353,7 +4353,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 0
   blendDistance: 0
-  weight: 0.618
+  weight: 0.538
   sharedProfile: {fileID: 11400000, guid: 34ff63fa77e329243bd59d42cd11a67d, type: 2}
 --- !u!4 &336276647
 Transform:
@@ -6231,8 +6231,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
   m_IsGlobal: 0
   priority: 0
-  blendDistance: 0.24
-  weight: 1
+  blendDistance: 1.53
+  weight: 0.107
   sharedProfile: {fileID: 11400000, guid: abcdcca38700fc84f902fe674e87175b, type: 2}
 --- !u!65 &521425105
 BoxCollider:
