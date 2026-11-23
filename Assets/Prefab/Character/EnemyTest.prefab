@@ -265,9 +265,13 @@ MonoBehaviour:
   lookAtRotationSpeed: 5
   confirmWaitTime: 0.5
   confirmGiveUpTime: 2
+  loseSightTime: 5
   catchDamage: 20
   damageCooldown: 1
   stunTime: 5
+  maxSearchRadius: 15
+  minSearchDistance: 3
+  searchWaitTime: 1.5
   rightHand: {fileID: 8352392293961473350}
 --- !u!114 &4111720402464977027
 MonoBehaviour:

@@ -15,13 +15,13 @@ public class PlayerHungerUI : MonoBehaviour
         hunger = GetComponentInParent<PlayerHunger>();
     }
 
-    void Start()
-    {
-        if (SceneManager.GetActiveScene().name == SceneConstants.HIDEOUT_NAME)
-            root.SetActive(false);
-        else
-            root.SetActive(true);
-    }
+    // void Start()
+    // {
+    //     if (SceneManager.GetActiveScene().name == SceneConstants.HIDEOUT_NAME)
+    //         root.SetActive(false);
+    //     else
+    //         root.SetActive(true);
+    // }
 
     void Update()
     {

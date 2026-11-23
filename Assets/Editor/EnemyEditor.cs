@@ -3,9 +3,10 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(EnemyVision))]
-public class EnemyVisionEditor : Editor
+public class EnemyEditor : Editor
 {
     private static readonly Color BandColor = new(1f, 1f, 1f, 0.5f);
+    private static readonly Color SearchColor = new(1f, 0.6f, 0f);
 
     void OnSceneGUI()
     {
@@ -46,6 +47,15 @@ public class EnemyVisionEditor : Editor
             }
 
             Handles.DrawLine(origin, targetDrawPos);
+        }
+
+        if(fov.TryGetComponent(out EnemyController ctrl) && ctrl.CurrentState is SearchState search)
+        {
+            Handles.color = SearchColor;
+            Handles.DrawWireDisc(search.Center, Vector3.up, ctrl.MaxSearchRadius);
+
+            Handles.color = new(1f, 0.6f, 0f, 0.4f);
+            Handles.DrawWireDisc(ctrl.transform.position, Vector3.up, ctrl.MinSearchDistance);
         }
     }
 

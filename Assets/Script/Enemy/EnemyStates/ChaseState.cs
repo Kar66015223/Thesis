@@ -9,6 +9,7 @@ public class ChaseState : EnemyStateBase
     private readonly Transform target;
     private PlayerStruggle targetStruggle;
     private float giveUpTimer;
+    private float lostSightTimer;
     private Vector3 lastTargetPos;
 
     private bool isReacting;
@@ -26,6 +27,7 @@ public class ChaseState : EnemyStateBase
         ctrl.Agent.updateRotation = false;
         ctrl.Agent.stoppingDistance = ApproachStoppingDistance;
         giveUpTimer = 0f;
+        lostSightTimer = 0f;
 
         if (target != null)
             targetStruggle = target.GetComponentInParent<PlayerStruggle>();
@@ -48,6 +50,18 @@ public class ChaseState : EnemyStateBase
         {
             ctrl.ReturnToDefaultState();
             return;
+        }
+
+        if (ctrl.Vision.CanSee(target))
+            lostSightTimer = 0f;
+        else
+        {
+            lostSightTimer += Time.deltaTime;
+            if(lostSightTimer >= ctrl.LoseSightTime)
+            {
+                ctrl.ChangeState(new SearchState(ctrl, target.position));
+                return;
+            }
         }
 
         if (isReacting)

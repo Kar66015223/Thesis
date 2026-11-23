@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -29,6 +30,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     [Header("Shared Settings")]
     [SerializeField] private Transform stateUIPoint;
     
+    [Header("Movement")]
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float runSpeed = 5f;
 
@@ -39,16 +41,26 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     [SerializeField] private Waypoint[] patrolPoints;
     [SerializeField] private float patrolWaitTime = 1f;
 
+    [Header("Distracted")]
     [SerializeField] private float distractWaitTime = 1f;
     [SerializeField] private float lookAtRotationSpeed = 5f;
 
+    [Header("Confirming")]
     [SerializeField] private float confirmWaitTime = 0.5f;
     [SerializeField] private float confirmGiveUpTime = 2f;
+    [SerializeField] private float loseSightTime = 3f;
 
+    [Header("Catching")]
     [SerializeField] private float catchDamage = 10f;
     [SerializeField] private float damageCooldown = 1f;
 
+    [Header("Stun")]
     [SerializeField] private float stunTime = 5f;
+
+    [Header("Search")]
+    [SerializeField] private float maxSearchRadius = 8f;
+    [SerializeField] private float minSearchDistance = 3f;
+    [SerializeField] private float searchWaitTime = 1.5f;
 
     [Tooltip("Bone the caught player's neck is held at. Found by name (hand.r) in the model when left empty.")]
     [SerializeField] private Transform rightHand;
@@ -68,11 +80,16 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
 
     public float ConfirmWaitTime => confirmWaitTime;
     public float ConfirmGiveUpTime => confirmGiveUpTime;
+    public float LoseSightTime => loseSightTime;
 
     public float CatchDamage => catchDamage;
     public float DamageInterval => damageCooldown;
 
     public float StunTime => stunTime;
+
+    public float MaxSearchRadius => maxSearchRadius;
+    public float MinSearchDistance => minSearchDistance;
+    public float SearchWaitTime => searchWaitTime;
 
     private const float BumpContactGap = 0.25f;
     private const float RoutineSnapRadius = 2f;
@@ -85,6 +102,9 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public bool IsConfirming => CurrentState is ConfirmingState;
     public bool IsInDefaultState => CurrentState is IdleState || CurrentState is PatrolState;
     public bool IsAlerted { get; private set; }
+
+    [ContextMenu("Debug/Search")]
+    public void DebugSearch() => ChangeState(new SearchState(this, transform.position));
 
     void Awake()
     {

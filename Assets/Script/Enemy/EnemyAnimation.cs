@@ -9,6 +9,8 @@ public class EnemyAnimation : MonoBehaviour
     private static readonly int StartCatchHash = Animator.StringToHash("StartCatch");
     private static readonly int CatchingHash = Animator.StringToHash("Catching");
     private static readonly int OutOfCatchStateHash = Animator.StringToHash("DemonType01_OutofCatch");
+    private static readonly int StartStunHash = Animator.StringToHash("StartStun");
+    private static readonly int StunHash = Animator.StringToHash("Stun");
     private const float CancelCatchFadeTime = 0.25f;
 
     void Awake() => anim = GetComponentInChildren<Animator>();
@@ -24,4 +26,7 @@ public class EnemyAnimation : MonoBehaviour
         anim.SetBool(CatchingHash, false);
         anim.CrossFadeInFixedTime(OutOfCatchStateHash, CancelCatchFadeTime);
     }
+
+    public void SetStartStun() => anim.SetTrigger(StartStunHash);
+    public void SetStun(bool value) => anim.SetBool(StunHash, value);
 }

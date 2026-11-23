@@ -25,6 +25,7 @@ public class EnemyVision : MonoBehaviour
     private readonly Collider[] overlapBuffer = new Collider[MaxTargetsPerScan];
     private readonly List<Transform> visibleTargets = new();
     private readonly List<Transform> confirmedTargets = new();
+    public Vector3? LastSeenPosition { get; private set; }
 
     private EnemyController ctrl;
     private Coroutine scanRoutine;
@@ -126,7 +127,7 @@ public class EnemyVision : MonoBehaviour
 
         int count = Physics.OverlapSphereNonAlloc(eye, viewRadius, overlapBuffer, targetMask);
 
-        for(int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             Collider col = overlapBuffer[i];
             Bounds bounds = col.bounds;
@@ -148,6 +149,10 @@ public class EnemyVision : MonoBehaviour
 
             if (!visibleTargets.Contains(col.transform))
                 visibleTargets.Add(col.transform);
+
+            LastSeenPosition = col.transform.position;
         }
     }
+
+    public bool CanSee(Transform target) => visibleTargets.Contains(target);
 }

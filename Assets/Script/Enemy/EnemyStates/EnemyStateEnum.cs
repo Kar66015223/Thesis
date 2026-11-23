@@ -5,5 +5,6 @@ public enum EnemyState
     DistractedMove,
     Confirming,
     Chase,
-    Stunned
+    Stunned,
+    Search
 }

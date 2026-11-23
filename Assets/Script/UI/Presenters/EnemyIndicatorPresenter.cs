@@ -102,6 +102,11 @@ public class EnemyIndicatorPresenter : IUIPresenter
                 color = Color.red;
                 break;
 
+            case EnemyState.Search:
+                main = sprites.Chase;
+                color = Color.orange;
+                break;
+
             case EnemyState.Stunned:
                 main = sprites.Stunned;
                 color = Color.white;
