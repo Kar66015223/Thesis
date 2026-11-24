@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
+    private GameObject player;
+
     [Header("Inventory")]
     [Tooltip("Root shown and hidden by the inventory key.")]
     [SerializeField] private GameObject panel;
@@ -53,6 +55,7 @@ public class Inventory : MonoBehaviour
     {
         inputHandler = GetComponentInParent<PlayerInputHandler>();
         source = GetComponent<AudioSource>();
+        player = GetComponentInParent<PlayerController>().gameObject;
 
         if (sortAscendingButton != null)
             sortAscendingButton.onClick.AddListener(() => SortItem(true));
@@ -228,6 +231,13 @@ public class Inventory : MonoBehaviour
             weightText.SetText($"Weight: <color=red>{model.CurrentWeight}</color> / {model.MaxWeight}");
         else
             weightText.SetText($"Weight: {model.CurrentWeight} / {model.MaxWeight}");
+
+        if (selectedSlot != null && GetItemAt(selectedSlot.Index) == null)
+        {
+            ClearActionButtons();
+            itemNameText.text = "";
+            itemDescText.text = "";
+        }
     }
 
     private void RefreshSelected(InventorySlot selected)
@@ -273,6 +283,10 @@ public class Inventory : MonoBehaviour
             TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
             if (label != null)
                 label.text = item.actionButtons[i].ToString();
+
+            button.TryGetComponent(out ItemActionButton action);
+            if (action != null)
+                action.Bind(item, item.actionButtons[i], player);
 
             spawnedActionButtons.Add(button);
         }

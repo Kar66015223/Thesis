@@ -35,7 +35,7 @@ public class PlayerHunger : MonoBehaviour
     private void DebugReduceHunger() => CurHunger -= 20f;
 
     [ContextMenu("Debug/Refill Hunger")]
-    public void DebugFillHunger() => CurHunger += 20f;
+    public void DebugFillHunger() => FillHunger(20f);
 
     [ContextMenu("Debug/Half Hunger")]
     private void DebugHalfHunger() => CurHunger = 50.5f;
@@ -79,4 +79,6 @@ public class PlayerHunger : MonoBehaviour
 
         return isHeavy && controller.IsMoving ? heavyWalkMultiplier : 1f;
     }
+
+    public void FillHunger(float amount) => CurHunger += amount;
 }
