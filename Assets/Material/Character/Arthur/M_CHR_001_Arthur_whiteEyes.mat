@@ -29,7 +29,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Mask_R_Emission:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 6692664d65d3cb64fa6816e05d9c116f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -95,10 +95,10 @@ Material:
     m_Ints: []
     m_Floats:
     - Brightness_Rim: 2
-    - Emission_Intensity: 1
+    - Emission_Intensity: 9.88
     - Rim_Power: 5
     - Toon_Ramp_Offset: 0.5
-    - Toon_Ramp_Smoothness: 0
+    - Toon_Ramp_Smoothness: 0.223
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
