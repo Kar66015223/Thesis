@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Video;
 
 public class ItemActionButton : MonoBehaviour
 {
@@ -12,7 +11,7 @@ public class ItemActionButton : MonoBehaviour
             button = GetComponent<Button>();
 
         button.onClick.RemoveAllListeners();
-        
+
     }
 
     private void Use()

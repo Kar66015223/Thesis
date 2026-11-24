@@ -31,4 +31,22 @@ public class ItemData : ScriptableObject
     [Header("Economy")]
     [Tooltip("Money for each one sold to the shop NPC. 0 = can't be sold (keys, mission items).")]
     [Min(0)] public int sellPrice = 0;
+
+    public virtual void Use()
+    {
+
+    }
+    
+    public virtual void Eat()
+    {
+        
+    }
+    public virtual void Equip()
+    {
+        
+    }
+    public virtual void Drop()
+    {
+        
+    }
 }
