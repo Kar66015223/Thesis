@@ -646,7 +646,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.1
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 309ec8981451aca4f9806a48ac87719f, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 2442adb1bf0e578498c49a434d064fdd, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &1769086748623434883
 GameObject:
@@ -2659,7 +2659,7 @@ Transform:
   m_GameObject: {fileID: 8627201825217126447}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.9269513, z: -0, w: 0.3751818}
-  m_LocalPosition: {x: -7.69, y: -0.909, z: -1.01}
+  m_LocalPosition: {x: -4.46, y: -0.909, z: 2.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40610,6 +40610,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorParent_ElectricLock
       objectReference: {fileID: 0}
+    - target: {fileID: 5521729136140182132, guid: 593679be68fd5b54787b31d797077fe9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5874082081618406576, guid: 593679be68fd5b54787b31d797077fe9, type: 3}
       propertyPath: m_LocalScale.y
       value: 1.1603723
@@ -48628,6 +48632,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -2024283774511849237, guid: 4e63bccd2f4bc7f41aace05dcb6d1ec2, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -2024283774511849237, guid: 4e63bccd2f4bc7f41aace05dcb6d1ec2, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -48638,6 +48646,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4e63bccd2f4bc7f41aace05dcb6d1ec2, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321325661482556898, guid: 4e63bccd2f4bc7f41aace05dcb6d1ec2, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5321325661482556898, guid: 4e63bccd2f4bc7f41aace05dcb6d1ec2, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -52596,9 +52608,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2750493304460014115}
     m_Modifications:
+    - target: {fileID: 15122855389758208, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 246275316431574019, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 681775467970249716, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
       propertyPath: m_Name
       value: DoorParent_NormalLock (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 681775467970249716, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385624379755234308, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 1464750484633161008, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
       propertyPath: m_LocalScale.y
@@ -52643,6 +52671,30 @@ PrefabInstance:
     - target: {fileID: 1464750484633161008, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1767571315258326913, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6391785015920619694, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7065049275646430268, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7720172605152772598, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7807070848975937278, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 9186319959554496585, guid: 891b1de14f39e494f9290de931d3c1dd, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
