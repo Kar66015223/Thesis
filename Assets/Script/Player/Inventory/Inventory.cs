@@ -272,7 +272,7 @@ public class Inventory : MonoBehaviour
 
             TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
             if (label != null)
-                label.text = item.actionButtons[i];
+                label.text = item.actionButtons[i].ToString();
 
             spawnedActionButtons.Add(button);
         }

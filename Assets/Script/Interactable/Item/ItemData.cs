@@ -8,6 +8,14 @@ public enum ItemType
     Readable
 }
 
+public enum ItemAction
+{
+    Use,
+    Eat,
+    Equip,
+    Drop
+}
+
 [CreateAssetMenu(fileName = "ItemData", menuName = "Scriptable Objects/ItemData/ItemData")]
 public class ItemData : ScriptableObject
 {
@@ -18,7 +26,7 @@ public class ItemData : ScriptableObject
 
     [Min(1)] public int maxStack = 1;
     public float weight = 0.1f;
-    public List<string> actionButtons = new();
+    public List<ItemAction> actionButtons = new();
 
     [Header("Economy")]
     [Tooltip("Money for each one sold to the shop NPC. 0 = can't be sold (keys, mission items).")]
