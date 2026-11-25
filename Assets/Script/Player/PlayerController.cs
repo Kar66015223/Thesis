@@ -90,7 +90,10 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         inputHandler.OnSlowCrouchInput += HandleSlowCrouch;
 
         if (hunger != null)
+        {
             hunger.HungerPang += anim.SetHungry;
+            hunger.StarvingPang += anim.SetStarving;
+        }
 
         if (health != null)
         {
@@ -107,7 +110,10 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         inputHandler.OnSlowCrouchInput -= HandleSlowCrouch;
 
         if (hunger != null)
+        {
             hunger.HungerPang -= anim.SetHungry;
+            hunger.StarvingPang -= anim.SetStarving;
+        }
 
         if (health != null)
         {
@@ -214,7 +220,9 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
             return;
 
         stamina.SetMoving(isMoving);
-        stamina.SetRunIntent(isRunHeld && !IsCrouching && !isUsingSkill);
+
+        bool isStarving = hunger != null && hunger.IsStarving;
+        stamina.SetRunIntent(isRunHeld && !IsCrouching && !isUsingSkill && !isStarving);
     }
 
     private float GetCurrentSpeed()

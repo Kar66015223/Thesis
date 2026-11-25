@@ -22,6 +22,7 @@ public class PlayerHunger : MonoBehaviour
 
     public bool IsStarving => Normalized < starvingRatio;
     public event Action HungerPang;
+    public event Action<bool> StarvingPang;
 
     public float MaxHunger => maxHunger;
     public float CurHunger { get => _curHunger; private set => _curHunger = Mathf.Clamp(value, 0, maxHunger); }
@@ -60,8 +61,13 @@ public class PlayerHunger : MonoBehaviour
         CurHunger -= drainRate * GetMultiplier() * Time.deltaTime;
         float after = Normalized;
 
-        if (Crossed(before, after, hungryRatio) || Crossed(before, after, starvingRatio))
+        if (Crossed(before, after, hungryRatio))
             HungerPang?.Invoke();
+        else if (Crossed(before, after, starvingRatio))
+        {
+            HungerPang?.Invoke();
+            StarvingPang?.Invoke(true);
+        }
     }
 
     private static bool Crossed(float before, float after, float threshold) =>

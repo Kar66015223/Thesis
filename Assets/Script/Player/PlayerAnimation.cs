@@ -19,6 +19,7 @@ public class PlayerAnimation
     private static readonly int CaughtHash = Animator.StringToHash("Caught");
 
     private static readonly int HungryHash = Animator.StringToHash("Hungry");
+    private static readonly int StarvingHash = Animator.StringToHash("Starving");
 
     private static readonly int VaulthHash = Animator.StringToHash("Vault");
 
@@ -99,6 +100,12 @@ public class PlayerAnimation
     {
         if (anim != null && anim.runtimeAnimatorController == missionAnimCtrl)
             anim.SetTrigger(HungryHash);
+    }
+
+    public void SetStarving(bool value)
+    {
+        if (anim != null && anim.runtimeAnimatorController == missionAnimCtrl)
+            anim.SetBool(StarvingHash, value);
     }
 
     public void SetVault()
