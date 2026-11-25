@@ -13,7 +13,7 @@ public class SearchState : EnemyStateBase
     private bool isWaiting;
     private float waitTimer;
 
-    public override EnemyState Indicator => EnemyState.Search;
+    private float searchTimer;
 
     public SearchState(EnemyController ctrl, Vector3? startCenter = null) : base(ctrl) =>
         this.startCenter = startCenter;
@@ -23,17 +23,25 @@ public class SearchState : EnemyStateBase
         ctrl.Tracking.InterruptCurrentStep();
         ctrl.Alert();
 
-        ctrl.Movement.SetBaseSpeed(ctrl.RunSpeed);
+        ctrl.Movement.SetBaseSpeed(ctrl.FastWalkSpeed);
         ctrl.Agent.isStopped = false;
         ctrl.Agent.updateRotation = true;
         ctrl.Agent.stoppingDistance = ApproachStoppingDistance;
 
         center = startCenter ?? ctrl.Vision.LastSeenPosition ?? ctrl.transform.position;
+        searchTimer = 0f;
         ctrl.SetDestination(center);
     }
 
     public override void Update()
     {
+        searchTimer += Time.deltaTime;
+        if(searchTimer >= ctrl.SearchTime)
+        {
+            ctrl.ReturnToDefaultState();
+            return;
+        }
+
         if (isWaiting)
         {
             waitTimer += Time.deltaTime;

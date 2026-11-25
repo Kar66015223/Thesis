@@ -24,6 +24,9 @@ public class EnemyStepTracking
         activeStep = step;
         stepInterrupted = false;
         ApplyActiveStep();
+
+        if (ctrl.IsSearching)
+            ctrl.ReturnToDefaultState();
     }
 
     public void InterruptCurrentStep()

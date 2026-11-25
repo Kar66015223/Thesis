@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using UnityEngine.UI;
 using Unity.Cinemachine;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -29,9 +29,10 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
 
     [Header("Shared Settings")]
     [SerializeField] private Transform stateUIPoint;
-    
+
     [Header("Movement")]
-    [SerializeField] private float walkSpeed = 3f;
+    [SerializeField] private float walkSpeed = 2f;
+    [SerializeField] private float fastWalkSpeed = 3f;
     [SerializeField] private float runSpeed = 5f;
 
     [SerializeField] private Transform idlePointsParent;
@@ -62,12 +63,19 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     [SerializeField] private float minSearchDistance = 3f;
     [SerializeField] private float searchWaitTime = 1.5f;
 
+    [SerializeField] private float searchTime = 10f;
+    public float SearchTime => searchTime;
+
+    [SerializeField] private Image overheadUIImg;
+    [SerializeField] private Sprite alertedSprite;
+
     [Tooltip("Bone the caught player's neck is held at. Found by name (hand.r) in the model when left empty.")]
     [SerializeField] private Transform rightHand;
 
     public Transform StateUIPoint => stateUIPoint != null ? stateUIPoint : transform;
 
     public float WalkSpeed => walkSpeed;
+    public float FastWalkSpeed => fastWalkSpeed;
     public float RunSpeed => runSpeed;
 
     public Transform IdlePoint => idlePoint;
@@ -101,6 +109,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public bool IsChasing => CurrentState is ChaseState;
     public bool IsConfirming => CurrentState is ConfirmingState;
     public bool IsInDefaultState => CurrentState is IdleState || CurrentState is PatrolState;
+    public bool IsSearching => CurrentState is SearchState;
     public bool IsAlerted { get; private set; }
 
     [ContextMenu("Debug/Search")]
@@ -153,9 +162,11 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
             CurrentState?.Update();
 
         if (Agent.velocity.magnitude > 1)
-            Anim.SetMove(IsAlerted || Agent.speed > walkSpeed ? 2 : 1);
+            Anim.SetMove(Agent.speed > fastWalkSpeed ? 2 : 1);
         else
             Anim.SetMove(0);
+
+        ShowOverheadUI(CurrentState);
     }
 
     public void ChangeState(IEnemyState newState)
@@ -213,7 +224,7 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
             return;
 
         IsAlerted = true;
-        Movement.SetSpeedFloor(runSpeed);
+        Movement.SetSpeedFloor(fastWalkSpeed);
     }
 
     private void HandleAlertRequested(EnemyController enemy)
@@ -285,5 +296,21 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     {
         if (child != null && child.parent == transform)
             child.SetParent(null);
+    }
+
+    public void ShowOverheadUI(IEnemyState state)
+    {
+        if (state is SearchState)
+        {
+            overheadUIImg.sprite = alertedSprite;
+            overheadUIImg.color = Color.orange;
+            overheadUIImg.gameObject.SetActive(true);
+        }
+        else
+        {
+            overheadUIImg.sprite = null;
+            overheadUIImg.color = Color.white;
+            overheadUIImg.gameObject.SetActive(false);
+        }
     }
 }
