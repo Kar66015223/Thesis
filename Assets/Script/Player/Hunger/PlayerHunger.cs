@@ -86,5 +86,12 @@ public class PlayerHunger : MonoBehaviour
         return isHeavy && controller.IsMoving ? heavyWalkMultiplier : 1f;
     }
 
-    public void FillHunger(float amount) => CurHunger += amount;
+    public void FillHunger(float amount)
+    {
+        bool wasStarving = IsStarving;
+        CurHunger += amount;
+
+        if (wasStarving && !IsStarving)
+            StarvingPang?.Invoke(false);
+    }
 }
