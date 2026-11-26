@@ -34,6 +34,7 @@ public class PlayerSound : MonoBehaviour
 
     [Header("Interact")]
     [SerializeField] private AudioClip pickUpItemClip;
+    [SerializeField] private float pickupItemVolume = 1f;
 
     [SerializeField] private AudioClip wasFoundSound;
 
@@ -146,7 +147,7 @@ public class PlayerSound : MonoBehaviour
     public void PlayPickUpItemSound()
     {
         if (pickUpItemClip != null)
-            source.PlayOneShot(pickUpItemClip);
+            source.PlayOneShot(pickUpItemClip, pickupItemVolume);
     }
     
     public void PlayWasFoundSound()
