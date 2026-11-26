@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d21995407cdff1b4eb222af9b39aaf9a, type: 3}
-  m_Name: ValuableTest
+  m_Name: Valuable2
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: Valuable
-  itemDesc: I can sell this for money.
+  itemName: Potion Bottle
+  itemDesc: A beautiful bottle, I can sell this for 30 coins.
   icon: {fileID: 21300000, guid: 0327e398bb01a1340994875acb14841c, type: 3}
   itemType: 1
   maxStack: 1
-  weight: 3
+  weight: 2
   actionButtons: 02000000
   sellPrice: 30

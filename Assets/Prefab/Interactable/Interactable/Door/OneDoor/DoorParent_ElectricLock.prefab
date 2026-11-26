@@ -233,6 +233,7 @@ MonoBehaviour:
   stateUIText: {fileID: 0}
   canUnlock: 0
   unlockableSide: {fileID: 0}
+  lockLight: {fileID: 7016941115863370232}
 --- !u!1001 &7871173104319097956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -314,6 +315,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1889162044840161547}
   m_SourcePrefab: {fileID: 100100000, guid: 12412b1e5b22a4948ab2be0041c07500, type: 3}
+--- !u!23 &7016941115863370232 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -8332458688668047972, guid: 12412b1e5b22a4948ab2be0041c07500, type: 3}
+  m_PrefabInstance: {fileID: 7871173104319097956}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7060922858049982773 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 12412b1e5b22a4948ab2be0041c07500, type: 3}
@@ -411,6 +417,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
   highlight: {fileID: 0}
+  interactSound: {fileID: 0}
   <InteractPromptPos>k__BackingField: {fileID: 1092497183068876591}
   playerPointFront: {fileID: 2827810795981943640}
   playerPointBack: {fileID: 124621608972566273}
