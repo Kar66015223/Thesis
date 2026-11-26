@@ -253,9 +253,13 @@ public class EnemyController : MonoBehaviour, IHearable, IPlayerCatcher, IStunna
     public void ReleasePlayer(bool playerEscaped)
     {
         if (playerEscaped)
+        {
             Stun();
-        else
-            ReturnToDefaultState();
+            return;
+        }
+
+        Anim.SetKill();
+        ChangeState(null);
     }
 
     private static Transform FindDescendant(Transform parent, string childName)
