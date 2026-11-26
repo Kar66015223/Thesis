@@ -2973,7 +2973,7 @@ MonoBehaviour:
   footstepReaction: 1
   caughtClip: {fileID: 8300000, guid: 4f6dec8dfb2a53d41b0b7e1b2595677a, type: 3}
   struggleClip: {fileID: 8300000, guid: f8a152cbc756fd64d94d96d6c03ce916, type: 3}
-  freedClip: {fileID: 8300000, guid: 124be7126e0d98d419bb0f7bdb8864a2, type: 3}
+  freedClip: {fileID: 8300000, guid: 96cd937a6e340954aaf772a7b40160bf, type: 3}
   caughtVolume: 1
   pickUpItemClip: {fileID: 8300000, guid: ba95113354df25a42bb7b4bb3c2b7115, type: 3}
   wasFoundSound: {fileID: 8300000, guid: a3dd259cb1bd61041a875bea9c045714, type: 3}
@@ -3385,7 +3385,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.161
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -10865,8 +10865,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5014081619451891361}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000000028497261, y: -1.046005e-15, z: -3.4593847e-16, w: 1}
-  m_LocalPosition: {x: 1, y: 1.7000002, z: -1}
+  m_LocalRotation: {x: 0.0000000011109498, y: -0.000000084293696, z: -6.4495775e-10, w: 1}
+  m_LocalPosition: {x: 1.0000002, y: 1.7000002, z: -0.9999999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10951,7 +10951,7 @@ MonoBehaviour:
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: 0
+    Value: 90
     Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
@@ -15476,7 +15476,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.5119629}
+  m_AnchoredPosition: {x: 0, y: -34.797974}
   m_SizeDelta: {x: -0.0002, y: 6.3304}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5528731644868407745
@@ -15714,7 +15714,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0024414062, y: -282.5}
+  m_AnchoredPosition: {x: 0.0012207031, y: -282.5}
   m_SizeDelta: {x: -961.07, y: -565}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8453768299530644084
