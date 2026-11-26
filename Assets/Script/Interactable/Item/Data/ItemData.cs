@@ -59,6 +59,18 @@ public class ItemData : ScriptableObject
     
     public virtual void Drop(GameObject owner)
     {
-        Debug.Log("Drop");
+        if (!owner.TryGetComponent(out PlayerController player))
+            return;
+
+        InventoryModel inventory = player.Inventory;
+        for(int i = 0; i < inventory.Slots.Count; i++)
+        {
+            if (inventory.Slots[i].Item != this)
+                continue;
+
+            inventory.RemoveOne(i);
+            player.DropItemObject(this);
+            return;
+        }
     }
 }

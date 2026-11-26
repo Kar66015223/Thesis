@@ -29,6 +29,10 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     [SerializeField] private float crouchColliderY = 0.5f;
     [SerializeField] private float crouchColliderHeight = 0.8f;
 
+    [Header("Inventory")]
+    [SerializeField] private Transform itemDropPoint;
+    private readonly Dictionary<ItemData, Stack<Item>> heldItemObjects = new();
+
     [Header("Other")]
     [SerializeField] private Transform playerModel;
     [SerializeField] private PlayerCameraController camController = new();
@@ -435,6 +439,32 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
 
     public bool HasItem(ItemData item) => Inventory.HasItem(item);
     public bool AddItem(ItemData item, int amount = 1) => Inventory.AddItem(item, amount);
+
+    public void StoreItemObject(Item item)
+    {
+        if (!heldItemObjects.TryGetValue(item.Data, out Stack<Item> stack))
+            heldItemObjects[item.Data] = stack = new();
+
+        stack.Push(item);
+    }
+
+    public void DropItemObject(ItemData data)
+    {
+        if (!heldItemObjects.TryGetValue(data, out Stack<Item> stack))
+            return;
+
+        while(stack.Count > 0)
+        {
+            Item item = stack.Pop();
+            if (item == null)
+                continue;
+
+            item.transform.SetPositionAndRotation(itemDropPoint.position, itemDropPoint.rotation);
+            item.gameObject.SetActive(true);
+
+            return;
+        }
+    }
 
     #endregion
 

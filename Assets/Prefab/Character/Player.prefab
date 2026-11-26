@@ -2815,6 +2815,7 @@ MonoBehaviour:
   standColliderHeight: 1.3
   crouchColliderY: 0.5
   crouchColliderHeight: 0.8
+  itemDropPoint: {fileID: 7577925255054673858}
   playerModel: {fileID: 2476962885942031575}
   camController:
     cam: {fileID: 6953314275788628758}
@@ -16783,6 +16784,37 @@ MonoBehaviour:
   m_EffectColor: {r: 0.95, g: 0.95, b: 0.95, a: 1}
   m_EffectDistance: {x: 2, y: -2}
   m_UseGraphicAlpha: 1
+--- !u!1 &7201028205595153875
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7577925255054673858}
+  m_Layer: 3
+  m_Name: ItemDropPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7577925255054673858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7201028205595153875}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2476962885942031575}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7225170949137604542
 GameObject:
   m_ObjectHideFlags: 0
@@ -22394,6 +22426,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6cd109157820382499991e760a74c654, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5013839253531492993}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6cd109157820382499991e760a74c654, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7577925255054673858}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6cd109157820382499991e760a74c654, type: 3}
       insertIndex: -1
