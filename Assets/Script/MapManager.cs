@@ -1,3 +1,4 @@
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,18 +26,20 @@ public class MapManager : MonoBehaviour
             PlayerConstants.ACTIONMAP_PLAYER_BASE : PlayerConstants.ACTIONMAP_PLAYER_MISSION;
     }
 
-    private void OnEnable()
+    void Start()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        if (LoadingScreen.IsLoading)
+            LoadingScreen.Finished += ShowFirstObjective;
+        else
+            ShowFirstObjective();
     }
 
-    private void OnDisable()
+    void OnDestroy() => LoadingScreen.Finished -= ShowFirstObjective;
+    
+    private void ShowFirstObjective()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
+        LoadingScreen.Finished -= ShowFirstObjective;
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
         if (ObjectiveUIManager.Instance != null && ObjectiveUIManager.Instance.allObjectives.Count > 0)
             UIEvents.RequestChangeObjective(ObjectiveUIManager.Instance.allObjectives[0]);
     }

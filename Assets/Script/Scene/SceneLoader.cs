@@ -7,13 +7,10 @@ public static class SceneLoader
     {
         Time.timeScale = 1f;
         SavePlayerSession();
-        SceneManager.LoadScene($"{sceneName}");
+        LoadingScreen.Load(sceneName);
     }
 
-    public static void RestartScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
+    public static void RestartScene() => LoadingScreen.Load(SceneManager.GetActiveScene().name);
 
     private static void SavePlayerSession()
     {
