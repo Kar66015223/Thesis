@@ -558,7 +558,8 @@ Animator parameters used from code:
 
 | Animator | Parameters |
 |---|---|
-| Player (base / mission) | `Move` (0 idle, 1 walk, 2 run), `Crouch`, `Interact`, `CrouchWalkSpeed` |
+| Player (base / mission) | `Move` (0 idle, 1 walk, 2 run), `Crouch`, `CrouchWalkSpeed` |
+| Player (mission controller only) | `Interact`, `Vault`, `Hungry`, `Starving`, `HeavyBag` (on while the inventory is over its max weight; idle, walk and run switch to the heavy-bag versions) |
 | Player (Caught controller) | `Caught` |
 | Enemy | `Move`, `Found`, `StartCatch`, `Catching` |
 

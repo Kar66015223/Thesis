@@ -23,6 +23,8 @@ public class PlayerAnimation
 
     private static readonly int VaulthHash = Animator.StringToHash("Vault");
 
+    private static readonly int HeavyBagHash = Animator.StringToHash("HeavyBag");
+
     public void Initialize()
     {
         if (MapManager.Instance == null || MapManager.Instance.DefaultActionMapName == "")
@@ -112,5 +114,11 @@ public class PlayerAnimation
     {
         if (anim != null && anim.runtimeAnimatorController == missionAnimCtrl)
             anim.SetTrigger(VaulthHash);
+    }
+
+    public void SetHeavyBag(bool value)
+    {
+        if (anim != null && anim.runtimeAnimatorController == missionAnimCtrl)
+            anim.SetBool(HeavyBagHash, value);
     }
 }

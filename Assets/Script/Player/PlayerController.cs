@@ -139,6 +139,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         UpdateMovement();
         UpdateModelRotation();
         UpdateState();
+        anim.SetHeavyBag(Inventory.IsOverweight);
 
         float staminaRatio = stamina != null ? stamina.Normalized : 1f;
         camController.Tick(new CameraViewState(IsRunning, IsCrouching, isUsingSkill, staminaRatio));
