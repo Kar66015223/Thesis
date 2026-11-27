@@ -3,22 +3,30 @@ using UnityEngine;
 public class EnemySound : MonoBehaviour
 {
     private const float MinTimeScale = 0.01f;
+    private const float FootHeight = 0.1f;
 
     private AudioSource source;
 
     [Header("Footstep Audio")]
     [SerializeField] private AudioClip[] footstepClips;
     [SerializeField, Range(0f, 1f)] private float footstepVolume = 1f;
+    private int lastClipIndex = -1;
 
     [Header("Random Variation")]
     [SerializeField, Range(0f, 0.1f)] private float pitchVariation = 0.02f;
     [SerializeField, Range(0f, 0.1f)] private float volumeVariation = 0.04f;
 
-    private int lastClipIndex = -1;
+    [Header("Soundproofing")]
+    [SerializeField] private float earHeight = 1.5f;
+    [SerializeField] private float maxHearDistance = 30f;
+    private Transform player;
 
     public void PlayFootstep()
     {
         if (footstepClips == null || footstepClips.Length == 0)
+            return;
+
+        if (!CanPlayerHear())
             return;
 
         AudioClip clip = footstepClips[GetRandomClipIndex(footstepClips.Length)];
@@ -59,5 +67,32 @@ public class EnemySound : MonoBehaviour
             index++;
 
         return lastClipIndex = index;
+    }
+
+    private bool CanPlayerHear()
+    {
+        Transform target = GetPlayer();
+        if (target == null)
+            return true;
+
+        Vector3 from = transform.position + Vector3.up * FootHeight;
+        Vector3 ear = target.position + Vector3.up * earHeight;
+
+        if ((ear - from).sqrMagnitude > maxHearDistance * maxHearDistance)
+            return false;
+
+        return !Soundproofing.IsBlocked(from, ear);
+    }
+
+    private Transform GetPlayer()
+    {
+        if (player == null)
+        {
+            PlayerController found = FindFirstObjectByType<PlayerController>();
+            if (found != null)
+                player = found.transform;
+        }
+
+        return player;
     }
 }

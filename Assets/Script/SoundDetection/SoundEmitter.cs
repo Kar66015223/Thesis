@@ -4,7 +4,6 @@ using UnityEngine;
 public class SoundEmitter : MonoBehaviour
 {
     private const int StartBufferSize = 32;
-    private const string SoundproofLayerName = "Soundproof";
 
     [Tooltip("Layers that can hear. Set it to just the listeners' layer (Enemy): with Everything, " +
              "every wall and chair in range is checked too.")]
@@ -22,9 +21,8 @@ public class SoundEmitter : MonoBehaviour
 
     void Awake()
     {
-        soundproofMask = LayerMask.GetMask(SoundproofLayerName);
-        if (soundproofMask == 0)
-            Debug.LogWarning($"SoundEmitter: there's no '{SoundproofLayerName}' layer, so nothing blocks sound.", this);
+        if (Soundproofing.Mask == 0)
+            Debug.LogWarning($"SoundEmitter: there's no Soundproof layer, so nothing blocks sound.", this);
     }
 
     public void MakeSound(float radius, EnemyReaction reaction)
@@ -53,15 +51,7 @@ public class SoundEmitter : MonoBehaviour
         }
     }
 
-    private bool IsSoundproofed(Vector3 from, Vector3 to)
-    {
-        bool blocked = Physics.Linecast(from, to, soundproofMask, QueryTriggerInteraction.Ignore);
-
-#if UNITY_EDITOR
-        Debug.DrawLine(from, to, blocked ? Color.red : Color.green, 1f);
-#endif
-        return blocked;
-    }
+    private bool IsSoundproofed(Vector3 from, Vector3 to) => Soundproofing.IsBlocked(from, to);
 
     [ContextMenu("Debug/Make Sound")]
     private void DebugMakeSound() => MakeSound(debugRadius, curReaction);

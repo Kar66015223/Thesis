@@ -1838,9 +1838,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d5964cdc90607ed4e9754f504e9ed8a8, type: 3}
   - {fileID: 8300000, guid: 9907210f9213c9f4f8ee9105dfd53ac5, type: 3}
   - {fileID: 8300000, guid: 59993af6cd4fe244a9b2ca58ca4b25c8, type: 3}
-  footstepVolume: 1
+  footstepVolume: 0.3
   pitchVariation: 0.02
   volumeVariation: 0.01
+  earHeight: 1.5
+  maxHearDistance: 30
 --- !u!4 &6799456140690673212 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1017604278939857351, guid: 6b3916aa78edae341ae791cdcb39c940, type: 3}
