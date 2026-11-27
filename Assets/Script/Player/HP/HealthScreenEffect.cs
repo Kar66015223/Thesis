@@ -2,21 +2,18 @@ using UnityEngine;
 
 public class HealthScreenEffect
 {
-    private static readonly int VignettePowerId = Shader.PropertyToID("_VignettePower");
-    private static readonly int BreathFrequencyId = Shader.PropertyToID("_BreathFrequency");
+    private static readonly int HealthId = Shader.PropertyToID("_Health");
 
     public struct Settings
     {
-        public float NormalVignettePower;
-        public float HurtVignettePower;
-        public float LowVignettePower;
-        public float NormalBreathFrequency;
-        public float LowBreathFrequency;
-        public float LowHealthRatio;
+        public float fadeSpeed;
     }
 
     private readonly Material material;
     private readonly Settings settings;
+
+    private float targetHealth = 1f;
+    private float shownHealth = 1f;
 
     public HealthScreenEffect(Material material, Settings settings)
     {
@@ -26,28 +23,29 @@ public class HealthScreenEffect
 
     public void Apply(float currentHealth, float maxHealth)
     {
-        if (material == null || maxHealth <= 0)
+        if (maxHealth > 0f)
+            targetHealth = Mathf.Clamp01(currentHealth / maxHealth);
+    }
+
+    public void Tick(float deltaTime)
+    {
+        if (material == null || shownHealth == targetHealth)
             return;
 
-        float ratio = currentHealth / maxHealth;
+        shownHealth = Mathf.MoveTowards(shownHealth, targetHealth, settings.fadeSpeed * deltaTime);
+        material.SetFloat(HealthId, shownHealth);
+    }
 
-        if (ratio >= 1f)
-            Set(settings.NormalVignettePower, settings.NormalBreathFrequency);
-        else if (ratio > settings.LowHealthRatio)
-            Set(settings.HurtVignettePower, settings.NormalBreathFrequency);
-        else
-            Set(settings.LowVignettePower, settings.LowBreathFrequency);
+    public void Snap()
+    {
+        shownHealth = targetHealth;
+        if (material != null)
+            material.SetFloat(HealthId, shownHealth);
     }
 
     public void Restore()
     {
-        if (material != null)
-            Set(settings.NormalVignettePower, settings.NormalBreathFrequency);
-    }
-    
-    private void Set(float vignettePower, float breathFrequency)
-    {
-        material.SetFloat(VignettePowerId, vignettePower);
-        material.SetFloat(BreathFrequencyId, breathFrequency);
+        targetHealth = 1f;
+        Snap();
     }
 }

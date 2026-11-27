@@ -37,40 +37,31 @@ public class ItemData : ScriptableObject
         Debug.Log("Use");
     }
 
-    public virtual void Eat(GameObject owner)
+    public virtual void Eat(GameObject owner, int slotIndex)
     {
-        if (!owner.TryGetComponent(out PlayerController player))
+        if (!TryTakenFrom(owner, slotIndex, out _))
             return;
 
-        InventoryModel inventory = player.Inventory;
-        for(int i = 0; i < inventory.Slots.Count; i++)
-        {
-            if (inventory.Slots[i].Item != this)
-                continue;
+        if (owner.TryGetComponent(out PlayerHunger hunger) && this is FoodData food)
+            hunger.FillHunger(food.fillAmount);
+    }
 
-            inventory.RemoveOne(i);
-
-            if (owner.TryGetComponent(out PlayerHunger hunger) && this is FoodData food)
-                hunger.FillHunger(food.fillAmount);
-
-            return;
-        }
+    public virtual void Drop(GameObject owner, int slotIndex)
+    {
+        if (TryTakenFrom(owner, slotIndex, out PlayerController player))
+            player.DropItemObject(this);
     }
     
-    public virtual void Drop(GameObject owner)
+    private bool TryTakenFrom(GameObject owner, int slotIndex, out PlayerController player)
     {
-        if (!owner.TryGetComponent(out PlayerController player))
-            return;
+        if (!owner.TryGetComponent(out player))
+            return false;
 
         InventoryModel inventory = player.Inventory;
-        for(int i = 0; i < inventory.Slots.Count; i++)
-        {
-            if (inventory.Slots[i].Item != this)
-                continue;
+        if (slotIndex < 0 || slotIndex >= inventory.Slots.Count || inventory.Slots[slotIndex].Item != this)
+            return false;
 
-            inventory.RemoveOne(i);
-            player.DropItemObject(this);
-            return;
-        }
+        inventory.RemoveOne(slotIndex);
+        return true;
     }
 }

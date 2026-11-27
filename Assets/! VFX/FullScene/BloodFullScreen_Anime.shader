@@ -9,6 +9,7 @@ Shader "Custom/URP/BloodFullScreen_Anime"
         _SpotStrength ("Random Blood Spots Strength", Range(0, 2)) = 0.85
         _SpotScale ("Blood Spot Scale", Range(3, 30)) = 13
         _OverallStrength ("Overall Strength", Range(0, 2)) = 1
+        _Health ("Health", Range(0, 1)) = 1
     }
 
     SubShader
@@ -33,10 +34,10 @@ Shader "Custom/URP/BloodFullScreen_Anime"
                 float _SpotStrength;
                 float _SpotScale;
                 float _OverallStrength;
+                float _Health;
             CBUFFER_END
 
             // These two values are sent globally by HealthScreenEffect.cs.
-            float _Health;
             float _HitFlash;
 
             float Hash21(float2 p)

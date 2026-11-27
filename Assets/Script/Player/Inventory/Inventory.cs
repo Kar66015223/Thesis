@@ -257,7 +257,7 @@ public class Inventory : MonoBehaviour
         itemNameText.text = selectedSlot.ItemName;
         itemDescText.text = selectedSlot.ItemDesc;
 
-        ShowActionButtons(GetItemAt(selectedSlot.Index));
+        ShowActionButtons(selectedSlot.Index);
     }
 
     private ItemData GetItemAt(int index)
@@ -269,10 +269,11 @@ public class Inventory : MonoBehaviour
         return slot.IsEmpty ? null : slot.Item;
     }
 
-    private void ShowActionButtons(ItemData item)
+    private void ShowActionButtons(int slotIndex)
     {
         ClearActionButtons();
 
+        ItemData item = GetItemAt(slotIndex);
         if (item == null || item.actionButtons == null || actionButtonPrefab == null || actionButtonsParent == null)
             return;
 
@@ -286,7 +287,7 @@ public class Inventory : MonoBehaviour
 
             button.TryGetComponent(out ItemActionButton action);
             if (action != null)
-                action.Bind(item, item.actionButtons[i], player);
+                action.Bind(item, item.actionButtons[i], player, slotIndex);
 
             spawnedActionButtons.Add(button);
         }

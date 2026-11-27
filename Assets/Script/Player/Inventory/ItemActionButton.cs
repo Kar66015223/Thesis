@@ -5,7 +5,7 @@ public class ItemActionButton : MonoBehaviour
 {
     private Button button;
 
-    public void Bind(ItemData data, ItemAction action, GameObject owner)
+    public void Bind(ItemData data, ItemAction action, GameObject owner, int slotIndex)
     {
         if (button == null)
             button = GetComponent<Button>();
@@ -18,11 +18,11 @@ public class ItemActionButton : MonoBehaviour
                 break;
 
             case ItemAction.Eat:
-                button.onClick.AddListener(() => data.Eat(owner));
+                button.onClick.AddListener(() => data.Eat(owner, slotIndex));
                 break;
 
             case ItemAction.Drop:
-                button.onClick.AddListener(() => data.Drop(owner));
+                button.onClick.AddListener(() => data.Drop(owner, slotIndex));
                 break;
         }
     }

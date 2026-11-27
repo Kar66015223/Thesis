@@ -8,12 +8,7 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("Blood Effect")]
     [SerializeField] private Material bloodFX;
-    [SerializeField] private float normalVignettePower = 20f;
-    [SerializeField] private float halfHPVignettePower = 10f;
-    [SerializeField] private float lowHPVignettePower = 8f;
-    [SerializeField] private float normalBreathFrequency = 2f;
-    [SerializeField] private float lowHPBreathFrequency = 5f;
-    [SerializeField, Range(0f, 1f)] private float lowHealthRatio = 0.5f;
+    [SerializeField, Min(0.01f)] private float bloodFadeSpeed = 0.5f;
 
     private HealthScreenEffect screenEffect;
 
@@ -29,12 +24,7 @@ public class PlayerHealth : MonoBehaviour
     {
         screenEffect = new HealthScreenEffect(bloodFX, new HealthScreenEffect.Settings
         {
-            NormalVignettePower = normalVignettePower,
-            HurtVignettePower = halfHPVignettePower,
-            LowVignettePower = lowHPVignettePower,
-            NormalBreathFrequency = normalBreathFrequency,
-            LowBreathFrequency = lowHPBreathFrequency,
-            LowHealthRatio = lowHealthRatio,
+            fadeSpeed = bloodFadeSpeed
         });
 
         curHP = maxHP;
@@ -44,6 +34,7 @@ public class PlayerHealth : MonoBehaviour
     {
         HealthChanged += screenEffect.Apply;
         screenEffect.Apply(curHP, maxHP);
+        screenEffect.Snap();
     }
 
     void OnDisable()
@@ -54,6 +45,8 @@ public class PlayerHealth : MonoBehaviour
 
     void OnApplicationQuit() => screenEffect.Restore();
 
+    void Update() => screenEffect.Tick(Time.deltaTime);
+    
     public void TakeDamage(float damage)
     {
         if (IsDead || damage <= 0f)

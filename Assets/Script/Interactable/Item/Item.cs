@@ -3,12 +3,21 @@ using UnityEngine;
 public class Item : InteractableBase
 {
     [field: SerializeField] public ItemData Data { get; private set; }
-    
+    private bool GoesInInventory => Data != null && !(Data is ReadableItemData);
+
+    public bool CanBeTakenBy(GameObject interactor)
+        => !GoesInInventory || !interactor.TryGetComponent(out IItemHolder holder) || holder.CanAdd(Data);
+
     protected sealed override void OnInteract(GameObject interactor)
     {
-        if (Data != null && !(Data as ReadableItemData) && interactor.TryGetComponent(out IItemHolder holder)
-            && holder.AddItem(Data) && interactor.TryGetComponent(out PlayerController player))
-            player.StoreItemObject(this);
+        if(GoesInInventory && interactor.TryGetComponent(out IItemHolder holder))
+        {
+            if (!holder.AddItem(Data))
+                return;
+
+            if (interactor.TryGetComponent(out PlayerController player))
+                player.StoreItemObject(this);
+        }
 
         WorldEvents.RaiseItemCollected(this);
         OnPickedUp(interactor);

@@ -68,6 +68,12 @@ public class PlayerInteraction : MonoBehaviour
         if (ctrl.IsInteracting)
             return;
 
+        if(handler.GetTarget(button) is Item item && !item.CanBeTakenBy(player))
+        {
+            UIEvents.ShowTip("Inventory is full");
+            return;
+        }
+
         if (handler.TryInteract(button, player))
         {
             if (handler.GetTarget(InteractButton.F) as Item)

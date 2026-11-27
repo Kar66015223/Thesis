@@ -463,7 +463,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         if (!heldItemObjects.TryGetValue(data, out Stack<Item> stack))
             return;
 
-        while(stack.Count > 0)
+        while (stack.Count > 0)
         {
             Item item = stack.Pop();
             if (item == null)
@@ -475,6 +475,8 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
             return;
         }
     }
+
+    public bool CanAdd(ItemData item, int amount = 1) => Inventory.CanAdd(item, amount);
 
     #endregion
 
