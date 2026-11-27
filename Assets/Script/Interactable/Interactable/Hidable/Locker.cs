@@ -101,4 +101,13 @@ public class Locker : Hidable
             ? Quaternion.LookRotation(forward)
             : hidingCharacterCopy.transform.rotation;
     }
+
+    protected override void OnCancelHiding()
+    {
+        if (doorAnim == null)
+            return;
+
+        doorAnim.Rebind();
+        doorAnim.Update(0f);
+    }
 }

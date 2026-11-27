@@ -65,6 +65,9 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
+        if (ctrl.IsInteracting)
+            return;
+
         if (handler.TryInteract(button, player))
         {
             if (handler.GetTarget(InteractButton.F) as Item)

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class Hidable : Interactable
@@ -48,13 +49,8 @@ public abstract class Hidable : Interactable
         }
     }
 
-    /// <summary>
-    /// Starts leaving. By default the player comes out straight away at Exit Pos.
-    /// Override to play an animation first, then call <see cref="FinishExit"/> when it is done.
-    /// </summary>
     protected virtual void BeginExit() => FinishExit(exitPos.position);
 
-    /// <summary>Brings the player out of hiding at the given spot, optionally facing a given way.</summary>
     protected void FinishExit(Vector3 position, Quaternion? facing = null)
     {
         if (occupant == null)
@@ -66,11 +62,30 @@ public abstract class Hidable : Interactable
         OnExitHiding();
     }
 
-    /// <summary>Called right after the player has gone into this hiding place.</summary>
+    public void CancelHiding()
+    {
+        if (occupant == null)
+            return;
+
+        IHidingAgent agent = occupant;
+        if (CrouchOnEnter)
+            agent.SetCrouching(false);
+
+        isExiting = false;
+
+        if (TryGetComponent(out AudioSource source))
+            source.Stop();
+
+        FinishExit(exitPos.position);
+        OnCancelHiding();
+        IsHide = false;
+    }
+    
+    protected virtual void OnCancelHiding() {}
+
     protected virtual void OnEnterHiding() { }
 
-    /// <summary>Called right after the player has come out of this hiding place.</summary>
     protected virtual void OnExitHiding() { }
 
-    public void SetHide(bool isHide) => IsHide = isHide;
+    public void SetHide(bool isHide) => IsHide = isHide && IsOccupied;
 }

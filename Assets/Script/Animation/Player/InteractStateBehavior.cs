@@ -5,10 +5,24 @@ public class InteractStateBehavior : StateMachineBehaviour
     private IInteractorBody body;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-        => GetBody(animator)?.SetCanMove(false);
+    {
+        IInteractorBody target = GetBody(animator);
+        if (target == null)
+            return;
+
+        target.SetCanMove(false);
+        target.SetInteracting(true);
+    }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-        => GetBody(animator)?.SetCanMove(true);
+    {
+        IInteractorBody target = GetBody(animator);
+        if (target == null)
+            return;
+
+        target.SetCanMove(true);
+        target.SetInteracting(false);
+    }
 
     private IInteractorBody GetBody(Animator anim)
     {

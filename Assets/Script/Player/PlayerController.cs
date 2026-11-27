@@ -60,8 +60,9 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     public bool IsHiding => CurrentHidingPlace != null;
     public Hidable CurrentHidingPlace { get; private set; }
 
+    public bool IsInteracting { get; private set; }
     public bool CanStartInteraction =>
-        CurrentState == PlayerState.Normal || CurrentState == PlayerState.Crouching;
+        !IsInteracting && (CurrentState == PlayerState.Normal || CurrentState == PlayerState.Crouching);
 
     public InventoryModel Inventory { get; } = new(InventoryCapacity, MaxInventoryWeight);
 
@@ -337,6 +338,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
     }
 
     public void SetPhysicsEnabled(bool enabled) => motor.SetEnabled(enabled);
+    public void SetInteracting(bool isInteracting) => IsInteracting = isInteracting;
 
     #endregion
 
@@ -361,6 +363,12 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
             playerModel.rotation = facing.Value;
 
         SetModelVisible(true);
+    }
+
+    public void CancelHiding()
+    {
+        if (CurrentHidingPlace != null)
+            CurrentHidingPlace.CancelHiding();
     }
 
     private void SetModelVisible(bool isVisible)
@@ -402,6 +410,7 @@ public class PlayerController : MonoBehaviour, IInteractorBody, IHidingAgent, II
         motor.SetEnabled(false);
         FaceDirection(catcherPosition - transform.position);
 
+        IsInteracting = false;
         return anim.PlayGotCaught();
     }
 

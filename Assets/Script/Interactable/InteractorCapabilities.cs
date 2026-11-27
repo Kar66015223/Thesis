@@ -5,6 +5,7 @@ public interface IInteractorBody
     void SetCanMove(bool canMove);
     void Teleport(Vector3 position, Quaternion? facing = null);
     void SetPhysicsEnabled(bool enabled);
+    void SetInteracting(bool isInteracting);
 }
 
 public interface IHidingAgent

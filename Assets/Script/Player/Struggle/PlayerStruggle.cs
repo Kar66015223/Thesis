@@ -135,7 +135,10 @@ public class PlayerStruggle : MonoBehaviour
             return false;
 
         IsCaught = true;
+        if (body != null)
+            body.CancelHiding();
         Caught?.Invoke();
+        
         CatchingEnemy = catcher;
         struggleProgress = 0f;
         damageTimer = 0f;
