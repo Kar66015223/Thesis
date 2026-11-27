@@ -136,10 +136,7 @@ public class PlayerStruggle : MonoBehaviour
 
         IsCaught = true;
         if (body != null)
-        {
             body.CancelHiding();
-            body.SetCrouching(false);
-        }
         Caught?.Invoke();
         
         CatchingEnemy = catcher;
