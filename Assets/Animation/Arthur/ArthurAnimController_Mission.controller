@@ -643,13 +643,13 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -2803203516384933849}
-    m_Position: {x: 360, y: 290, z: 0}
+    m_Position: {x: 360, y: 270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2968221918044358578}
-    m_Position: {x: 630, y: 290, z: 0}
+    m_Position: {x: 630, y: 270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1460717564588722924}
-    m_Position: {x: 630, y: 400, z: 0}
+    m_Position: {x: 630, y: 380, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6633840568807142196}
     m_Position: {x: 50, y: 150, z: 0}
@@ -694,7 +694,7 @@ AnimatorStateMachine:
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 140, y: -270, z: 0}
-  m_EntryPosition: {x: 60, y: 300, z: 0}
+  m_EntryPosition: {x: 60, y: 280, z: 0}
   m_ExitPosition: {x: 1040, y: -260, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -2803203516384933849}
@@ -1189,6 +1189,12 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   - m_Name: Starving
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: HeavyBag
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
