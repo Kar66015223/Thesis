@@ -5065,7 +5065,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveUIManager
   allObjectives:
   - {fileID: 11400000, guid: e557c6e826a368d4094be10acce55d8f, type: 2}
-  - {fileID: 11400000, guid: 1fd904b10e2ac18408980a42298cf488, type: 2}
+  - {fileID: 11400000, guid: 848668e505b16dc45aaf518210e5fa35, type: 2}
 --- !u!4 &955489888
 Transform:
   m_ObjectHideFlags: 0
@@ -9179,6 +9179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acd9283f917376b43b58950b3bea53fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapManager
+  firstObjective: {fileID: 11400000, guid: e557c6e826a368d4094be10acce55d8f, type: 2}
 --- !u!4 &1691177828
 Transform:
   m_ObjectHideFlags: 0

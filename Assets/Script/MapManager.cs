@@ -1,4 +1,3 @@
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +7,7 @@ public class MapManager : MonoBehaviour
     public static MapManager Instance;
     private string defaultActionMapName;
     public string DefaultActionMapName => defaultActionMapName;
+    [SerializeField] private ObjectiveData firstObjective;
 
     private bool isBase;
 
@@ -41,6 +41,11 @@ public class MapManager : MonoBehaviour
         LoadingScreen.Finished -= ShowFirstObjective;
 
         if (ObjectiveUIManager.Instance != null && ObjectiveUIManager.Instance.allObjectives.Count > 0)
-            UIEvents.RequestChangeObjective(ObjectiveUIManager.Instance.allObjectives[0]);
+        {
+            if (firstObjective != null)
+                UIEvents.RequestChangeObjective(firstObjective);
+            else
+                UIEvents.RequestChangeObjective(ObjectiveUIManager.Instance.allObjectives[0]);
+        }       
     }
 }
