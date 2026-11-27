@@ -2213,6 +2213,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5471835137912402078}
   - {fileID: 1056341800789811873}
   m_Father: {fileID: 8698471582296186626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2231,7 +2232,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4656245310834333869}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2462,7 +2463,7 @@ Transform:
   m_GameObject: {fileID: 5026566636657982632}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.226, z: 0}
+  m_LocalPosition: {x: 0, y: 0.816, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -62548,6 +62549,68 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4ba40267de7a9dd4aa9658806e808cf8, type: 3}
   m_PrefabInstance: {fileID: 5496395506748602639}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5504916536134571893
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3087348779544170378}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.793
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+      propertyPath: m_Name
+      value: PRP-002_Drain Cover1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+--- !u!4 &5471835137912402078 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 305a771b9059b124cbfe8e2729151914, type: 3}
+  m_PrefabInstance: {fileID: 5504916536134571893}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5510448784279742411
 PrefabInstance:
