@@ -3,8 +3,10 @@ using UnityEngine;
 public static class PlayerSession
 {
     private static (ItemData item, int stack)[] savedInventory;
-
     public static bool HasInventory => savedInventory != null;
+
+    public static bool firstItemTaken = false;
+
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() => savedInventory = null;

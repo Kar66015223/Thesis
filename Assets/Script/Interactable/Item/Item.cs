@@ -17,5 +17,10 @@ public class Item : InteractableBase
     protected virtual void OnPickedUp(GameObject interactor)
     {
         gameObject.SetActive(false);
+        if(!PlayerSession.firstItemTaken)
+        {
+            UIEvents.ShowTip("[Tab] Open inventory");
+            PlayerSession.firstItemTaken = true;
+        }
     }
 }
