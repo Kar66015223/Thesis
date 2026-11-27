@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1749617877454836013}
   - component: {fileID: 1449307405204174920}
   - component: {fileID: 2794688272736145632}
+  - component: {fileID: 9119304213752856871}
   m_Layer: 0
   m_Name: FoodItemTest
   m_TagString: Untagged
@@ -129,6 +130,33 @@ MonoBehaviour:
   highlight: {fileID: 0}
   interactSound: {fileID: 0}
   <Data>k__BackingField: {fileID: 11400000, guid: bc6102120ffc90c40ad822c4f7884623, type: 2}
+--- !u!54 &9119304213752856871
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244938505234025334}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &7717464924105700077
 PrefabInstance:
   m_ObjectHideFlags: 0
