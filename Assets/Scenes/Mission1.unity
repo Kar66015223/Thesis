@@ -25248,6 +25248,63 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1001 &1994024147
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 13.136492
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.2568395
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.6943782
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99994123
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.0108425785
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -1.242
+      objectReference: {fileID: 0}
+    - target: {fileID: 247639203068844385, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 714954501375519340, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
+      propertyPath: m_Name
+      value: TaserSpark
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 03184a55678982f48a67fcb1bf8fe55c, type: 3}
 --- !u!1 &2001391053
 GameObject:
   m_ObjectHideFlags: 0
@@ -36426,3 +36483,4 @@ SceneRoots:
   - {fileID: 990516794}
   - {fileID: 418849436}
   - {fileID: 241924518}
+  - {fileID: 1994024147}
