@@ -38,10 +38,14 @@ public class PlayerSound : MonoBehaviour
 
     [SerializeField] private AudioClip wasFoundSound;
 
+    [Header("Hunger")]
+    [SerializeField] private AudioClip stomachGrowlSound;
+
     private AudioSource source;
     private SoundEmitter emitter;
     private PlayerStamina stamina;
     private PlayerStruggle struggle;
+    private PlayerHunger hunger;
     private int lastClipIndex = -1;
 
     private bool isSlowCrouching;
@@ -52,6 +56,7 @@ public class PlayerSound : MonoBehaviour
         emitter = GetComponent<SoundEmitter>();
         stamina = GetComponent<PlayerStamina>();
         struggle = GetComponent<PlayerStruggle>();
+        hunger = GetComponent<PlayerHunger>();
 
         source.playOnAwake = false;
         source.loop = false;
@@ -69,6 +74,9 @@ public class PlayerSound : MonoBehaviour
             struggle.Freed += PlayFreedSound;
         }
 
+        if (hunger != null)
+            hunger.HungerPang += PlayStomachGrowlSound;
+
         PlayerEvents.SlowCrouch += HandleSlowCrouchChanged;
         PlayerEvents.WasFound += PlayWasFoundSound;
     }
@@ -77,13 +85,16 @@ public class PlayerSound : MonoBehaviour
     {
         if (stamina != null)
             stamina.Exhausted -= PlayTiredSound;
-        
+
         if (struggle != null)
         {
             struggle.Caught -= PlayCaughtSound;
             struggle.Struggle -= PlayStruggleSoundLoop;
             struggle.Freed -= PlayFreedSound;
         }
+        
+        if (hunger != null)
+            hunger.HungerPang -= PlayStomachGrowlSound;
 
         PlayerEvents.SlowCrouch -= HandleSlowCrouchChanged;
         PlayerEvents.WasFound -= PlayWasFoundSound;
@@ -149,12 +160,14 @@ public class PlayerSound : MonoBehaviour
         if (pickUpItemClip != null)
             source.PlayOneShot(pickUpItemClip, pickupItemVolume);
     }
-    
+
     public void PlayWasFoundSound()
     {
         if (wasFoundSound != null)
             source.PlayOneShot(wasFoundSound);
     }
+
+    public void PlayStomachGrowlSound() => source.PlayOneShot(stomachGrowlSound);
 
     private void PlayFootstep(float baseVolume, float noiseRadius)
     {
