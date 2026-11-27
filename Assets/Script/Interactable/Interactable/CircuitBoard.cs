@@ -12,6 +12,8 @@ public class CircuitBoard : Interactable
     // private Color baseEmission;
     [SerializeField] private GameObject pointLight;
 
+    [SerializeField] private ParticleSystem sparkVFX;
+
     void Awake()
     {
         emissionMat = lightRend.material;
@@ -33,6 +35,8 @@ public class CircuitBoard : Interactable
 
         pointLight.SetActive(false);
         emissionMat.SetColor(EmissionColorId, Color.black);
+
+        sparkVFX.Play();
 
         if (!hasChangedPath)
         {
